@@ -42,6 +42,8 @@
             }
         ],
         "prettier/prettier": ["error", { "endOfLine": "auto" }],
-        "react/function-component-definition": "off"
+        "react/function-component-definition": "off",
+        "react/jsx-no-useless-fragment": "off",
+        "object-curly-spacing": "off"
     }
 }

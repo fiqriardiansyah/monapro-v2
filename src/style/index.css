@@ -9,6 +9,9 @@ body {
 }
 
 @layer components {
+    .BTN-ADD {
+        @apply !h-10 !flex !items-center;
+    }
 }
 
 /* width */

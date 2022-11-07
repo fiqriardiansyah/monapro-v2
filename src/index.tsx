@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { StateProvider } from "context/state";
 import { UserProvider } from "context/user";
 import { ReactQueryDevtools } from "react-query/devtools";
+import "utils/extension";
 import App from "./app";
 import "./style/index.css";
 import "./style/theme.less";

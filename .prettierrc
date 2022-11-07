@@ -2,5 +2,6 @@
     "trailingComma": "es5",
     "tabWidth": 4,
     "endOfLine": "auto",
-    "printWidth": 150
+    "printWidth": 150,
+    "bracketSpacing": true
 }
