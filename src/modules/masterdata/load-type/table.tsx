@@ -62,12 +62,17 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
         {
             title: "Nama Beban",
             dataIndex: "load_name",
-            render: (text, record, i) => (
-                <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-                    {text}
-                </Button>
-            ),
+            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
+        // {
+        //     title: "Nama Beban",
+        //     dataIndex: "load_name",
+        //     render: (text, record, i) => (
+        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
+        //             {text}
+        //         </Button>
+        //     ),
+        // },
         {
             title: "Action",
             key: "action",

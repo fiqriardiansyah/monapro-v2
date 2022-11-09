@@ -62,12 +62,17 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
         {
             title: "Nama Unit",
             dataIndex: "unit_name",
-            render: (text, record, i) => (
-                <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-                    {text}
-                </Button>
-            ),
+            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
+        // {
+        //     title: "Nama Unit",
+        //     dataIndex: "unit_name",
+        //     render: (text, record, i) => (
+        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
+        //             {text}
+        //         </Button>
+        //     ),
+        // },
         {
             title: "Nama PIC",
             dataIndex: "pic_name",

@@ -8,7 +8,7 @@ module.exports = {
                     "linear-gradient(90deg, rgba(158,158,158,0) 0%, rgba(221,221,221,0.3533788515406162) 59%, rgba(230,230,230,0.7483368347338936) 72%, rgba(255,255,255) 90%)",
             },
             colors: {
-                primary: "#1e1e2e",
+                primary: "#B21919",
                 secondary: "#333354",
                 tertiary: "#7c7cb7",
                 base: "#242438",

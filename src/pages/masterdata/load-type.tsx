@@ -77,7 +77,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
                     </button>
                 )}
             </EditLoadType>
-            <DetailLoadType>
+            {/* <DetailLoadType>
                 {(data) => (
                     <button
                         type="button"
@@ -88,7 +88,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
                         detail
                     </button>
                 )}
-            </DetailLoadType>
+            </DetailLoadType> */}
             <Header
                 title="Load Type"
                 action={

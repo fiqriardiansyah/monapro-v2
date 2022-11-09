@@ -77,7 +77,7 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
                     </button>
                 )}
             </EditSubUnit>
-            <DetailSubUnit>
+            {/* <DetailSubUnit>
                 {(data) => (
                     <button
                         type="button"
@@ -88,7 +88,7 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
                         detail
                     </button>
                 )}
-            </DetailSubUnit>
+            </DetailSubUnit> */}
             <Header
                 title="Sub Unit"
                 action={

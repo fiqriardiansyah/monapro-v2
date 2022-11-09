@@ -62,12 +62,17 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
         {
             title: "Nama",
             dataIndex: "name",
-            render: (text, record, i) => (
-                <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-                    {text}
-                </Button>
-            ),
+            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
+        // {
+        //     title: "Nama",
+        //     dataIndex: "name",
+        //     render: (text, record, i) => (
+        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
+        //             {text}
+        //         </Button>
+        //     ),
+        // },
         {
             title: "Jabatan",
             dataIndex: "position",

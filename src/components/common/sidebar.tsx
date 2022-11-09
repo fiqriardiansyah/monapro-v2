@@ -8,7 +8,8 @@ import { BsFillCalendarCheckFill } from "react-icons/bs";
 // utils
 import { useLocation, useNavigate } from "react-router-dom";
 import {
-    AGENDA_PATH,
+    AGENDA_DATA_PATH,
+    AGENDA_DISPOSITION_PATH,
     DASHBOARD_PATH,
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
@@ -53,7 +54,10 @@ function Sidebar({ collapse }: Props) {
             getItem("Load Type", MASTER_DATA_LOAD_TYPE_PATH),
             getItem("Approval Position", MASTER_DATA_APPROVAL_POSITION_PATH),
         ]),
-        getItem("Agenda", AGENDA_PATH, <BsFillCalendarCheckFill />),
+        getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
+            getItem("Agenda Data", AGENDA_DATA_PATH),
+            getItem("Agenda Disposition", AGENDA_DISPOSITION_PATH),
+        ]),
         getItem("Procurement", "procurement", <AiFillDatabase />, [
             getItem("Justification", PROCUREMENT_JUSTIFICATION_PATH),
             getItem("Negotiation", PROCUREMENT_NEGOTIATION_PATH),

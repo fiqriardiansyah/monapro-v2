@@ -77,7 +77,7 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
                     </button>
                 )}
             </EditApprovalPosition>
-            <DetailApprovalPosition>
+            {/* <DetailApprovalPosition>
                 {(data) => (
                     <button
                         type="button"
@@ -88,7 +88,7 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
                         detail
                     </button>
                 )}
-            </DetailApprovalPosition>
+            </DetailApprovalPosition> */}
             <Header
                 title="Approval Position"
                 action={

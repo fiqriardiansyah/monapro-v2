@@ -77,7 +77,7 @@ const RoleManagementPage = <T extends TDataRoleManagement>() => {
                     </button>
                 )}
             </EditRole>
-            <DetailRole>
+            {/* <DetailRole>
                 {(data) => (
                     <button
                         type="button"
@@ -88,7 +88,7 @@ const RoleManagementPage = <T extends TDataRoleManagement>() => {
                         detail
                     </button>
                 )}
-            </DetailRole>
+            </DetailRole> */}
             <Header
                 title="Role management"
                 action={

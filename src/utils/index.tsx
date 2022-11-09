@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable consistent-return */
 import { message } from "antd";
 import type { RcFile } from "antd/es/upload/interface";
 import Cookies from "js-cookie";
@@ -34,17 +36,16 @@ export default class Utils {
     };
 
     static currencyParser = (val: any) => {
-        let value = val;
         try {
             // for when the input gets clears
             if (typeof val === "string" && !val.length) {
-                value = "0.0";
+                val = "0.0";
             }
 
             // detecting and parsing between comma and dot
             const group = new Intl.NumberFormat(locale).format(1111).replace(/1/g, "");
             const decimal = new Intl.NumberFormat(locale).format(1.1).replace(/1/g, "");
-            let reversedVal = value.replace(new RegExp(`\\${group}`, "g"), "");
+            let reversedVal = val.replace(new RegExp(`\\${group}`, "g"), "");
             reversedVal = reversedVal.replace(new RegExp(`\\${decimal}`, "g"), ".");
             //  => 1232.21 €
 
@@ -63,7 +64,6 @@ export default class Utils {
             return Number.isNaN(reversedVal) ? 0 : reversedVal;
         } catch (error) {
             console.error(error);
-            return error || DEFAULT_ERROR_MESSAGE;
         }
     };
 

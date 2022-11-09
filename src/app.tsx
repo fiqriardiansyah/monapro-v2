@@ -3,7 +3,8 @@ import { Button, Spin } from "antd";
 import { Route, Routes, Navigate, BrowserRouter } from "react-router-dom";
 import Layout from "components/common/layout";
 import {
-    AGENDA_PATH,
+    AGENDA_DATA_PATH,
+    AGENDA_DISPOSITION_PATH,
     DASHBOARD_PATH,
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
@@ -24,12 +25,13 @@ import SubUnitPage from "pages/masterdata/sub-unit";
 import RoleManagementPage from "pages/masterdata/role-management";
 import LoadTypePage from "pages/masterdata/load-type";
 import ApprovalPositionPage from "pages/masterdata/approval-position";
-import AgendaPage from "pages/agenda";
-import JustificationPage from "pages/procurement/justification";
+import AgendaDataPage from "pages/agenda/data";
+import AgendaDispositionPage from "pages/agenda/disposition";
 import NegotiationPage from "pages/procurement/negotiation";
 import ContractPage from "pages/procurement/contract";
 import NewsPage from "pages/procurement/news";
 import FinancePage from "pages/procurement/finance";
+import JustificationPage from "pages/procurement/justification";
 
 function App() {
     return (
@@ -42,7 +44,8 @@ function App() {
                     <Route path={MASTER_DATA_ROLE_MANAGE_PATH} element={<RoleManagementPage />} />
                     <Route path={MASTER_DATA_LOAD_TYPE_PATH} element={<LoadTypePage />} />
                     <Route path={MASTER_DATA_APPROVAL_POSITION_PATH} element={<ApprovalPositionPage />} />
-                    <Route path={AGENDA_PATH} element={<AgendaPage />} />
+                    <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
+                    <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
                     <Route path={PROCUREMENT_JUSTIFICATION_PATH} element={<JustificationPage />} />
                     <Route path={PROCUREMENT_NEGOTIATION_PATH} element={<NegotiationPage />} />
                     <Route path={PROCUREMENT_CONTRACT_PATH} element={<ContractPage />} />

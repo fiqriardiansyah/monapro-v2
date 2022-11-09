@@ -1,0 +1,51 @@
+import { TDataJustification } from "./models";
+
+export const datatable: TDataJustification[] = [
+    {
+        id: 1,
+        key: "1",
+        no: "13123123123",
+        date: "1231231213",
+        agenda_no: "1212121",
+        regarding: "laksdjfasldkf asldkfj asldf",
+        justification_value: "10000000",
+        creator: "doni forger",
+        sub_unit: "telkom",
+        last_approval: "asdfasf",
+        code_and_budget: "asdfasdf",
+        notes: "this is notes",
+        document: "file.pdf",
+    },
+    {
+        id: 2,
+        key: "2",
+        no: "13123123123",
+        date: "1231231213",
+        agenda_no: "1212121",
+        regarding: "laksdjfasldkf asldkfj asldf",
+        justification_value: "10000000",
+        creator: "doni forger",
+        sub_unit: "telkom",
+        last_approval: "asdfasf",
+        code_and_budget: "asdfasdf",
+        notes: "this is notes",
+        document: "file.pdf",
+    },
+    {
+        id: 3,
+        key: "3",
+        no: "13123123123",
+        date: "1231231213",
+        agenda_no: "1212121",
+        regarding: "laksdjfasldkf asldkfj asldf",
+        justification_value: "10000000",
+        creator: "doni forger",
+        sub_unit: "telkom",
+        last_approval: "asdfasf",
+        code_and_budget: "asdfasdf",
+        notes: "this is notes",
+        document: "file.pdf",
+    },
+];
+
+export default {};

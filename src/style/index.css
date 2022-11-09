@@ -12,6 +12,9 @@ body {
     .BTN-ADD {
         @apply !h-10 !flex !items-center;
     }
+    .INPUT-FILE-UPLOADER input {
+        @apply !hidden;
+    }
 }
 
 /* width */
