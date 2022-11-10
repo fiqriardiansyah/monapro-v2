@@ -52,7 +52,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                         </form>
                     )}
                     {additional && additional()}
-                    {!search && !additional && <h1 className="capitalize text-gray-600 m-0">{title}</h1>}
+                    {!search && !additional && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
                     <Popover
                         content={
                             <div className="flex flex-col">
@@ -73,7 +73,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                 </>
             </div>
             <div className="w-full flex items-center justify-between mt-4">
-                {search && <h1 className="capitalize text-gray-600 m-0">{title}</h1>}
+                {search && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
                 <div className="">{action}</div>
             </div>
         </div>

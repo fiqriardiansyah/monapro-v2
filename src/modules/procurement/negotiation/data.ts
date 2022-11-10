@@ -6,8 +6,8 @@ export const datatable: TDataNegotiation[] = [
         key: "1",
         justification_no: "automatic",
         justification_regarding: "automatic",
-        date: "123123123123",
-        notes: "asdfasdfa sdfasd fasdf asdfs",
+        date: "21 April 2021",
+        notes: "this is random notes",
         document: "file.pdf",
     },
     {
@@ -15,8 +15,8 @@ export const datatable: TDataNegotiation[] = [
         key: "2",
         justification_no: "automatic",
         justification_regarding: "automatic",
-        date: "123123123123",
-        notes: "asdfasdfa sdfasd fasdf asdfs",
+        date: "12 Mei 2021",
+        notes: "this is random notes",
         document: "file.pdf",
     },
     {
@@ -24,8 +24,8 @@ export const datatable: TDataNegotiation[] = [
         key: "3",
         justification_no: "automatic",
         justification_regarding: "automatic",
-        date: "123123123123",
-        notes: "asdfasdfa sdfasd fasdf asdfs",
+        date: "14 April 2021",
+        notes: "this is random notes",
         document: "file.pdf",
     },
 ];
