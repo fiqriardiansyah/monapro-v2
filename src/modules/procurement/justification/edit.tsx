@@ -38,6 +38,8 @@ const schema: yup.SchemaOf<Omit<Justification, "id">> = yup.object().shape({
     last_approval: yup.string().required("Approval terakhir wajib diisi"),
     no: yup.string().required("No justifikasi wajib diisi"),
     notes: yup.string().required("Catatan wajib diisi"),
+    event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
+    payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
 });
 
 const EditJustification = ({ onSubmit, loading, children }: Props) => {
@@ -196,6 +198,12 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     multiple={false}
                                     name="document"
                                 />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="payment_estimation_date" label="Perkiraan bayar" />
                             </Col>
                         </Row>
 

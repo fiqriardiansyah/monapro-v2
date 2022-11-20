@@ -37,6 +37,8 @@ const schema: yup.SchemaOf<Omit<AgendaData, "id">> = yup.object().shape({
     regarding: yup.string().required("Perihal wajib diisi"),
     sender: yup.string().required("Pengirim wajib diisi"),
     sub_unit: yup.string().required("Sub unit wajib diisi"),
+    event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
+    payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
 });
 
 const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
@@ -171,6 +173,12 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                     multiple={false}
                                     name="document"
                                 />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="payment_estimation_date" label="Perkiraan bayar" />
                             </Col>
                         </Row>
 

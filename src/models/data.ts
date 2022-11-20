@@ -58,6 +58,8 @@ export interface AgendaData {
     follow_up: string;
     decision: string;
     document: any;
+    event_date: string;
+    payment_estimation_date: string;
 }
 
 export interface AgendaDisposition {
@@ -86,6 +88,8 @@ export interface Justification {
     code_and_budget: string;
     notes: string;
     document: any;
+    event_date: string;
+    payment_estimation_date: string;
 }
 
 export interface Negotiation {

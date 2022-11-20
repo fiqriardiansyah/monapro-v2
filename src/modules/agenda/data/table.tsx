@@ -38,6 +38,19 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
         });
     };
 
+    const onClickLockBudget = (data: T) => {
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `Kunci anggaran dengan id ${data.id}?`,
+            onOk() {},
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
+
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
             pathname: location.pathname,
@@ -124,7 +137,17 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            width: "200px",
+            title: "Pelaksanaan acara",
+            dataIndex: "event_date",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Perkiraan bayar",
+            dataIndex: "payment_estimation_date",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            width: "300px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -133,8 +156,11 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    <Button type="primary" className="button-delete-master-data" onClick={() => onClickDlt(record)}>
+                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
                         Hapus
+                    </Button>
+                    <Button type="primary" onClick={() => onClickLockBudget(record)}>
+                        Lock budget
                     </Button>
                 </Space>
             ),
@@ -143,7 +169,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
 
     return (
         <Table
-            scroll={{ x: 1500 }}
+            scroll={{ x: 2000 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

@@ -15,6 +15,9 @@ body {
     .INPUT-FILE-UPLOADER input {
         @apply !hidden;
     }
+    .BTN-DELETE {
+        @apply !bg-red-200 !text-red-500 !border-none;
+    }
 }
 
 /* width */

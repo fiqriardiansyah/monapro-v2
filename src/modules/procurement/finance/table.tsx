@@ -114,7 +114,7 @@ Props<T>) => {
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    {/* <Button type="primary" className="button-delete-master-data" onClick={() => onClickDlt(record)}>
+                    {/* <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
                         Hapus
                     </Button> */}
                 </Space>

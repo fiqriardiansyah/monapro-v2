@@ -1,4 +1,4 @@
-import { Button, Popover } from "antd";
+import { Button, Popover, Space } from "antd";
 import React, { useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
@@ -9,11 +9,12 @@ type Props = {
     action?: React.ReactNode;
     placeholderInput?: string;
     search?: boolean;
+    back?: () => void;
     additional?: () => void;
     onSubmitSearch?: (data: string) => void;
 };
 
-const Header = ({ additional, title, action, placeholderInput = "Search...", onSubmitSearch, search = true }: Props) => {
+const Header = ({ additional, title, action, placeholderInput = "Search...", onSubmitSearch, search = true, back }: Props) => {
     const [open, setOpen] = useState(false);
 
     const hide = () => {
@@ -40,17 +41,22 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
         <div className="flex flex-col w-full mb-5 z-10 container mx-auto py-2 mt-5">
             <div className="w-full flex items-center justify-between">
                 <>
-                    {search && (
-                        <form onSubmit={onSubmit} className="relative w-1/2">
-                            <input
-                                className="w-full bg-white py-2 px-5 pr-10 rounded-lg border-none focus:outline-primary"
-                                type="text"
-                                name="inputsearch"
-                                placeholder={placeholderInput}
-                            />
-                            <FiSearch className="text-xl text-gray-400 absolute right-4 top-1/2 transform -translate-y-1/2" />
-                        </form>
-                    )}
+                    <Space className="">
+                        <>
+                            {back && back()}
+                            {search && (
+                                <form onSubmit={onSubmit} className="relative !w-[300px]">
+                                    <input
+                                        className="w-full bg-white py-2 px-5 pr-10 rounded-lg border-none focus:outline-primary"
+                                        type="text"
+                                        name="inputsearch"
+                                        placeholder={placeholderInput}
+                                    />
+                                    <FiSearch className="text-xl text-gray-400 absolute right-4 top-1/2 transform -translate-y-1/2" />
+                                </form>
+                            )}
+                        </>
+                    </Space>
                     {additional && additional()}
                     {!search && !additional && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
                     <Popover

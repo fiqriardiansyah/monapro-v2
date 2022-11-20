@@ -16,6 +16,8 @@ export const datatable: TDataAgenda[] = [
         regarding: "Joni iskandar",
         sender: "Rumanah",
         sub_unit: "Unit 2",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
     {
         id: 3,
@@ -32,6 +34,8 @@ export const datatable: TDataAgenda[] = [
         regarding: "pak joni",
         sender: "bu rt",
         sub_unit: "Unit 2",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
     {
         id: 2,
@@ -48,6 +52,8 @@ export const datatable: TDataAgenda[] = [
         regarding: "Romli saputra",
         sender: "Juniardi",
         sub_unit: "Unit 1",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
 ];
 

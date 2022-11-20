@@ -9,22 +9,10 @@ import BlueWaveImage from "assets/svgs/blue-wave.svg";
 import GreenWaveImage from "assets/svgs/green-wave.svg";
 import OrangeWaveImage from "assets/svgs/orange-wave.svg";
 import { Link } from "react-router-dom";
-
-const dataRevenueDefault = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"],
-    datasets: [
-        {
-            label: "Statistik",
-            data: [100000, 120000, 154500, 193000, 123000, 144000, 210000, 160400, 189000, 164000, 200000, 180000],
-            backgroundColor: [],
-            borderColor: [],
-            borderWidth: 1,
-        },
-    ],
-    options: {
-        responsive: true,
-    },
-};
+import { dataRevenueDefault, mainBudget } from "modules/dashboard/data";
+import RemainingBudget from "modules/dashboard/component/remaining-budget";
+import ProgressCustome from "modules/dashboard/component/progress-custome";
+import { DASHBOARD_PATH } from "utils/routes";
 
 const DashboardPage = () => {
     if (typeof window !== "undefined") {
@@ -56,26 +44,11 @@ const DashboardPage = () => {
         <div className="min-h-screen px-10">
             <Header title="Dashboard" />
             <div className="grid grid-cols-3 grid-rows-3 gap-4">
-                <div className="p-3 bg-white rounded-md flex flex-col">
-                    <p className="m-0 font-medium text-gray-400">Total Pemakaian</p>
-                    <div className="flex items-center justify-center my-2">
-                        <p className="m-0 text-2xl font-bold">75%</p>
-                        <div className="h-full bg-gray-300 mx-3" style={{ width: "1px" }} />
-                        <p className="m-0 text-lg font-semibold">Rp. 400.000.000</p>
-                    </div>
-                    <Progress percent={75} showInfo={false} />
-                </div>
-                <div className="p-3 bg-white rounded-md flex flex-col">
-                    <p className="m-0 font-medium text-gray-400">Sisa Pemakaian</p>
-                    <div className="flex items-center justify-center my-2">
-                        <p className="m-0 text-2xl font-bold">25%</p>
-                        <div className="h-full bg-gray-300 mx-3" style={{ width: "1px" }} />
-                        <p className="m-0 text-lg font-semibold">Rp. 20.000.000</p>
-                    </div>
-                    <Progress percent={25} showInfo={false} />
-                </div>
-                <div className="p-3 bg-white rounded-md flex flex-col justify-between">
-                    <p className="m-0 font-medium text-gray-400">Total Aktivitas</p>
+                {mainBudget.map((budget) => (
+                    <RemainingBudget data={budget} key={budget.title} />
+                ))}
+                <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
+                    <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">Total Aktivitas</p>
                     <div className="w-full flex justify-between items-center">
                         <p className="m-0 font-medium">Sponsorship</p>
                         <p className="m-0 font-bold text-gray-500 text-xl">Rp. 200.000.000</p>
@@ -94,7 +67,7 @@ const DashboardPage = () => {
                         <Tooltip placement="left" title={`Sisa Anggaran: ${`${el.budget}00000`}`} key={i}>
                             <div className="flex flex-col w-full mb-3">
                                 <p className="m-0 text-gray-400 capitalize font-medium">{el.subUnit}</p>
-                                <Progress percent={el.budget} showInfo={false} />
+                                <ProgressCustome percent={el.budget} showInfo={false} status="active" />
                             </div>
                         </Tooltip>
                     ))}
@@ -102,7 +75,7 @@ const DashboardPage = () => {
             </div>
             <div className="flex items-center w-full justify-between">
                 <h1 className="capitalize text-xl font-bold text-gray-600 m-0 my-4">sub unit program & partnership</h1>
-                <Link to="/">Lihat detail</Link>
+                <Link to={`${DASHBOARD_PATH}/sub-unit-program-partnership`}>Lihat detail</Link>
             </div>
             <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
@@ -136,7 +109,7 @@ const DashboardPage = () => {
             </div>
             <div className="flex items-center w-full justify-between">
                 <h1 className="capitalize text-xl font-bold text-gray-600 m-0 my-4">sub unit corporate communication</h1>
-                <Link to="/">Lihat detail</Link>
+                <Link to={`${DASHBOARD_PATH}/sub-unit-corporate-communication`}>Lihat detail</Link>
             </div>
             <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">

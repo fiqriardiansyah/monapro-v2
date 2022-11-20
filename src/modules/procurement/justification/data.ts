@@ -15,6 +15,8 @@ export const datatable: TDataJustification[] = [
         code_and_budget: "ASDFA123",
         notes: "this is notes",
         document: "file.pdf",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
     {
         id: 2,
@@ -30,6 +32,8 @@ export const datatable: TDataJustification[] = [
         code_and_budget: "AASDF232",
         notes: "this is notes",
         document: "file.pdf",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
     {
         id: 3,
@@ -45,6 +49,8 @@ export const datatable: TDataJustification[] = [
         code_and_budget: "ASDF2323",
         notes: "this is notes",
         document: "file.pdf",
+        event_date: "30 September 2022",
+        payment_estimation_date: "12 Oktober 2022",
     },
 ];
 
