@@ -1,4 +1,4 @@
-import { Alert, Button } from "antd";
+import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
 import { BasePaginationResponse, SubUnitData } from "models";
 import AddSubUnit from "modules/masterdata/sub-unit/add";
@@ -9,21 +9,76 @@ import SubUnitTable from "modules/masterdata/sub-unit/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import subUnitService from "services/api-endpoints/masterdata/sub-unit";
+import Utils from "utils";
+
+// [FINISH]
 
 const SubUnitPage = <T extends TDataSubUnit>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+    const getList = useQuery([subUnitService.getAll, page], async () => {
+        const res = await subUnitService.GetAll<SubUnitData>({ page });
+        return Utils.toBaseTable<SubUnitData, T>(res.data.data);
     });
 
-    const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
+    const deleteMutation = useMutation(
+        async ({ id, callback }: { id: string; callback: () => void }) => {
+            await subUnitService.Delete<SubUnitData>({ id });
+            callback();
+        },
+        {
+            onSuccess: (_, data) => {
+                getList.refetch();
+                message.success(`Sub unit with id ${data.id} has been deleted`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
 
-    const createMutation = useMutation(async ({ data, callback }: { data: SubUnitData; callback: () => void }) => {});
+    const createMutation = useMutation(
+        async ({ data, callback }: { data: SubUnitData; callback: () => void }) => {
+            await subUnitService.Create<SubUnitData>(data);
+            callback();
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success(`Sub unit has been created`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
 
-    const editMutation = useMutation(async ({ data, callback }: { data: SubUnitData; callback: () => void }) => {});
+    const editMutation = useMutation(
+        async ({ data, callback }: { data: SubUnitData; callback: () => void }) => {
+            await subUnitService.Edit<SubUnitData>(data);
+            callback();
+        },
+        {
+            onSuccess: (_, data) => {
+                getList.refetch();
+                message.success(`Sub unit with id ${data.data.id} has been edited`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
 
     // crud handler
     const onClickDelete = (data: T, callback: () => void) => {
@@ -102,7 +157,7 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <SubUnitTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            <SubUnitTable fetcher={getList} onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} />
         </div>
     );
 };

@@ -1,8 +1,10 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
 import { message } from "antd";
 import type { RcFile } from "antd/es/upload/interface";
 import Cookies from "js-cookie";
+import { BasePaginationResponse, BaseTableData } from "models";
 import { DEFAULT_ERROR_MESSAGE, locale, TOKEN_USER } from "./constant";
 
 export default class Utils {
@@ -118,5 +120,18 @@ export default class Utils {
         } catch (e: any) {
             throw new Error("oops something went wrong converting image to base64");
         }
+    }
+
+    static toBaseTable<T extends { id: string | number }, R>(data: BasePaginationResponse<T>): BasePaginationResponse<R> {
+        return {
+            ...data,
+            list: data.list?.map(
+                (el) =>
+                ({
+                    ...el,
+                    key: el.id,
+                } as R)
+            ),
+        };
     }
 }

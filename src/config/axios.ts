@@ -20,7 +20,8 @@ axiosClient.interceptors.request.use(
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Headers": "Content-Type, Authorization",
             "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT",
-            Authorization: Cookies.get(TOKEN_USER)!,
+            // Authorization: Cookies.get(TOKEN_USER)!,
+            Authorization: "$2a$10$w70dYzx1ZC6HleTGqbZ46ObUBP4Yjfk.RhEyPURWbJJcqI1KlXv3O",
         };
         return process.env.NODE_ENV === "development" ? requestLogger(req) : req;
     },

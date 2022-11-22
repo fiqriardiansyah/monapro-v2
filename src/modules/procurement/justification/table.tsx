@@ -6,6 +6,7 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
+import moment from "moment";
 import { TDataJustification } from "./models";
 import { datatable } from "./data";
 
@@ -68,68 +69,73 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
+            title: "ID",
+            dataIndex: "id",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
             title: "No Justifikasi",
-            dataIndex: "no",
+            dataIndex: "no_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tanggal Justifikasi",
-            dataIndex: "date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "justification_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "No Agenda",
-            dataIndex: "agenda_no",
+            dataIndex: "no_agenda",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal",
-            dataIndex: "regarding",
+            dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Nilai Justifikasi",
-            dataIndex: "justification_value",
+            title: "Posisi",
+            dataIndex: "position",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Creator",
+            title: "Beban",
+            dataIndex: "load_name",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Nilai",
+            dataIndex: "value",
+            render: (text) => <p className="capitalize m-0">{parseInt(text, 10).ToIndCurrency("Rp")}</p>,
+        },
+        {
+            title: "Sub unit",
+            dataIndex: "subunit_name",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Pembuat",
             dataIndex: "creator",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Sub Unit",
-            dataIndex: "sub_unit",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Approval Terakhir",
-            dataIndex: "last_approval",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Kode & Anggaran",
-            dataIndex: "code_and_budget",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
             title: "Catatan",
-            dataIndex: "notes",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Dok Justifikasi",
-            dataIndex: "document",
+            dataIndex: "note",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "Perkiraan bayar",
-            dataIndex: "payment_estimation_date",
+            dataIndex: "estimation_paydate",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+        },
+        {
+            title: "Dok Justifikasi",
+            dataIndex: "doc_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
@@ -145,8 +151,8 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
                     <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
                         Hapus
                     </Button>
-                    <Button type="primary" onClick={() => onClickLockBudget(record)}>
-                        Lock budget
+                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudget(record)}>
+                        {record?.lock_budget === 1 ? "Locked" : "Lock Budget"}
                     </Button>
                 </Space>
             ),
@@ -159,8 +165,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

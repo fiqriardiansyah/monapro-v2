@@ -11,6 +11,7 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import Utils from "utils";
 import { ApprovalPosition } from "models";
 import { useMutation } from "react-query";
+import approvalPositionService from "services/api-endpoints/masterdata/approval-position";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -45,16 +46,22 @@ const EditApprovalPosition = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            form.setFieldsValue({
-                name: data?.name || "",
-                position: data?.position || 0,
-            });
-            setValue("name", data?.name || "");
-            setValue("position", data?.position || "");
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const res = await approvalPositionService.Detail<ApprovalPosition>({ id });
+            return res.data.data;
         },
-    });
+        {
+            onSuccess: (data: any) => {
+                form.setFieldsValue({
+                    name: data?.name || "",
+                    position: data?.position || 0,
+                });
+                setValue("name", data?.name || "");
+                setValue("position", data?.position || "");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -75,9 +82,15 @@ const EditApprovalPosition = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {

@@ -52,16 +52,17 @@ const DetailRole = ({ children }: Props) => {
                     <h1 className="">Mengambil data...</h1>
                 ) : (
                     <Descriptions
-                        title={detailMutation.data?.name}
+                        title={detailMutation.data?.full_name}
                         column={{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}
                         colon={false}
                         labelStyle={{ color: "#919EAB", width: 200 }}
                         bordered
                     >
                         <Descriptions.Item label="ID">{detailMutation.data?.id}</Descriptions.Item>
-                        <Descriptions.Item label="Nama">{detailMutation.data?.name}</Descriptions.Item>
+                        <Descriptions.Item label="Nama">{detailMutation.data?.full_name}</Descriptions.Item>
                         <Descriptions.Item label="Email">{detailMutation.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Status">{detailMutation.data?.status}</Descriptions.Item>
+                        <Descriptions.Item label="Status">{detailMutation.data?.role_id}</Descriptions.Item>
+                        <Descriptions.Item label="Status">{detailMutation.data?.role_name}</Descriptions.Item>
                     </Descriptions>
                 )}
                 {detailMutation.error ? (

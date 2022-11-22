@@ -11,6 +11,7 @@ import ControlledInputDate from "components/form/controlled-inputs/controlled-in
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
+import { FDataJustification } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -19,25 +20,23 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: Justification, callback: () => void) => void;
+    onSubmit: (data: FDataJustification, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<Justification, "id">> = yup.object().shape({
-    date: yup.string().required("Tanggal wajib diisi"),
-    document: yup.string(),
-    regarding: yup.string().required("Perihal wajib diisi"),
-    sub_unit: yup.string().required("Sub unit wajib diisi"),
-    agenda_no: yup.string().required("No agenda wajib diisi"),
-    code_and_budget: yup.string().required("Kode dan anggaran wajib diisi"),
-    creator: yup.string().required("Creator wajib diisi"),
-    justification_value: yup.string().required("Nilai justifikasi wajib diisi"),
-    last_approval: yup.string().required("Approval terakhir wajib diisi"),
-    no: yup.string().required("No justifikasi wajib diisi"),
-    notes: yup.string().required("Catatan wajib diisi"),
+const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
+    justification_date: yup.string().required("Tanggal wajib diisi"),
+    no_agenda: yup.string().required("No agenda wajib diisi"),
+    value: yup.string().required("Nilai justifikasi wajib diisi"),
+    about_justification: yup.string().required("Perihal wajib diisi"),
+    note: yup.string().required("Catatan wajib diisi"),
     event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
-    payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
+    estimation_paydate: yup.string().required("Perkiraan pembayaran wajib diisi"),
+    doc_justification: yup.string(),
+    approval_position_id: yup.string().required("Approval posisi wajib diisi"),
+    load_type_id: yup.string().required("Jenis beban wajib diisi"),
+    subunit_id: yup.string().required("Sub unit wajib diisi"),
 });
 
 const AddJustification = ({ onSubmit, loading, children }: Props) => {
@@ -47,7 +46,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
-    } = useForm<Justification>({
+    } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -93,41 +92,35 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="no"
-                                    label="No Justifikasi"
-                                    placeholder="No Justifikasi"
-                                />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal justifikasi" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 24 }} name="agenda_no" label="No agenda" placeholder="Nomor" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="regarding" label="Perihal" placeholder="Perihal" />
+                                <ControlledInputText control={control} labelCol={{ xs: 24 }} name="no_agenda" label="No agenda" placeholder="Nomor" />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputNumber
                                     control={control}
                                     labelCol={{ xs: 12 }}
-                                    name="justification_value"
+                                    name="value"
                                     label="Nilai justifikasi"
                                     placeholder="Nilai justifikasi"
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="creator" label="Creator" placeholder="Creator" />
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="about_justification"
+                                    label="Perihal"
+                                    placeholder="Perihal"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="sub_unit"
-                                    label="Sub Unit"
-                                    placeholder="Sub Unit"
+                                    name="approval_position_id"
+                                    label="Approval posisi"
+                                    placeholder="Approval posisi"
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
@@ -137,9 +130,9 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="last_approval"
-                                    label="Approval terakhir"
-                                    placeholder="Approval terakhir"
+                                    name="load_type_id"
+                                    label="Jenis bebas"
+                                    placeholder="Jenis bebas"
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
@@ -149,9 +142,9 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="code_and_budget"
-                                    label="Kode & Anggaran"
-                                    placeholder="Kode & Anggaran"
+                                    name="subunit_id"
+                                    label="Sub unit"
+                                    placeholder="Sub unit"
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
@@ -159,7 +152,13 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="notes" label="Catatan" placeholder="Catatan" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
                                 <InputFile
@@ -167,14 +166,8 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     label="file document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="document"
+                                    name="doc_justification"
                                 />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="payment_estimation_date" label="Perkiraan bayar" />
                             </Col>
                         </Row>
 

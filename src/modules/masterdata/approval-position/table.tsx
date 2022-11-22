@@ -28,7 +28,9 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
             content: `Hapus data dengan id ${data.id} ?`,
             onOk() {
                 return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => resolve);
+                    onClickDelete(data, () => {
+                        resolve(true);
+                    });
                 });
             },
             onCancel() {},
@@ -42,7 +44,7 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -100,8 +102,7 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

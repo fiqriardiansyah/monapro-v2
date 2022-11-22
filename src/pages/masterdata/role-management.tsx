@@ -9,14 +9,24 @@ import RoleManagementTable from "modules/masterdata/role-management/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import roleManagementService from "services/api-endpoints/masterdata/role-management";
+import Utils from "utils";
+
+// [IMPORTANT] role mangement belum selesai
 
 const RoleManagementPage = <T extends TDataRoleManagement>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+    const getList = useQuery([roleManagementService.getAll, page], async () => {
+        const res = await roleManagementService.GetAll<Role>({ page });
+        return Utils.toBaseTable<Role, T>(res.data.data);
     });
 
     const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});

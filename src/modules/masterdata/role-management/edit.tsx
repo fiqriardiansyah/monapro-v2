@@ -23,9 +23,10 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
-    name: yup.string().required("Nama wajib diisi"),
+    role_id: yup.string().required("Role id wajib diisi"),
+    role_name: yup.string().required("Role name wajib diisi"),
     email: yup.string().required("Email wajib diisi"),
-    status: yup.string().required("Status wajib diisi"),
+    full_name: yup.string().required("Name wajib diisi"),
 });
 
 const EditRole = ({ onSubmit, loading, children }: Props) => {
@@ -46,13 +47,15 @@ const EditRole = ({ onSubmit, loading, children }: Props) => {
     const detailMutation = useMutation(async (id: string) => {}, {
         onSuccess: (data: any) => {
             form.setFieldsValue({
-                name: data?.name || "",
+                full_name: data?.full_name || "",
                 email: data?.email || "",
-                status: data?.status || "",
+                role_id: data?.role_id || "",
+                role_name: data?.role_name || "",
             });
-            setValue("name", data?.name || "");
+            setValue("full_name", data?.full_name || "");
             setValue("email", data?.email || "");
-            setValue("status", data?.status || "");
+            setValue("role_id", data?.role_id || "");
+            setValue("role_name", data?.role_name || "");
         },
     });
 
@@ -107,9 +110,10 @@ const EditRole = ({ onSubmit, loading, children }: Props) => {
                     layout="vertical"
                 >
                     <Space direction="vertical" className="w-full">
-                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="name" label="Nama" placeholder="Nama" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="role_id" label="Role ID" placeholder="Role ID" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="role_name" label="Role Name" placeholder="Role name" />
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="email" label="Email" placeholder="Email" />
-                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="status" label="Status" placeholder="Status" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="full_name" label="Full Name" placeholder="Full name" />
 
                         <Row justify="start">
                             <Space>

@@ -8,14 +8,17 @@ import AgendaDataTable from "modules/agenda/data/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import agendaDataService from "services/api-endpoints/agenda/agenda-data";
+import Utils from "utils";
 
 const AgendaDataPage = <T extends TDataAgenda>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+    const getList = useQuery([agendaDataService.getAll], async () => {
+        const res = await agendaDataService.GetAll<AgendaData>({ page: 1 });
+        return Utils.toBaseTable<AgendaData, T>(res.data.data);
     });
 
     const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});

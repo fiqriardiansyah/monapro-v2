@@ -1,4 +1,4 @@
-import { Alert, Button } from "antd";
+import { Alert, Button, message } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
 import Header from "components/common/header";
 import { ApprovalPosition, BasePaginationResponse, BaseTableData } from "models";
@@ -9,22 +9,76 @@ import React, { useRef } from "react";
 import { useMutation, useQuery } from "react-query";
 import EditApprovalPosition from "modules/masterdata/approval-position/edit";
 import DetailApprovalPosition from "modules/masterdata/approval-position/detail";
+import approvalPositionService from "services/api-endpoints/masterdata/approval-position";
+import Utils from "utils";
+import { useSearchParams } from "react-router-dom";
+
+// [FINISH]
 
 const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+    const getList = useQuery([approvalPositionService.getAll, page], async () => {
+        const res = await approvalPositionService.GetAll<ApprovalPosition>({ page });
+        return Utils.toBaseTable<ApprovalPosition, T>(res.data.data);
     });
 
-    const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
+    const deleteMutation = useMutation(
+        async ({ id, callback }: { id: string; callback: () => void }) => {
+            await approvalPositionService.Delete<ApprovalPosition>({ id });
+            callback();
+        },
+        {
+            onSuccess: (_, data) => {
+                getList.refetch();
+                message.success(`Approval position with id ${data.id} has been deleted`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
 
-    const createMutation = useMutation(async ({ data, callback }: { data: ApprovalPosition; callback: () => void }) => {});
+    const createMutation = useMutation(
+        async ({ data, callback }: { data: ApprovalPosition; callback: () => void }) => {
+            await approvalPositionService.Create<ApprovalPosition>(data);
+            callback();
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success(`Approval position has been created`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
 
-    const editMutation = useMutation(async ({ data, callback }: { data: ApprovalPosition; callback: () => void }) => {});
-
+    const editMutation = useMutation(
+        async ({ data, callback }: { data: ApprovalPosition; callback: () => void }) => {
+            await approvalPositionService.Edit<ApprovalPosition>(data);
+            callback();
+        },
+        {
+            onSuccess: (_, data) => {
+                getList.refetch();
+                message.success(`Approval position with id ${data.data.id} has been edited`);
+            },
+            onError: (error: any, { callback }) => {
+                message.error(error?.message);
+                callback();
+            },
+        }
+    );
     // crud handler
     const onClickDelete = (data: T, callback: () => void) => {
         deleteMutation.mutate({

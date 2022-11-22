@@ -21,9 +21,10 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
-    name: yup.string().required("Nama wajib diisi"),
+    role_id: yup.string().required("Role id wajib diisi"),
+    role_name: yup.string().required("Role name wajib diisi"),
     email: yup.string().required("Email wajib diisi"),
-    status: yup.string().required("Status wajib diisi"),
+    full_name: yup.string().required("Name wajib diisi"),
 });
 
 const AddRole = ({ onSubmit, loading, children }: Props) => {
@@ -73,9 +74,10 @@ const AddRole = ({ onSubmit, loading, children }: Props) => {
                     layout="vertical"
                 >
                     <Space direction="vertical" className="w-full">
-                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="name" label="Nama" placeholder="Nama" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="role_id" label="Role ID" placeholder="Role ID" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="role_name" label="Role Name" placeholder="Role name" />
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="email" label="Email" placeholder="Email" />
-                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="status" label="Status" placeholder="Status" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="full_name" label="Full Name" placeholder="Full name" />
 
                         <Row justify="start">
                             <Space>

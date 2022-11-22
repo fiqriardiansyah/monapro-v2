@@ -8,6 +8,7 @@ import * as yup from "yup";
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
 import { LoadType } from "models";
 import { useMutation } from "react-query";
+import loadTypeService from "services/api-endpoints/masterdata/load-type";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -41,14 +42,20 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            form.setFieldsValue({
-                load_name: data?.load_name || "",
-            });
-            setValue("load_name", data?.load_name || "");
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const res = await loadTypeService.Detail<LoadType>({ id });
+            return res.data.data;
         },
-    });
+        {
+            onSuccess: (data: any) => {
+                form.setFieldsValue({
+                    load_name: data?.load_name || "",
+                });
+                setValue("load_name", data?.load_name || "");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -69,9 +76,15 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -85,7 +98,7 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit jenis beban"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit jenis beban"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}

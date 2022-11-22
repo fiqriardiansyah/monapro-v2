@@ -173,8 +173,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

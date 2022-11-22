@@ -28,9 +28,10 @@ export interface SubUnitData {
 
 export interface Role {
     id: number | string;
-    name: string;
+    role_id: number | string;
+    role_name: string;
+    full_name: string;
     email: string;
-    status: string;
 }
 
 export interface LoadType {
@@ -77,19 +78,19 @@ export interface AgendaDisposition {
 
 export interface Justification {
     id: string | number;
-    no: string;
-    date: string;
-    agenda_no: string;
-    regarding: string;
-    justification_value: string;
+    no_justification: string;
+    justification_date: number | string;
+    no_agenda: string;
+    about_justification: string;
+    position: string;
+    value: number | string;
+    subunit_name: string;
     creator: string;
-    sub_unit: string;
-    last_approval: string;
-    code_and_budget: string;
-    notes: string;
-    document: any;
-    event_date: string;
-    payment_estimation_date: string;
+    note: string;
+    doc_justification: any | null;
+    event_date: string | number;
+    estimation_paydate: string | number;
+    lock_budget?: number;
 }
 
 export interface Negotiation {
@@ -135,4 +136,19 @@ export interface Finance {
     payment_value: string;
     notes: string;
     document: any;
+}
+
+export interface SubUnitProcurement {
+    subunit_id: number;
+    subunit_name: string;
+}
+
+export interface LoadTypeProcurement {
+    load_type_id: number;
+    load_name: string;
+}
+
+export interface ApprovalPositionProcurement {
+    approval_position_id: number;
+    position: string;
 }

@@ -28,7 +28,9 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
             content: `Hapus data dengan id ${data.id} ?`,
             onOk() {
                 return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => resolve);
+                    onClickDelete(data, () => {
+                        resolve(true);
+                    });
                 });
             },
             onCancel() {},
@@ -42,7 +44,7 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -60,28 +62,24 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Nama",
-            dataIndex: "name",
+            title: "Role Id",
+            dataIndex: "role_id",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        // {
-        //     title: "Nama",
-        //     dataIndex: "name",
-        //     render: (text, record, i) => (
-        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-        //             {text}
-        //         </Button>
-        //     ),
-        // },
+        {
+            title: "Full Name",
+            dataIndex: "full_name",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Role Name",
+            dataIndex: "role_name",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
         {
             title: "Email",
             dataIndex: "email",
             render: (text) => <p className="lowercase m-0">{text}</p>,
-        },
-        {
-            title: "Status",
-            dataIndex: "status",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Action",
@@ -105,8 +103,7 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

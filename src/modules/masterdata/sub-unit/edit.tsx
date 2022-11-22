@@ -9,6 +9,7 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { SubUnitData } from "models";
 import { useMutation } from "react-query";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
+import subUnitService from "services/api-endpoints/masterdata/sub-unit";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -44,18 +45,24 @@ const EditSubUnit = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            form.setFieldsValue({
-                pic_name: data?.pic_name || "",
-                unit_name: data?.unit_name || "",
-                budget: data?.budget || "",
-            });
-            setValue("pic_name", data?.pic_name || "");
-            setValue("unit_name", data?.unit_name || "");
-            setValue("budget", data?.budget || "0");
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const res = await subUnitService.Detail<SubUnitData>({ id });
+            return res.data.data;
         },
-    });
+        {
+            onSuccess: (data: any) => {
+                form.setFieldsValue({
+                    pic_name: data?.pic_name || "",
+                    unit_name: data?.unit_name || "",
+                    budget: data?.budget || "",
+                });
+                setValue("pic_name", data?.pic_name || "");
+                setValue("unit_name", data?.unit_name || "");
+                setValue("budget", data?.budget || "0");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -76,9 +83,15 @@ const EditSubUnit = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -92,7 +105,7 @@ const EditSubUnit = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Sub Unit"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Sub Unit"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}

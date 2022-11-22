@@ -26,21 +26,23 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<Justification, "id">> = yup.object().shape({
-    date: yup.string().required("Tanggal wajib diisi"),
-    document: yup.string(),
-    regarding: yup.string().required("Perihal wajib diisi"),
-    sub_unit: yup.string().required("Sub unit wajib diisi"),
-    agenda_no: yup.string().required("No agenda wajib diisi"),
-    code_and_budget: yup.string().required("Kode dan anggaran wajib diisi"),
-    creator: yup.string().required("Creator wajib diisi"),
-    justification_value: yup.string().required("Nilai justifikasi wajib diisi"),
-    last_approval: yup.string().required("Approval terakhir wajib diisi"),
-    no: yup.string().required("No justifikasi wajib diisi"),
-    notes: yup.string().required("Catatan wajib diisi"),
-    event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
-    payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
-});
+// [IMPORTANT]
+
+// const schema: yup.SchemaOf<Omit<Justification, "id">> = yup.object().shape({
+//     date: yup.string().required("Tanggal wajib diisi"),
+//     document: yup.string(),
+//     regarding: yup.string().required("Perihal wajib diisi"),
+//     sub_unit: yup.string().required("Sub unit wajib diisi"),
+//     agenda_no: yup.string().required("No agenda wajib diisi"),
+//     code_and_budget: yup.string().required("Kode dan anggaran wajib diisi"),
+//     creator: yup.string().required("Creator wajib diisi"),
+//     justification_value: yup.string().required("Nilai justifikasi wajib diisi"),
+//     last_approval: yup.string().required("Approval terakhir wajib diisi"),
+//     no: yup.string().required("No justifikasi wajib diisi"),
+//     notes: yup.string().required("Catatan wajib diisi"),
+//     event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
+//     payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
+// });
 
 const EditJustification = ({ onSubmit, loading, children }: Props) => {
     const [prevData, setPrevData] = useState<Justification | null>(null);
@@ -53,7 +55,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         formState: { isValid },
     } = useForm<Justification>({
         mode: "onChange",
-        resolver: yupResolver(schema),
+        // resolver: yupResolver(schema),
     });
 
     const detailMutation = useMutation(async (id: string) => {}, {
@@ -109,7 +111,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                 onCancel={closeModal}
                 footer={null}
             >
-                <Form
+                {/* <Form
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
@@ -218,7 +220,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                             </Space>
                         </Row>
                     </Space>
-                </Form>
+                </Form> */}
             </Modal>
             {children(childrenData)}
         </>

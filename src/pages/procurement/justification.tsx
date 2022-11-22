@@ -3,19 +3,27 @@ import Header from "components/common/header";
 import { BasePaginationResponse, Justification } from "models";
 import AddJustification from "modules/procurement/justification/add";
 import EditJustification from "modules/procurement/justification/edit";
-import { TDataJustification } from "modules/procurement/justification/models";
+import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
 import JustificationTable from "modules/procurement/justification/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import justificationService from "services/api-endpoints/procurement/justification";
+import Utils from "utils";
 
 const JustificationPage = <T extends TDataJustification>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
     const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+        const res = await justificationService.GetAll<Justification>({ page });
+        return Utils.toBaseTable<Justification, T>(res.data.data);
     });
 
     const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
@@ -43,13 +51,13 @@ const JustificationPage = <T extends TDataJustification>() => {
             editTriggerRef.current.click();
         }
     };
-    const addHandler = (data: Justification, callback: () => void) => {
-        createMutation.mutate({
-            data,
-            callback: () => {
-                callback();
-            },
-        });
+    const addHandler = (data: FDataJustification, callback: () => void) => {
+        // createMutation.mutate({
+        //     data,
+        //     callback: () => {
+        //         callback();
+        //     },
+        // });
     };
     const editHandler = (data: Justification, callback: () => void) => {
         editMutation.mutate({
