@@ -52,6 +52,7 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,

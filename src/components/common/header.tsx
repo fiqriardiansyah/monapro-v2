@@ -62,13 +62,13 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                     <Popover
                         content={
                             <div className="flex flex-col">
-                                <p className="text-gray-400 m-0 lowercase">fiqri@gmail.com</p>
-                                <Button onClick={logoutHandler} className="items-center flex">
+                                <p className="text-gray-400 m-0 lowercase">telkom.corcomm1@gmail.com</p>
+                                <Button onClick={logoutHandler} className="items-center flex mt-4">
                                     Logout
                                 </Button>
                             </div>
                         }
-                        title="Fiqri ardiansyah"
+                        title="Telkom"
                         trigger="click"
                         open={open}
                         placement="leftTop"

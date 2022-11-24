@@ -21,25 +21,6 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const onClickDlt = (data: T) => {
-        Modal.confirm({
-            title: "Delete",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Hapus data dengan id ${data.id} ?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => {
-                        resolve(true);
-                    });
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
-
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
             pathname: location.pathname,
@@ -52,6 +33,7 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
@@ -61,11 +43,11 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
             dataIndex: "id",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        {
-            title: "Role Id",
-            dataIndex: "role_id",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
+        // {
+        //     title: "Role Id",
+        //     dataIndex: "role_id",
+        //     render: (text) => <p className="capitalize m-0">{text}</p>,
+        // },
         {
             title: "Full Name",
             dataIndex: "full_name",
@@ -89,9 +71,6 @@ const RoleManagementTable = <T extends TDataRoleManagement>({ fetcher, onClickDe
                 <Space size="middle" direction="horizontal">
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
-                    </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
                     </Button>
                 </Space>
             ),

@@ -6,26 +6,23 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Negotiation, SelectOption } from "models";
+import { Justification, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
-import negotiationService from "services/api-endpoints/procurement/negotiation";
-import moment from "moment";
+import { useQuery } from "react-query";
 import { FDataNegotiation } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
     openModal: () => void;
     closeModal: () => void;
-    openModalWithData: (data: string | undefined) => void;
 };
 
 type Props = {
-    onSubmit: (data: FDataNegotiation & { id: string }, callback: () => void) => void;
+    onSubmit: (data: FDataNegotiation, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
@@ -37,16 +34,13 @@ const schema: yup.SchemaOf<Partial<FDataNegotiation>> = yup.object().shape({
     note: yup.string(),
 });
 
-const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
-    const [prevData, setPrevData] = useState<Negotiation | null>(null);
-
+const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         handleSubmit,
         control,
         formState: { isValid },
-        setValue,
     } = useForm<FDataNegotiation>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -64,27 +58,6 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         return subunit;
     });
 
-    const detailMutation = useMutation(
-        async (id: string) => {
-            const req = await negotiationService.Detail({ id });
-            return req.data.data;
-        },
-        {
-            onSuccess: (data) => {
-                form.setFieldsValue({
-                    justification_id: data?.no_justification || "", // [IMPORTANT] JUSTIFICATION_ID
-                    negotiation_date: (moment(data?.negotiation_date) as any) || moment(),
-                    note: data?.note || "",
-                    doc_negotiation: data?.doc_negotiation || "",
-                });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
-                setValue("negotiation_date", (moment(data?.negotiation_date) as any) || moment());
-                setValue("note", data?.note || "");
-                setValue("doc_negotiation", data?.doc_negotiation || "");
-            },
-        }
-    );
-
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
@@ -94,30 +67,14 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         setIsModalOpen(true);
     };
 
-    const openModalWithData = (data: string | undefined) => {
-        if (data) {
-            const dataParse = JSON.parse(data) as Negotiation;
-            setPrevData(dataParse);
-            setIsModalOpen(true);
-            detailMutation.mutate(dataParse?.id as any);
-        }
-    };
-
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(
-            {
-                ...data,
-                id: prevData?.id as any,
-            },
-            closeModal
-        );
+        onSubmit(data, closeModal);
     });
 
     const childrenData: ChildrenProps = {
         isModalOpen,
         openModal,
         closeModal,
-        openModalWithData,
     };
 
     const onFileChangeHandler = (file: any) => {
@@ -126,13 +83,7 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal
-                confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Negosiasi"}`}
-                open={isModalOpen}
-                onCancel={closeModal}
-                footer={null}
-            >
+            <Modal confirmLoading={loading} title="Tambah Negosiasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -192,4 +143,4 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default EditNegotiation;
+export default AddNegotiation;

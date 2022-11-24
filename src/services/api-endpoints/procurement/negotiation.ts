@@ -1,28 +1,24 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, Justification } from "models";
+import { BasePaginationResponse, Justification, Negotiation } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
-class JustificationService extends BaseService {
-    getAll = "/procurement/get-all-justification";
+class NegotiationService extends BaseService {
+    getAll = "/procurement/get-all-negotiation";
 
-    create = "/procurement/create-justification";
+    detail = "/procurement/detail-negotiation";
 
-    edit = "/procurement/create-justification";
+    create = "/procurement/create-negotiation";
 
-    delete = "/approval/delete-approval";
-
-    detail = "/procurement/detail-justification";
-
-    lockBudget = "/procurement/set-lock-budget";
+    edit = "/procurement/edit-negotiation";
 
     constructor() {
         super();
     }
 
-    GetAll<T = any>(param: Models.JustificationGetAllParam) {
+    GetAll<T = any>(param: Models.NegotiationGetAllParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,
@@ -37,7 +33,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.JustificationCreateData) {
+    Create<T = any>(data: Models.NegotiationCreateData) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
@@ -48,18 +44,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    Edit<T = any>(data: Models.JustificationEditData) {
-        return this.ProxyRequest(async () => {
-            const req = await ApiMethod.put<T>({
-                url: this.edit,
-                data,
-            });
-            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
-            return req;
-        });
-    }
-
-    Detail<T = Justification>({ id }: Models.JustificationDetailPath) {
+    Detail<T = Negotiation>({ id }: Models.NegotiationDetailPath) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.get<T>({
                 url: `${this.detail}/${id}`,
@@ -69,10 +54,10 @@ class JustificationService extends BaseService {
         });
     }
 
-    LockBudget<T = any>(data: Models.JustificationLockBudgetData) {
+    Edit<T = any>(data: Models.NegotiationEditData) {
         return this.ProxyRequest(async () => {
-            const req = await ApiMethod.post<T>({
-                url: this.lockBudget,
+            const req = await ApiMethod.put<T>({
+                url: this.edit,
                 data,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
@@ -81,5 +66,5 @@ class JustificationService extends BaseService {
     }
 }
 
-const justificationService = new JustificationService();
-export default justificationService;
+const negotiationService = new NegotiationService();
+export default negotiationService;

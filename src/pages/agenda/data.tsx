@@ -1,69 +1,97 @@
-import { Alert, Button } from "antd";
+import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { AgendaData, BasePaginationResponse } from "models";
+import { AgendaData, AgendaDataLockBudgetData, BasePaginationResponse, SelectOption } from "models";
 import AddAgendaData from "modules/agenda/data/add";
 import EditAgendaData from "modules/agenda/data/edit";
-import { TDataAgenda } from "modules/agenda/data/models";
+import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
 import AgendaDataTable from "modules/agenda/data/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import agendaService from "services/api-endpoints/agenda";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import Utils from "utils";
 
 const AgendaDataPage = <T extends TDataAgenda>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
-    const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
     const getList = useQuery([agendaDataService.getAll], async () => {
-        const res = await agendaDataService.GetAll<AgendaData>({ page: 1 });
+        const res = await agendaDataService.GetAll<AgendaData>({ page });
         return Utils.toBaseTable<AgendaData, T>(res.data.data);
     });
 
-    const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
+    const lockBudgetMutation = useMutation(
+        async (data: AgendaDataLockBudgetData) => {
+            await agendaDataService.LockBudget(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Budget Locked!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const createMutation = useMutation(async ({ data, callback }: { data: AgendaData; callback: () => void }) => {});
+    const createMutation = useMutation(
+        async ({ data }: { data: FDataAgenda }) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Agenda Data dibuat!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const editMutation = useMutation(async ({ data, callback }: { data: AgendaData; callback: () => void }) => {});
+    const editMutation = useMutation(
+        async ({ data }: { data: FDataAgenda }) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Agenda Data diedit!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
     // crud handler
-    const onClickDelete = (data: T, callback: () => void) => {
-        deleteMutation.mutate({
-            id: data.id as any,
-            callback,
-        });
-    };
-    const onClickDetail = (data: T) => {
-        if (detailTriggerRef.current) {
-            detailTriggerRef.current.dataset.data = JSON.stringify(data);
-            detailTriggerRef.current.click();
-        }
-    };
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
             editTriggerRef.current.dataset.data = JSON.stringify(data);
             editTriggerRef.current.click();
         }
     };
-    const addHandler = (data: AgendaData, callback: () => void) => {
-        createMutation.mutate({
-            data,
-            callback: () => {
-                callback();
-            },
-        });
+    const onClickLockBudget = async (data: T, callback: () => void) => {
+        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
+        callback();
     };
-    const editHandler = (data: AgendaData, callback: () => void) => {
-        editMutation.mutate({
-            data,
-            callback: () => {
-                callback();
-            },
-        });
+    const addHandler = async (data: FDataAgenda, callback: () => void) => {
+        await createMutation.mutateAsync({ data });
+        callback();
+    };
+    const editHandler = async (data: FDataAgenda, callback: () => void) => {
+        await editMutation.mutateAsync({ data });
+        callback();
     };
 
-    const errors = [getList, deleteMutation, createMutation, editMutation];
+    const errors = [getList, createMutation, editMutation];
 
     return (
         <div className="min-h-screen px-10">
@@ -92,7 +120,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <AgendaDataTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            <AgendaDataTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
         </div>
     );
 };

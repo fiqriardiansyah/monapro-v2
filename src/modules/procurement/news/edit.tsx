@@ -6,12 +6,13 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { News } from "models";
-import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
+import { News, SelectOption } from "models";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
+import procurementService from "services/api-endpoints/procurement";
+import newsService from "services/api-endpoints/procurement/news";
+import { FDataNews } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -21,20 +22,19 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: News, callback: () => void) => void;
+    onSubmit: (data: FDataNews & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<News, "id">> = yup.object().shape({
-    justification_no: yup.string().required("No Justifikasi wajib diisi"),
-    justification_regarding: yup.string().required("Perihal Justifikasi wajib diisi"),
-    bap_no: yup.string().required("No BAP wajib diisi"),
-    bar_no: yup.string().required("No BAR wajib diisi"),
-    bapp_no: yup.string().required("No BAPP wajib diisi"),
-    bap_document: yup.string(),
-    bapp_document: yup.string(),
-    bar_document: yup.string(),
+const schema: yup.SchemaOf<Partial<FDataNews>> = yup.object().shape({
+    justification_id: yup.string(),
+    no_bar: yup.string(),
+    no_bap: yup.string(),
+    no_bapp: yup.string(),
+    file_bap: yup.string(),
+    file_bapp: yup.string(),
+    file_bar: yup.string(),
 });
 
 const EditNews = ({ onSubmit, loading, children }: Props) => {
@@ -46,19 +46,50 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
-    } = useForm<News>({
+        setValue,
+    } = useForm<FDataNews>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            // form.setFieldsValue({
-            //     load_name: data?.load_name || "",
-            // });
-            // setValue("load_name", data?.load_name || "");
-        },
+    const justificationQuery = useQuery([procurementService.getJustification], async () => {
+        const req = await procurementService.GetJustification();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.no_justification,
+                    value: el.justification_id,
+                } as SelectOption)
+        );
+        return subunit;
     });
+
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const req = await newsService.Detail({ id });
+            return req.data.data;
+        },
+        {
+            onSuccess: (data) => {
+                form.setFieldsValue({
+                    justification_id: data?.no_justification || "",
+                    no_bap: data?.no_bap || "",
+                    no_bar: data?.no_bar || "",
+                    no_bapp: data?.no_bapp || "",
+                    file_bap: data?.file_bap || "",
+                    file_bar: data?.file_bar || "",
+                    file_bapp: data?.file_bapp || "",
+                });
+                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
+                setValue("no_bap", data?.no_bap || "");
+                setValue("no_bar", data?.no_bar || "");
+                setValue("no_bapp", data?.no_bapp || "");
+                setValue("file_bap", data?.file_bap || "");
+                setValue("file_bar", data?.file_bar || "");
+                setValue("file_bapp", data?.file_bapp || "");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -79,9 +110,13 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            closeModal
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -99,7 +134,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit News"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Berita Acara"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}
@@ -117,31 +152,25 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputText
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="justification_id"
+                                    label="Justifikasi"
+                                    placeholder="Justifikasi"
+                                    optionFilterProp="children"
                                     control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="justification_no"
-                                    label="No Justifikasi"
-                                    placeholder="No Justifikasi"
+                                    loading={justificationQuery.isLoading}
+                                    options={justificationQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="justification_regarding"
-                                    label="Perihal justifikasi"
-                                    placeholder="Perihal"
-                                />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bap" label="No BAP" placeholder="No BAP" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="bap_no" label="No BAP" placeholder="No BAP" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bar" label="No BAR" placeholder="No BAR" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="bar_no" label="No BAR" placeholder="No BAR" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="bapp_no" label="No BAPP" placeholder="No BAPP" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bapp" label="No BAPP" placeholder="No BAPP" />
                             </Col>
                             <Col span={12}>
                                 <InputFile
@@ -149,7 +178,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     label="bap document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="bap_document"
+                                    name="file_bap"
                                 />
                             </Col>
                             <Col span={12}>
@@ -158,7 +187,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     label="bar document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="bar_document"
+                                    name="file_bar"
                                 />
                             </Col>
                             <Col span={12}>
@@ -167,7 +196,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     label="bapp document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="bapp_document"
+                                    name="file_bapp"
                                 />
                             </Col>
                         </Row>

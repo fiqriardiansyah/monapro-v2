@@ -6,11 +6,13 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Justification } from "models";
+import { Justification, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
+import procurementService from "services/api-endpoints/procurement";
+import { useQuery } from "react-query";
 import { FDataJustification } from "./models";
 
 type ChildrenProps = {
@@ -51,6 +53,42 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
+    const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
+        const req = await procurementService.GetSubUnit();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.subunit_name,
+                    value: el.subunit_id,
+                } as SelectOption)
+        );
+        return subunit;
+    });
+
+    const loadTypeQuery = useQuery([procurementService.getLoadType], async () => {
+        const req = await procurementService.GetLoadType();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.load_name,
+                    value: el.load_type_id,
+                } as SelectOption)
+        );
+        return subunit;
+    });
+
+    const approvalQuery = useQuery([procurementService.getApprovalPosition], async () => {
+        const req = await procurementService.GetApprovalPosition();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.position,
+                    value: el.approval_position_id,
+                } as SelectOption)
+        );
+        return subunit;
+    });
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
@@ -61,9 +99,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(data, closeModal);
     });
 
     const childrenData: ChildrenProps = {
@@ -123,20 +159,20 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     placeholder="Approval posisi"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={false}
-                                    options={[]}
+                                    loading={approvalQuery.isLoading}
+                                    options={approvalQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
                                     name="load_type_id"
-                                    label="Jenis bebas"
-                                    placeholder="Jenis bebas"
+                                    label="Jenis beban"
+                                    placeholder="Jenis beban"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={false}
-                                    options={[]}
+                                    loading={loadTypeQuery.isLoading}
+                                    options={loadTypeQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -147,8 +183,8 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     placeholder="Sub unit"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={false}
-                                    options={[]}
+                                    loading={subUnitQuery.isLoading}
+                                    options={subUnitQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>

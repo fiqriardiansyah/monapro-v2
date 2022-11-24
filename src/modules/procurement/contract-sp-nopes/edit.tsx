@@ -6,12 +6,16 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { ContractSpNopes } from "models";
+import { ContractSpNopes, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
+import procurementService from "services/api-endpoints/procurement";
+import contractService from "services/api-endpoints/procurement/contract";
+import moment from "moment";
+import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -21,21 +25,19 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: ContractSpNopes, callback: () => void) => void;
+    onSubmit: (data: FDataContractSpNopes & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<ContractSpNopes, "id">> = yup.object().shape({
-    date: yup.string().required("Tanggal wajib diisi"),
-    justification_no: yup.string().required("No Justifikasi wajib diisi"),
-    justification_regarding: yup.string().required("Perihal Justifikasi wajib diisi"),
-    manage_regarding: yup.string().required("Perihal data manage wajib diisi"),
-    no: yup.string().required("Nomor kontrak wajib diisi"),
-    value: yup.string().required("Nilai wajib diisi"),
-    document: yup.string(),
+const schema: yup.SchemaOf<Partial<FDataContractSpNopes>> = yup.object().shape({
+    justification_id: yup.string(),
+    no_contract: yup.string(),
+    about_manage: yup.string(),
+    date: yup.string(),
+    value: yup.string(),
+    doc: yup.string(),
 });
-
 const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
     const [prevData, setPrevData] = useState<ContractSpNopes | null>(null);
 
@@ -45,19 +47,48 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
-    } = useForm<ContractSpNopes>({
+        setValue,
+    } = useForm<FDataContractSpNopes>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            // form.setFieldsValue({
-            //     load_name: data?.load_name || "",
-            // });
-            // setValue("load_name", data?.load_name || "");
-        },
+    const justificationQuery = useQuery([procurementService.getJustification], async () => {
+        const req = await procurementService.GetJustification();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.no_justification,
+                    value: el.justification_id,
+                } as SelectOption)
+        );
+        return subunit;
     });
+
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const req = await contractService.Detail({ id });
+            return req.data.data;
+        },
+        {
+            onSuccess: (data) => {
+                form.setFieldsValue({
+                    justification_id: data?.no_justification || "",
+                    no_contract: data?.no_contract || "",
+                    about_manage: data?.about_manage || "",
+                    value: data?.value || "",
+                    doc: data?.doc || "",
+                    date: (moment(data?.date) as any) || moment(),
+                });
+                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
+                setValue("no_contract", data?.no_contract || "");
+                setValue("about_manage", data?.about_manage || "");
+                setValue("date", (moment(data?.date) as any) || moment());
+                setValue("value", data?.value || "");
+                setValue("doc", data?.doc || "");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -78,9 +109,13 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            closeModal
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -98,7 +133,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Negosiasi"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Kontrak"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}
@@ -116,40 +151,40 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputText
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="justification_id"
+                                    label="Justifikasi"
+                                    placeholder="Justifikasi"
+                                    optionFilterProp="children"
                                     control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="justification_no"
-                                    label="No Justifikasi"
-                                    placeholder="No Justifikasi"
+                                    loading={justificationQuery.isLoading}
+                                    options={justificationQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText
                                     control={control}
                                     labelCol={{ xs: 24 }}
-                                    name="justification_regarding"
-                                    label="Perihal justifikasi"
+                                    name="no_contract"
+                                    label="Nomor Kontrak"
+                                    placeholder="Nomor Kontrak"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="about_manage"
+                                    label="Perihal"
                                     placeholder="Perihal"
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 24 }} name="no" label="No Kontrak" placeholder="No Kontrak" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="manage_regarding"
-                                    label="Prihal data manage"
-                                    placeholder="Prihal data manage"
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="date" label="Tanggal" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputNumber control={control} labelCol={{ xs: 24 }} name="value" label="Nilai" placeholder="Nilai" />
+                                <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="value" label="Nilai" placeholder="Nilai" />
                             </Col>
                             <Col span={12}>
                                 <InputFile
@@ -157,7 +192,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                     label="file document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="document"
+                                    name="doc_justification"
                                 />
                             </Col>
                         </Row>

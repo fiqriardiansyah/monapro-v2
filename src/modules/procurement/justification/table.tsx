@@ -8,43 +8,30 @@ import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
 import { TDataJustification } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickDelete: (data: T, callback: () => void) => void;
-    onClickDetail: (data: T) => void;
+    onClickLockBudget: (data: T, callback: () => void) => void;
 };
 
-const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const onClickDlt = (data: T) => {
-        Modal.confirm({
-            title: "Delete",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Hapus data dengan id ${data.id} ?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => resolve);
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
-
-    const onClickLockBudget = (data: T) => {
+    const onClickLockBudgetHandler = (data: T) => {
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
             content: `Kunci anggaran dengan id ${data.id}?`,
-            onOk() {},
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickLockBudget(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
             onCancel() {},
             okButtonProps: {
                 danger: true,
@@ -56,7 +43,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -64,14 +51,10 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
-        },
-        {
-            title: "ID",
-            dataIndex: "id",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "No Justifikasi",
@@ -139,7 +122,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            width: "300px",
+            width: "200px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -148,10 +131,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickDele
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
-                    </Button>
-                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudget(record)}>
+                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
                         {record?.lock_budget === 1 ? "Locked" : "Lock Budget"}
                     </Button>
                 </Space>

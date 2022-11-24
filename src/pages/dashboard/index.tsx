@@ -25,18 +25,17 @@ const DashboardPage = () => {
         {
             subUnit: "unit 1",
             budget: 20,
+            color: "rgb(197, 57, 180)",
         },
         {
             subUnit: "unit 2",
             budget: 95,
+            color: "rgb(239, 154, 83)",
         },
         {
             subUnit: "unit 3",
             budget: 40,
-        },
-        {
-            subUnit: "unit 4",
-            budget: 95,
+            color: "rgb(70, 73, 255)",
         },
     ];
 
@@ -67,7 +66,7 @@ const DashboardPage = () => {
                         <Tooltip placement="left" title={`Sisa Anggaran: ${`${el.budget}00000`}`} key={i}>
                             <div className="flex flex-col w-full mb-3">
                                 <p className="m-0 text-gray-400 capitalize font-medium">{el.subUnit}</p>
-                                <ProgressCustome percent={el.budget} showInfo={false} status="active" />
+                                <Progress percent={el.budget} showInfo={false} status="active" strokeColor={{ from: el.color, to: el.color }} />
                             </div>
                         </Tooltip>
                     ))}

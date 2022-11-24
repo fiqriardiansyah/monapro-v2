@@ -9,7 +9,7 @@ import BlueWaveImage from "assets/svgs/blue-wave.svg";
 import GreenWaveImage from "assets/svgs/green-wave.svg";
 import OrangeWaveImage from "assets/svgs/orange-wave.svg";
 import { Link, useParams } from "react-router-dom";
-import { dataRevenueDefault, mainBudget } from "modules/dashboard/data";
+import { dataRevenueDefault, dataRevenueDefault1, mainBudget } from "modules/dashboard/data";
 import RemainingBudget from "modules/dashboard/component/remaining-budget";
 import ProgressCustome from "modules/dashboard/component/progress-custome";
 import { IoMdArrowBack } from "react-icons/io";
@@ -33,6 +33,8 @@ const DashboardDetail = () => {
     const onClickEdit = (data: any) => {};
     const onClickDetail = (data: any) => {};
     const onClickDelete = (data: any, callback: () => void) => {};
+    const onClickLockBudget = (data: any, callback: () => void) => {};
+    const onClickPaid = (data: any, callback: () => void) => {};
     return (
         <div className="min-h-screen px-10">
             <Header
@@ -77,7 +79,7 @@ const DashboardDetail = () => {
             </div>
             <div className="grid grid-cols-3 gap-4 mt-4">
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
-                    <Line data={dataRevenueDefault} />
+                    <Line data={dataRevenueDefault1} />
                 </div>
                 <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
                     <p className="m-0 font-medium text-gray-400 mb-2 absolute top-4 left-4">Sisa Pemakaian</p>
@@ -96,9 +98,9 @@ const DashboardDetail = () => {
                 </div>
             </div>
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data agenda</p>
-            <AgendaDataTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            <AgendaDataTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data justifikasi</p>
-            <JustificationTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            <JustificationTable onClickLockBudget={onClickPaid} onClickEdit={onClickEdit} fetcher={getList} />
         </div>
     );
 };

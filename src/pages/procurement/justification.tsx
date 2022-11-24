@@ -1,6 +1,6 @@
-import { Alert, Button } from "antd";
+import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, Justification } from "models";
+import { AgendaDataLockBudgetData, BasePaginationResponse, Justification } from "models";
 import AddJustification from "modules/procurement/justification/add";
 import EditJustification from "modules/procurement/justification/edit";
 import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
@@ -18,32 +18,62 @@ const JustificationPage = <T extends TDataJustification>() => {
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
-    const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
+    const getList = useQuery([justificationService.getAll], async () => {
         const res = await justificationService.GetAll<Justification>({ page });
         return Utils.toBaseTable<Justification, T>(res.data.data);
     });
 
-    const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
+    const createMutation = useMutation(
+        async (data: FDataJustification) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                message.success("Justifikasi dibuat!");
+                getList.refetch();
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const createMutation = useMutation(async ({ data, callback }: { data: Justification; callback: () => void }) => {});
+    const editMutation = useMutation(
+        async (data: FDataJustification) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                message.success("Justifikasi diedit!");
+                getList.refetch();
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const editMutation = useMutation(async ({ data, callback }: { data: Justification; callback: () => void }) => {});
+    const lockBudgetMutation = useMutation(
+        async (data: AgendaDataLockBudgetData) => {
+            await justificationService.LockBudget(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Budget Locked!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
     // crud handler
-    const onClickDelete = (data: T, callback: () => void) => {
-        deleteMutation.mutate({
-            id: data.id as any,
-            callback,
-        });
-    };
-    const onClickDetail = (data: T) => {
-        if (detailTriggerRef.current) {
-            detailTriggerRef.current.dataset.data = JSON.stringify(data);
-            detailTriggerRef.current.click();
-        }
+    const onClickLockBudget = async (data: T, callback: () => void) => {
+        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
+        callback();
     };
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
@@ -51,24 +81,16 @@ const JustificationPage = <T extends TDataJustification>() => {
             editTriggerRef.current.click();
         }
     };
-    const addHandler = (data: FDataJustification, callback: () => void) => {
-        // createMutation.mutate({
-        //     data,
-        //     callback: () => {
-        //         callback();
-        //     },
-        // });
+    const addHandler = async (data: FDataJustification, callback: () => void) => {
+        await createMutation.mutateAsync(data);
+        callback();
     };
-    const editHandler = (data: Justification, callback: () => void) => {
-        editMutation.mutate({
-            data,
-            callback: () => {
-                callback();
-            },
-        });
+    const editHandler = async (data: FDataJustification, callback: () => void) => {
+        await editMutation.mutateAsync(data);
+        callback();
     };
 
-    const errors = [getList, deleteMutation, createMutation, editMutation];
+    const errors = [getList, createMutation, editMutation];
 
     return (
         <div className="min-h-screen px-10">
@@ -97,7 +119,7 @@ const JustificationPage = <T extends TDataJustification>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <JustificationTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            <JustificationTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
         </div>
     );
 };

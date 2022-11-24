@@ -6,12 +6,16 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { AgendaDisposition } from "models";
+import { AgendaDisposition, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
+import agendaService from "services/api-endpoints/agenda";
+import agendaDispositionService from "services/api-endpoints/agenda/agenda-disposition";
+import moment from "moment";
+import { FDataAgendaDisposition } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -21,25 +25,23 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: AgendaDisposition, callback: () => void) => void;
+    onSubmit: (data: FDataAgendaDisposition, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<AgendaDisposition, "id">> = yup.object().shape({
-    document: yup.string(),
-    letter_no: yup.string().required("Nomor Surat wajib diisi"),
-    no_disposition: yup.string().required("Nomor Disposisi wajib diisi"),
-    no_secretariat: yup.string().required("Nomor Sekretariat wajib diisi"),
-    regarding: yup.string().required("Perihal wajib diisi"),
-    sender: yup.string().required("Pengirim wajib diisi"),
-    disposition_date: yup.string().required("Tanggal Disposisi wajib diisi"),
-    disposition_to: yup.string().required("Disposisi kepada wajib diisi"),
-    disposition_note: yup.string().required("Catatan Disposisi wajib diisi"),
+const schema: yup.SchemaOf<Partial<FDataAgendaDisposition>> = yup.object().shape({
+    agenda_data_id: yup.string(),
+    disposition_doc: yup.string(),
+    disposition_date: yup.string(),
+    disposition_to: yup.string(),
+    letter_no: yup.string(),
+    note: yup.string(),
+    _: yup.string(),
 });
 
 const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
-    const [prevData, setPrevData] = useState<AgendaDisposition | null>(null);
+    const [prevData, setPrevData] = useState<FDataAgendaDisposition | null>(null);
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,19 +50,46 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
-    } = useForm<AgendaDisposition>({
+    } = useForm<FDataAgendaDisposition>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            // form.setFieldsValue({
-            //     load_name: data?.load_name || "",
-            // });
-            // setValue("load_name", data?.load_name || "");
-        },
+    const getAgendaDataDisposition = useQuery([agendaService.getAgendaData], async () => {
+        const req = await agendaService.GetAgendaData();
+        return req.data.data.map(
+            (el) =>
+                ({
+                    label: el.no_agenda_secretariat,
+                    value: el.agenda_data_id,
+                } as SelectOption)
+        );
     });
+
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const res = await agendaDispositionService.Detail({ id });
+            return res.data.data;
+        },
+        {
+            onSuccess: (data: any) => {
+                form.setFieldsValue({
+                    agenda_data_id: data?.agenda_data_id || "",
+                    disposition_to: data?.disposition_to || "",
+                    letter_no: data?.letter_no || "",
+                    note: data?.note || "",
+                    disposition_doc: data?.disposition_doc || "",
+                    disposition_date: (moment(data?.disposition_date) as any) || moment(),
+                });
+                setValue("agenda_data_id", data?.agenda_data_id || "");
+                setValue("disposition_to", data?.disposition_to || "");
+                setValue("letter_no", data?.letter_no || "");
+                setValue("note", data?.note || "");
+                setValue("disposition_doc", data?.disposition_doc || "");
+                setValue("disposition_date", (moment(data?.disposition_date) as any) || moment());
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -101,7 +130,7 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Agenda Disposition"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Agenda Disposition"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}
@@ -119,21 +148,15 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputText
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="agenda_data_id"
+                                    label="Agenda data"
+                                    placeholder="Agenda data"
+                                    optionFilterProp="children"
                                     control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="no_secretariat"
-                                    label="No agenda sekretariat"
-                                    placeholder="Nomor"
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="no_disposition"
-                                    label="No agenda disposisi"
-                                    placeholder="Nomor"
+                                    loading={getAgendaDataDisposition.isLoading}
+                                    options={getAgendaDataDisposition.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -142,7 +165,7 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     labelCol={{ xs: 12 }}
                                     name="disposition_to"
                                     label="Disposisi kepada"
-                                    placeholder="Disposisi kepada"
+                                    placeholder="Nomor"
                                 />
                             </Col>
                             <Col span={12}>
@@ -150,29 +173,16 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     control={control}
                                     labelCol={{ xs: 12 }}
                                     name="letter_no"
-                                    label="No Surat"
-                                    placeholder="No Surat"
+                                    label="Nomor surat"
+                                    placeholder="Nomor surat"
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="regarding" label="Perihal" placeholder="Perihal" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="disposition_date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="sender" label="Pengirim" placeholder="Pengirim" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="disposition_date" label="Tanggal disposisi" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 12 }}
-                                    name="disposition_note"
-                                    label="Catatan disposisi"
-                                    placeholder="Catatan disposisi"
-                                />
-                            </Col>
-
                             <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}

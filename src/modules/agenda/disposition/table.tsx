@@ -4,45 +4,26 @@ import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
+import { AgendaDisposition, BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
+import moment from "moment";
 import { TDataAgendaDisposition } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickDelete: (data: T, callback: () => void) => void;
-    onClickDetail: (data: T) => void;
 };
 
-const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickEdit }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
-
-    const onClickDlt = (data: T) => {
-        Modal.confirm({
-            title: "Delete",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Hapus data dengan id ${data.id} ?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => resolve);
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -50,18 +31,19 @@ const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onC
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
             title: "No Agenda sekretariat",
-            dataIndex: "no_secretariat",
+            dataIndex: "no_agenda_secretariat",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "No Agenda disposisi",
-            dataIndex: "no_disposition",
+            dataIndex: "no_agenda_disposition",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
@@ -76,7 +58,7 @@ const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onC
         },
         {
             title: "Perihal",
-            dataIndex: "regarding",
+            dataIndex: "about",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
@@ -87,20 +69,25 @@ const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onC
         {
             title: "Tanggal disposisi",
             dataIndex: "disposition_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+        },
+        {
+            title: "Catatan",
+            dataIndex: "note",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Catatan disposisi",
             dataIndex: "disposition_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Dokumen",
-            dataIndex: "document",
+            dataIndex: "disposition_doc",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            width: "200px",
+            width: "100px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -108,9 +95,6 @@ const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onC
                 <Space size="middle" direction="horizontal">
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
-                    </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
                     </Button>
                 </Space>
             ),
@@ -123,8 +107,7 @@ const AgendaDispositionTable = <T extends TDataAgendaDisposition>({ fetcher, onC
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

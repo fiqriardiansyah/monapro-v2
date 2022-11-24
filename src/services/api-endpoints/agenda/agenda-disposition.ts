@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse } from "models";
+import { AgendaDisposition, BasePaginationResponse } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -59,7 +59,7 @@ class AgendaDispositionService extends BaseService {
         });
     }
 
-    Detail<T = any>({ id }: Models.AgendaDispositionDetailPath) {
+    Detail<T extends AgendaDisposition>({ id }: Models.AgendaDispositionDetailPath) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.get<T>({
                 url: `${this.detail}/${id}`,

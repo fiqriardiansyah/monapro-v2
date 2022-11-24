@@ -6,48 +6,44 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
+import moment from "moment";
 import { TDataFinance } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    // onClickDelete: (data: T, callback: () => void) => void;
-    // onClickDetail: (data: T) => void;
+    onClickPaid: (data: T, callback: () => void) => void;
 };
 
-const FinanceTable = <T extends TDataFinance>({
-    fetcher,
-    // onClickDelete,
-    onClickEdit,
-}: //  onClickDetail
-Props<T>) => {
+const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdit }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    // const onClickDlt = (data: T) => {
-    //     Modal.confirm({
-    //         title: "Delete",
-    //         icon: <ImWarning className="text-red-400" />,
-    //         content: `Hapus data dengan id ${data.id} ?`,
-    //         onOk() {
-    //             return new Promise((resolve, reject) => {
-    //                 onClickDelete(data, () => resolve);
-    //             });
-    //         },
-    //         onCancel() {},
-    //         okButtonProps: {
-    //             danger: true,
-    //         },
-    //     });
-    // };
+    const onClickPaidHandler = (data: T) => {
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `Set Bayar dengan id ${data.id}?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickPaid(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -55,57 +51,58 @@ Props<T>) => {
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
             title: "No Justifikasi",
-            dataIndex: "justification_no",
+            dataIndex: "no_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal Justifikasi",
-            dataIndex: "justification_regarding",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Berkas Tagihan",
-            dataIndex: "bill_file",
+            dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tanggal TEL21/SPB",
-            dataIndex: "tel21_spb_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "tel21_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Tanggal SPB Finance",
-            dataIndex: "spb_finance_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "spb_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Tanggal pembayaran",
             dataIndex: "payment_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Nilai Pembayaran",
-            dataIndex: "payment_value",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "value_payment",
+            render: (text) => <p className="capitalize m-0">{parseInt(text, 10).ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Catatan",
-            dataIndex: "notes",
+            dataIndex: "note",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Berkas Tagihan",
+            dataIndex: "invoice_file",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Lampiran berkas",
-            dataIndex: "document",
+            dataIndex: "attachment_file",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            width: "100px",
+            width: "200px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -114,9 +111,9 @@ Props<T>) => {
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    {/* <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
-                    </Button> */}
+                    <Button disabled={record?.is_paid === 1} type="primary" onClick={() => onClickPaidHandler(record)}>
+                        Bayar
+                    </Button>
                 </Space>
             ),
         },
@@ -128,8 +125,7 @@ Props<T>) => {
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={datatable as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

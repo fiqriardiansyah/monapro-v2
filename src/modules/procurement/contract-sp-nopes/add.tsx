@@ -6,52 +6,44 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Finance, SelectOption } from "models";
+import { Justification, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
-import financeService from "services/api-endpoints/procurement/finance";
-import moment from "moment";
-import { FDataFinance } from "./models";
+import { useQuery } from "react-query";
+import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
     openModal: () => void;
     closeModal: () => void;
-    openModalWithData: (data: string | undefined) => void;
 };
 
 type Props = {
-    onSubmit: (data: FDataFinance & { id: string }, callback: () => void) => void;
+    onSubmit: (data: FDataContractSpNopes, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Partial<FDataFinance>> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<FDataContractSpNopes>> = yup.object().shape({
     justification_id: yup.string(),
-    invoice_file: yup.string(),
-    tel21_date: yup.string(),
-    spb_date: yup.string(),
-    payment_date: yup.string(),
-    value_payment: yup.string(),
-    note: yup.string(),
-    attachment_file: yup.string(),
+    no_contract: yup.string(),
+    about_manage: yup.string(),
+    date: yup.string(),
+    value: yup.string(),
+    doc: yup.string(),
 });
 
-const EditFinance = ({ onSubmit, loading, children }: Props) => {
-    const [prevData, setPrevData] = useState<Finance | null>(null);
-
+const AddContract = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         handleSubmit,
         control,
-        setValue,
         formState: { isValid },
-    } = useForm<FDataFinance>({
+    } = useForm<FDataContractSpNopes>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -68,35 +60,6 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         return subunit;
     });
 
-    const detailMutation = useMutation(
-        async (id: string) => {
-            const req = await financeService.Detail({ id });
-            return req.data.data;
-        },
-        {
-            onSuccess: (data) => {
-                form.setFieldsValue({
-                    justification_id: data?.no_justification || "",
-                    invoice_file: data?.invoice_file || "",
-                    tel21_date: (moment(data?.tel21_date) as any) || moment(),
-                    spb_date: (moment(data?.spb_date) as any) || moment(),
-                    payment_date: (moment(data?.payment_date) as any) || moment(),
-                    value_payment: data?.value_payment || "",
-                    note: data?.note || "",
-                    attachment_file: data?.attachment_file || "",
-                });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
-                setValue("invoice_file", data?.invoice_file || "");
-                setValue("tel21_date", (moment(data?.tel21_date) as any) || moment());
-                setValue("spb_date", (moment(data?.spb_date) as any) || moment());
-                setValue("payment_date", (moment(data?.payment_date) as any) || moment());
-                setValue("value_payment", data?.value_payment || "");
-                setValue("note", data?.note || "");
-                setValue("attachment_file", data?.attachment_file || "");
-            },
-        }
-    );
-
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
@@ -106,30 +69,14 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         setIsModalOpen(true);
     };
 
-    const openModalWithData = (data: string | undefined) => {
-        if (data) {
-            const dataParse = JSON.parse(data) as Finance;
-            setPrevData(dataParse);
-            setIsModalOpen(true);
-            detailMutation.mutate(dataParse?.id as any);
-        }
-    };
-
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(
-            {
-                ...data,
-                id: prevData?.id as any,
-            },
-            closeModal
-        );
+        onSubmit(data, closeModal);
     });
 
     const childrenData: ChildrenProps = {
         isModalOpen,
         openModal,
         closeModal,
-        openModalWithData,
     };
 
     const onFileChangeHandler = (file: any) => {
@@ -138,13 +85,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal
-                confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Finance"}`}
-                open={isModalOpen}
-                onCancel={closeModal}
-                footer={null}
-            >
+            <Modal confirmLoading={loading} title="Tambah Negosiasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -170,42 +111,36 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="File invoice"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="invoice_file"
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="tel21_date" label="Tanggal TEL21/SPB" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="spb_date" label="Tanggal SPB finance" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="payment_date" label="Tanggal Pembayaran" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputNumber
+                                <ControlledInputText
                                     control={control}
                                     labelCol={{ xs: 24 }}
-                                    name="value_payment"
-                                    label="Nilai Pembayaran"
-                                    placeholder="Nilai Pembayaran"
+                                    name="no_contract"
+                                    label="Nomor Kontrak"
+                                    placeholder="Nomor Kontrak"
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="about_manage"
+                                    label="Perihal"
+                                    placeholder="Perihal"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="value" label="Nilai" placeholder="Nilai" />
                             </Col>
                             <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}
-                                    label="File"
+                                    label="file document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
-                                    name="attachment_file"
+                                    name="doc_justification"
                                 />
                             </Col>
                         </Row>
@@ -228,4 +163,4 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default EditFinance;
+export default AddContract;

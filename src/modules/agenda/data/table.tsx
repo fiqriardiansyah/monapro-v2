@@ -6,44 +6,33 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
+import moment from "moment";
+import { DECISION, FOLLOW_UP } from "utils/constant";
 import { TDataAgenda } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickDelete: (data: T, callback: () => void) => void;
-    onClickDetail: (data: T) => void;
+    onClickLockBudget: (data: T, callback: () => void) => void;
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const onClickDlt = (data: T) => {
-        Modal.confirm({
-            title: "Delete",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Hapus data dengan id ${data.id} ?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => resolve);
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
-
-    const onClickLockBudget = (data: T) => {
+    const onClickLockBudgetHandler = (data: T) => {
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
             content: `Kunci anggaran dengan id ${data.id}?`,
-            onOk() {},
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickLockBudget(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
             onCancel() {},
             okButtonProps: {
                 danger: true,
@@ -55,7 +44,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
         navigate({
             pathname: location.pathname,
             search: `?${createSearchParams({
-                query: params.get("query") || "",
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
                 page: pagination.current?.toString() || "1",
             })}`,
         });
@@ -63,33 +52,25 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
 
     const columns: ColumnsType<T> = [
         {
+            width: "50px",
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
-        // {
-        //     title: "Nama Beban",
-        //     dataIndex: "load_name",
-        //     render: (text, record, i) => (
-        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-        //             {text}
-        //         </Button>
-        //     ),
-        // },
         {
             title: "No Agenda sekretariat",
-            dataIndex: "no_secretariat",
+            dataIndex: "no_agenda_secretariat",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "No Agenda disposisi",
-            dataIndex: "no_disposition",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "no_agenda_disposition",
+            render: (text) => <p className="capitalize m-0">{text || ""}</p>,
         },
         {
             title: "Tanggal",
             dataIndex: "date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Endorse",
@@ -104,7 +85,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
         {
             title: "Tanggal Surat",
             dataIndex: "letter_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Pengirim",
@@ -113,23 +94,23 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
         },
         {
             title: "Perihal",
-            dataIndex: "regarding",
+            dataIndex: "about",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Sub Unit",
-            dataIndex: "sub_unit",
+            title: "Sub unit",
+            dataIndex: "subunit_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tindak Lanjut",
             dataIndex: "follow_up",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{FOLLOW_UP.find((el) => el.value === text)?.label}</p>,
         },
         {
             title: "Keputusan",
             dataIndex: "decision",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{DECISION.find((el) => el.value === text)?.label}</p>,
         },
         {
             title: "Dokumen",
@@ -139,15 +120,15 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
             title: "Perkiraan bayar",
             dataIndex: "payment_estimation_date",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
         },
         {
-            width: "300px",
+            width: "200px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -156,11 +137,8 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickDelete, onClic
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
-                    </Button>
-                    <Button type="primary" onClick={() => onClickLockBudget(record)}>
-                        Lock budget
+                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
+                        {record?.lock_budget === 1 ? "Locked" : "Lock budget"}
                     </Button>
                 </Space>
             ),

@@ -68,9 +68,9 @@ function Sidebar({ collapse }: Props) {
     ];
 
     return (
-        <div style={{ borderRight: "1px solid #e7e7e7" }} className="h-screen overflow-y-auto overflow-x-hidden">
+        <div style={{ borderRight: "1px solid #e7e7e7" }} className="h-screen overflow-y-auto overflow-x-hidden pb-20">
             <div className="w-full relative p-5">
-                <h1 className=" rounded-lg text-center">MONAPRO</h1>
+                <h1 className=" rounded-lg text-center">{collapse ? "M" : "MONAPRO"}</h1>
             </div>
             <Menu onClick={onClick} defaultSelectedKeys={[DASHBOARD_PATH]} mode="inline" items={items} selectedKeys={[location.pathname]} />
         </div>

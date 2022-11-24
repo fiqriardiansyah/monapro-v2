@@ -1,6 +1,8 @@
 export const TOKEN_USER = "token";
 export const locale = "en-us";
 
+export const FORMAT_DATE = "yyyy-MM-DD";
+
 export const DEFAULT_ERROR_MESSAGE = "Ooops something wrong!";
 export const FILE_TYPE_ERROR = "file type not support!";
 export const FILE_SIZE_ERROR = "file size too big or too small!";
@@ -14,6 +16,32 @@ export const currency = [
         Ccy: "IDR",
         CcyNbr: "971",
         CcyMnrUnts: "2",
+    },
+];
+
+export const FOLLOW_UP = [
+    {
+        value: 1,
+        label: "follow up",
+    },
+];
+
+export const DECISION = [
+    {
+        value: 1,
+        label: "Ditolak",
+    },
+    {
+        value: 2,
+        label: "Disetujui",
+    },
+    {
+        value: 3,
+        label: "Arsip",
+    },
+    {
+        value: 4,
+        label: "Monitoring",
     },
 ];
 

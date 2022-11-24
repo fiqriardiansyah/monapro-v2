@@ -1,18 +1,35 @@
+import Cookies from "js-cookie";
 import { AuthData } from "models";
-import React, { createContext, useMemo, useState } from "react";
+import React, { createContext, Dispatch, SetStateAction, useMemo, useState } from "react";
+import { TOKEN_USER } from "utils/constant";
 
 type Props = {
     children: any;
 };
 
 type StateType = {
-    user?: AuthData | null;
+    user?: Partial<AuthData> | null;
 };
 
-const UserContext = createContext(null);
+type ValueContextType = {
+    state: StateType;
+    setState?: Dispatch<SetStateAction<StateType>>;
+};
+
+const UserContext = createContext<ValueContextType>({
+    state: {
+        user: {
+            token: Cookies.get(TOKEN_USER),
+        },
+    },
+});
 
 function UserProvider({ children }: Props) {
-    const [state, setState] = useState<StateType | null>(null);
+    const [state, setState] = useState<StateType | null>({
+        user: {
+            token: Cookies.get(TOKEN_USER),
+        },
+    });
 
     const value = useMemo(
         () => ({

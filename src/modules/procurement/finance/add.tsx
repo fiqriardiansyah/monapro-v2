@@ -6,26 +6,23 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Finance, SelectOption } from "models";
+import { Justification, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
-import financeService from "services/api-endpoints/procurement/finance";
-import moment from "moment";
+import { useQuery } from "react-query";
 import { FDataFinance } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
     openModal: () => void;
     closeModal: () => void;
-    openModalWithData: (data: string | undefined) => void;
 };
 
 type Props = {
-    onSubmit: (data: FDataFinance & { id: string }, callback: () => void) => void;
+    onSubmit: (data: FDataFinance, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
@@ -41,15 +38,12 @@ const schema: yup.SchemaOf<Partial<FDataFinance>> = yup.object().shape({
     attachment_file: yup.string(),
 });
 
-const EditFinance = ({ onSubmit, loading, children }: Props) => {
-    const [prevData, setPrevData] = useState<Finance | null>(null);
-
+const AddFinance = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         handleSubmit,
         control,
-        setValue,
         formState: { isValid },
     } = useForm<FDataFinance>({
         mode: "onChange",
@@ -68,35 +62,6 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         return subunit;
     });
 
-    const detailMutation = useMutation(
-        async (id: string) => {
-            const req = await financeService.Detail({ id });
-            return req.data.data;
-        },
-        {
-            onSuccess: (data) => {
-                form.setFieldsValue({
-                    justification_id: data?.no_justification || "",
-                    invoice_file: data?.invoice_file || "",
-                    tel21_date: (moment(data?.tel21_date) as any) || moment(),
-                    spb_date: (moment(data?.spb_date) as any) || moment(),
-                    payment_date: (moment(data?.payment_date) as any) || moment(),
-                    value_payment: data?.value_payment || "",
-                    note: data?.note || "",
-                    attachment_file: data?.attachment_file || "",
-                });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
-                setValue("invoice_file", data?.invoice_file || "");
-                setValue("tel21_date", (moment(data?.tel21_date) as any) || moment());
-                setValue("spb_date", (moment(data?.spb_date) as any) || moment());
-                setValue("payment_date", (moment(data?.payment_date) as any) || moment());
-                setValue("value_payment", data?.value_payment || "");
-                setValue("note", data?.note || "");
-                setValue("attachment_file", data?.attachment_file || "");
-            },
-        }
-    );
-
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
@@ -106,30 +71,14 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         setIsModalOpen(true);
     };
 
-    const openModalWithData = (data: string | undefined) => {
-        if (data) {
-            const dataParse = JSON.parse(data) as Finance;
-            setPrevData(dataParse);
-            setIsModalOpen(true);
-            detailMutation.mutate(dataParse?.id as any);
-        }
-    };
-
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(
-            {
-                ...data,
-                id: prevData?.id as any,
-            },
-            closeModal
-        );
+        onSubmit(data, closeModal);
     });
 
     const childrenData: ChildrenProps = {
         isModalOpen,
         openModal,
         closeModal,
-        openModalWithData,
     };
 
     const onFileChangeHandler = (file: any) => {
@@ -138,13 +87,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal
-                confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Finance"}`}
-                open={isModalOpen}
-                onCancel={closeModal}
-                footer={null}
-            >
+            <Modal confirmLoading={loading} title="Tambah Finance" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -228,4 +171,4 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default EditFinance;
+export default AddFinance;

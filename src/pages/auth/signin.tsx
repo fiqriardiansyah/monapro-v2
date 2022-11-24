@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useContext } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Alert, Button, Form, Row, Space } from "antd";
+import { Alert, Button, Form, message, Row, Space } from "antd";
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { SignInEmailData } from "models";
+import { AuthData, SignInEmailData } from "models";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import AuthEndPoints from "services/api-endpoints/auth";
@@ -10,6 +10,7 @@ import { DEFAULT_ERROR_MESSAGE, TOKEN_USER } from "utils/constant";
 import * as yup from "yup";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "context/user";
 
 const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
     email: yup.string().required("Email wajib diisi"),
@@ -17,7 +18,7 @@ const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
 });
 
 const SignInPage = () => {
-    const navigate = useNavigate();
+    const { setState } = useContext(UserContext);
 
     const [form] = Form.useForm();
     const { handleSubmit, control } = useForm<SignInEmailData>({
@@ -25,20 +26,40 @@ const SignInPage = () => {
         resolver: yupResolver(schema),
     });
 
-    const signInMutation = useMutation(async (data: SignInEmailData) => {}, {
-        onSuccess: (data) => {},
-    });
+    const signInMutation = useMutation(
+        async (data: SignInEmailData) => {
+            const user: AuthData = {
+                id: "fawsdef234",
+                is_new: false,
+                email: "telkom@gmail.com",
+                fullname: "telkom",
+                phone: "23142314234",
+                token: "$2a$10$Qt/8ZvEbnLtUUO0IaHca2e7Ic4KubSMvPgxlLW",
+            };
+            return user;
+        },
+        {
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const onSubmitHandler = handleSubmit((data) => {
-        // signInMutation.mutate(data);
-
-        Cookies.set(TOKEN_USER, "blbalbalbalbalbal");
-        navigate("/");
+    const onSubmitHandler = handleSubmit(async (data) => {
+        const user = await signInMutation.mutateAsync(data);
+        Cookies.set(TOKEN_USER, user.token);
+        if (setState) {
+            setState((prev) => ({
+                ...prev,
+                user,
+            }));
+        }
     });
 
     return (
         <div className=" w-full !h-screen overflow-y-hidden flex items-center justify-center flex-col">
             <div className="flex flex-col items-center z-10">
+                <h1 className="text-3xl font-semibold">MONAPRO</h1>
                 <div className="bg-white rounded-2xl w-40vw 2xl:w-[500px] p-10 shadow-xl z-10">
                     <Form
                         form={form}

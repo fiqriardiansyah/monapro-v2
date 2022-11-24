@@ -1,28 +1,26 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, Justification } from "models";
+import { BasePaginationResponse, ContractSpNopes, Finance, Justification, Negotiation, News } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
-class JustificationService extends BaseService {
-    getAll = "/procurement/get-all-justification";
+class FinanceService extends BaseService {
+    getAll = "/procurement/get-all-finance";
 
-    create = "/procurement/create-justification";
+    detail = "/procurement/detail-finance";
 
-    edit = "/procurement/create-justification";
+    create = "/procurement/create-finance";
 
-    delete = "/approval/delete-approval";
+    edit = "/procurement/edit-finance";
 
-    detail = "/procurement/detail-justification";
-
-    lockBudget = "/procurement/set-lock-budget";
+    isPaid = "/procurement/set-paid";
 
     constructor() {
         super();
     }
 
-    GetAll<T = any>(param: Models.JustificationGetAllParam) {
+    GetAll<T = any>(param: Models.FinanceGetAllParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,
@@ -37,7 +35,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.JustificationCreateData) {
+    Create<T = any>(data: Models.FinanceCreateData) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
@@ -48,7 +46,17 @@ class JustificationService extends BaseService {
         });
     }
 
-    Edit<T = any>(data: Models.JustificationEditData) {
+    Detail<T = Finance>({ id }: Models.FinanceDetailPath) {
+        return this.ProxyRequest(async () => {
+            const req = await ApiMethod.get<T>({
+                url: `${this.detail}/${id}`,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    Edit<T = any>(data: Models.FinanceEditData) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.put<T>({
                 url: this.edit,
@@ -59,20 +67,10 @@ class JustificationService extends BaseService {
         });
     }
 
-    Detail<T = Justification>({ id }: Models.JustificationDetailPath) {
-        return this.ProxyRequest(async () => {
-            const req = await ApiMethod.get<T>({
-                url: `${this.detail}/${id}`,
-            });
-            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
-            return req;
-        });
-    }
-
-    LockBudget<T = any>(data: Models.JustificationLockBudgetData) {
+    SetPaid<T = any>(data: Models.FinanceIsPaid) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
-                url: this.lockBudget,
+                url: this.isPaid,
                 data,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
@@ -81,5 +79,5 @@ class JustificationService extends BaseService {
     }
 }
 
-const justificationService = new JustificationService();
-export default justificationService;
+const financeService = new FinanceService();
+export default financeService;

@@ -6,12 +6,17 @@ import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { AgendaData } from "models";
+import { AgendaData, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
+import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
+import agendaService from "services/api-endpoints/agenda";
+import agendaDataService from "services/api-endpoints/agenda/agenda-data";
+import moment from "moment";
+import { FDataAgenda } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -21,26 +26,25 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: AgendaData, callback: () => void) => void;
+    onSubmit: (data: FDataAgenda & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<AgendaData, "id">> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
     date: yup.string().required("Tanggal wajib diisi"),
-    decision: yup.string().required("Keputusan wajib diisi"),
-    document: yup.string(),
-    endorse: yup.number().required("Endorse wajib diisi"),
-    follow_up: yup.string().required("Tindak lanjut wajib diisi"),
+    endorse: yup.number(),
+    letter_no: yup.string(),
     letter_date: yup.string().required("Tangal Surat wajib diisi"),
-    letter_no: yup.string().required("Nomor Surat wajib diisi"),
-    no_disposition: yup.string().required("Nomor Disposisi wajib diisi"),
-    no_secretariat: yup.string().required("Nomor Sekretariat wajib diisi"),
-    regarding: yup.string().required("Perihal wajib diisi"),
     sender: yup.string().required("Pengirim wajib diisi"),
-    sub_unit: yup.string().required("Sub unit wajib diisi"),
-    event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
-    payment_estimation_date: yup.string().required("Perkiraan pembayaran wajib diisi"),
+    about: yup.string().required("Perihal wajib diisi"),
+    subunit_id: yup.string().required("Sub unit wajib diisi"),
+    follow_up: yup.string().required("Tindak lanjut wajib diisi"),
+    decision: yup.string().required("Keputusan wajib diisi"),
+    event_date: yup.string(),
+    estimation_paydate: yup.string(),
+    document: yup.string(),
+    _: yup.string(),
 });
 
 const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
@@ -53,19 +57,59 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
-    } = useForm<AgendaData>({
+    } = useForm<FDataAgenda>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
-    const detailMutation = useMutation(async (id: string) => {}, {
-        onSuccess: (data: any) => {
-            // form.setFieldsValue({
-            //     load_name: data?.load_name || "",
-            // });
-            // setValue("load_name", data?.load_name || "");
-        },
+    const subUnitQuery = useQuery([agendaService.getSubUnit], async () => {
+        const req = await agendaService.GetSubUnit();
+        const subunit = req.data.data?.map(
+            (el) =>
+                ({
+                    label: el.subunit_name,
+                    value: el.subunit_id,
+                } as SelectOption)
+        );
+        return subunit;
     });
+
+    const detailMutation = useMutation(
+        async (id: string) => {
+            const req = await agendaDataService.Detail<AgendaData>({ id });
+            return req.data.data;
+        },
+        {
+            onSuccess: (data) => {
+                form.setFieldsValue({
+                    date: moment(data?.date) || moment(),
+                    endorse: data?.endorse || 0,
+                    letter_no: data?.letter_no || "",
+                    letter_date: moment(data?.letter_date) || moment(),
+                    sender: data?.sender || "",
+                    about: data?.about || "",
+                    subunit_id: data?.subunit_id || "",
+                    follow_up: data?.follow_up || "",
+                    decision: data?.decision || "",
+                    event_date: moment(data?.event_date) || moment(),
+                    estimation_paydate: moment(data?.estimation_paydate) || moment(),
+                    document: data?.document || "",
+                });
+                setValue("date", (moment(data?.date) as any) || moment());
+                setValue("endorse", data?.endorse || 0);
+                setValue("letter_no", data?.letter_no || "");
+                setValue("letter_date", (moment(data?.letter_date) as any) || moment());
+                setValue("sender", data?.sender || "");
+                setValue("about", data?.about || "");
+                setValue("subunit_id", data?.subunit_id || "");
+                setValue("follow_up", data?.follow_up || "");
+                setValue("decision", data?.decision || "");
+                setValue("event_date", (moment(data?.event_date) as any) || moment());
+                setValue("estimation_paydate", (moment(data?.estimation_paydate) as any) || moment());
+                setValue("document", data?.document || "");
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -86,9 +130,13 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+            },
+            closeModal
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -106,7 +154,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         <>
             <Modal
                 confirmLoading={loading}
-                title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Data Agenda"}`}
+                title={`${detailMutation.isLoading ? "Mengambil data..." : "Edit Data Agenda"}`}
                 open={isModalOpen}
                 onCancel={closeModal}
                 footer={null}
@@ -124,24 +172,6 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="no_secretariat"
-                                    label="No agenda sekretariat"
-                                    placeholder="Nomor"
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText
-                                    control={control}
-                                    labelCol={{ xs: 24 }}
-                                    name="no_disposition"
-                                    label="No agenda disposisi"
-                                    placeholder="Nomor"
-                                />
-                            </Col>
-                            <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
@@ -157,18 +187,18 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="sender" label="Pengirim" placeholder="Pengirim" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="regarding" label="Perihal" placeholder="Perihal" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="about" label="Perihal" placeholder="Perihal" />
                             </Col>
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="sub_unit"
+                                    name="subunit_id"
                                     label="Sub Unit"
                                     placeholder="Sub Unit"
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
-                                    options={[]}
+                                    options={subUnitQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -180,7 +210,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
-                                    options={[]}
+                                    options={FOLLOW_UP}
                                 />
                             </Col>
                             <Col span={12}>
@@ -192,8 +222,14 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                     optionFilterProp="children"
                                     control={control}
                                     loading={false}
-                                    options={[]}
+                                    options={DECISION}
                                 />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
                             </Col>
                             <Col span={12}>
                                 <InputFile
@@ -203,12 +239,6 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                     multiple={false}
                                     name="document"
                                 />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="payment_estimation_date" label="Perkiraan bayar" />
                             </Col>
                         </Row>
 

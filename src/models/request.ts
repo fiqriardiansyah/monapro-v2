@@ -1,5 +1,16 @@
 import { AxiosRequestConfig } from "axios";
-import { AgendaData, AgendaDisposition, ApprovalPosition, Justification, LoadType, SubUnitData } from "./data";
+import {
+    AgendaData,
+    AgendaDisposition,
+    ApprovalPosition,
+    ContractSpNopes,
+    Finance,
+    Justification,
+    LoadType,
+    Negotiation,
+    News,
+    SubUnitData,
+} from "./data";
 
 export default {};
 
@@ -165,4 +176,77 @@ export interface JustificationDetailPath {
 export interface JustificationLockBudgetData {
     id: string | number;
     lock_budget: string | number;
+}
+
+// PROCUREMENT - NEGOTIATION
+export interface NegotiationGetAllParam {
+    page: string | number;
+}
+
+export interface NegotiationCreateData extends Omit<Negotiation, "id"> {
+    _?: any;
+}
+
+export interface NegotiationEditData extends Negotiation {
+    _?: any;
+}
+
+export interface NegotiationDetailPath {
+    id: string | number;
+}
+
+// PROCUREMENT - CONTRACT
+export interface ContractGetAllParam {
+    page: string | number;
+}
+
+export interface ContractCreateData extends Omit<ContractSpNopes, "id"> {
+    _?: any;
+}
+
+export interface ContractEditData extends ContractSpNopes {
+    _?: any;
+}
+
+export interface ContractDetailPath {
+    id: string | number;
+}
+
+// PROCUREMENT - NEWS
+export interface NewsGetAllParam {
+    page: string | number;
+}
+
+export interface NewsCreateData extends Omit<News, "id"> {
+    _?: any;
+}
+
+export interface NewsEditData extends News {
+    _?: any;
+}
+
+export interface NewsDetailPath {
+    id: string | number;
+}
+
+// PROCUREMENT - FINANCE
+export interface FinanceGetAllParam {
+    page: string | number;
+}
+
+export interface FinanceCreateData extends Omit<Finance, "id"> {
+    _?: any;
+}
+
+export interface FinanceEditData extends Finance {
+    _?: any;
+}
+
+export interface FinanceDetailPath {
+    id: string | number;
+}
+
+export interface FinanceIsPaid {
+    id: string | number;
+    isPaid: string | number;
 }

@@ -47,33 +47,36 @@ export interface ApprovalPosition {
 
 export interface AgendaData {
     id: string | number;
-    no_secretariat: string;
-    no_disposition: string;
+    no_agenda_secretariat: string;
+    no_agenda_disposition: string;
     date: string;
     endorse: number;
     letter_no: string;
     letter_date: string;
     sender: string;
-    regarding: string;
-    sub_unit: string;
+    about: string;
+    subunit_id: string;
+    subunit_name: string;
     follow_up: string;
     decision: string;
     document: any;
     event_date: string;
-    payment_estimation_date: string;
+    estimation_paydate: string;
+    lock_budget?: number;
 }
 
 export interface AgendaDisposition {
     id: string | number;
-    no_secretariat: string;
-    no_disposition: string;
+    agenda_data_id: string;
+    no_agenda_secretariat: string;
+    no_agenda_disposition: string;
     disposition_to: string;
     letter_no: string;
-    regarding: string;
     sender: string;
+    about: string;
     disposition_date: string;
-    disposition_note: string;
-    document: any;
+    note: string;
+    disposition_doc: any;
 }
 
 export interface Justification {
@@ -95,47 +98,48 @@ export interface Justification {
 
 export interface Negotiation {
     id: string | number;
-    justification_no: string;
-    justification_regarding: string;
-    date: string;
-    notes: string;
-    document: any;
+    no_justification: string;
+    about_justification: string;
+    negotiation_date: string;
+    note: string;
+    doc_negotiation: any;
 }
 
 export interface ContractSpNopes {
     id: string | number;
-    justification_no: string;
-    justification_regarding: string;
-    no: string;
-    manage_regarding: string;
+    no_justification: string;
+    about_justification: string;
+    no_contract: string;
+    about_manage: string;
     date: string;
     value: string;
-    document: any;
+    doc: any;
 }
 
 export interface News {
     id: string | number;
-    justification_no: string;
-    justification_regarding: string;
-    bap_no: string;
-    bar_no: string;
-    bapp_no: string;
-    bap_document: any;
-    bar_document: any;
-    bapp_document: any;
+    no_justification: string;
+    about_justification: string;
+    no_bap: string;
+    no_bar: string;
+    no_bapp: string;
+    file_bap: any;
+    file_bar: any;
+    file_bapp: any;
 }
 
 export interface Finance {
     id: string | number;
-    justification_no: string;
-    justification_regarding: string;
-    bill_file: string;
-    tel21_spb_date: string;
-    spb_finance_date: string;
+    no_justification: string;
+    about_justification: string;
+    invoice_file: string;
+    tel21_date: string;
+    spb_date: string;
     payment_date: string;
-    payment_value: string;
-    notes: string;
-    document: any;
+    value_payment: string;
+    note: string;
+    attachment_file: any;
+    is_paid?: number;
 }
 
 export interface SubUnitProcurement {
@@ -151,4 +155,14 @@ export interface LoadTypeProcurement {
 export interface ApprovalPositionProcurement {
     approval_position_id: number;
     position: string;
+}
+
+export interface JustificationProcurement {
+    justification_id: number;
+    no_justification: string;
+}
+
+export interface AgendaDataDisposition {
+    agenda_data_id: number;
+    no_agenda_secretariat: string;
 }

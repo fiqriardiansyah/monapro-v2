@@ -1,64 +1,96 @@
-import { Alert } from "antd";
+import { Alert, Button, message } from "antd";
+import { equal } from "assert";
 import Header from "components/common/header";
-import { BasePaginationResponse, Finance } from "models";
+import { AgendaDataLockBudgetData, BasePaginationResponse, Finance, FinanceIsPaid } from "models";
+import AddFinance from "modules/procurement/finance/add";
 import EditFinance from "modules/procurement/finance/edit";
-import { TDataFinance } from "modules/procurement/finance/models";
+import { FDataFinance, TDataFinance } from "modules/procurement/finance/models";
 import FinanceTable from "modules/procurement/finance/table";
 import React, { useRef } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import financeService from "services/api-endpoints/procurement/finance";
 
 const FinancePage = <T extends TDataFinance>() => {
+    const [searchParams] = useSearchParams();
+    const page = searchParams.get("page") || 1;
+    const query = searchParams.get("query") || "";
+
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
-    // const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([""], async () => {
-        return {} as BasePaginationResponse<T>;
+    const getList = useQuery([financeService.getAll], async () => {
+        const req = await financeService.GetAll({ page });
+        return req.data.data;
     });
 
-    const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
+    const createMutation = useMutation(
+        async (data: FDataFinance) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                message.success("Finance dibuat!");
+                getList.refetch();
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const createMutation = useMutation(async ({ data, callback }: { data: Finance; callback: () => void }) => {});
+    const editMutation = useMutation(
+        async (data: FDataFinance) => {
+            console.log(data);
+        },
+        {
+            onSuccess: () => {
+                message.success("Finance diedit!");
+                getList.refetch();
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const editMutation = useMutation(async ({ data, callback }: { data: Finance; callback: () => void }) => {});
+    const setPaidMutation = useMutation(
+        async (data: FinanceIsPaid) => {
+            await financeService.SetPaid(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Budget Locked!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
     // crud handler
-    // const onClickDelete = (data: T, callback: () => void) => {
-    //     deleteMutation.mutate({
-    //         id: data.id as any,
-    //         callback,
-    //     });
-    // };
-    // const onClickDetail = (data: T) => {
-    //     if (detailTriggerRef.current) {
-    //         detailTriggerRef.current.dataset.data = JSON.stringify(data);
-    //         detailTriggerRef.current.click();
-    //     }
-    // };
+    const onClickPaidHandler = async (data: TDataFinance, callback: () => void) => {
+        await setPaidMutation.mutateAsync({ id: data.id, isPaid: 1 });
+        callback();
+    };
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
             editTriggerRef.current.dataset.data = JSON.stringify(data);
             editTriggerRef.current.click();
         }
     };
-    // const addHandler = (data: Finance, callback: () => void) => {
-    //     createMutation.mutate({
-    //         data,
-    //         callback: () => {
-    //             callback();
-    //         },
-    //     });
-    // };
-    const editHandler = (data: Finance, callback: () => void) => {
-        editMutation.mutate({
-            data,
-            callback: () => {
-                callback();
-            },
-        });
+    const addHandler = async (data: FDataFinance, callback: () => void) => {
+        await createMutation.mutateAsync(data);
+        callback();
+    };
+    const editHandler = async (data: FDataFinance, callback: () => void) => {
+        await editMutation.mutateAsync(data);
+        callback();
     };
 
-    const errors = [getList, deleteMutation, createMutation, editMutation];
+    const errors = [getList, createMutation, editMutation];
 
     return (
         <div className="min-h-screen px-10">
@@ -74,14 +106,20 @@ const FinancePage = <T extends TDataFinance>() => {
                     </button>
                 )}
             </EditFinance>
-            <Header title="Finance" />
-            {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <FinanceTable
-                onClickEdit={onClickEdit}
-                // onClickDetail={onClickDetail}
-                //  onClickDelete={onClickDelete}
-                fetcher={getList}
+            <Header
+                title="Finance"
+                action={
+                    <AddFinance loading={createMutation.isLoading} onSubmit={addHandler}>
+                        {(data) => (
+                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                Tambah Finance
+                            </Button>
+                        )}
+                    </AddFinance>
+                }
             />
+            {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
+            <FinanceTable onClickPaid={onClickPaidHandler} onClickEdit={onClickEdit} fetcher={getList} />
         </div>
     );
 };
