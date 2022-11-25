@@ -58,11 +58,6 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "ID",
-            dataIndex: "id",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
             title: "Nama",
             dataIndex: "name",
             render: (text) => <p className="capitalize m-0">{text}</p>,

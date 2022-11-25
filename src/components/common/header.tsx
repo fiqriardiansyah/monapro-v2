@@ -1,5 +1,6 @@
 import { Button, Popover, Space } from "antd";
-import React, { useState } from "react";
+import { UserContext } from "context/user";
+import React, { useContext, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import Utils from "utils";
@@ -15,6 +16,8 @@ type Props = {
 };
 
 const Header = ({ additional, title, action, placeholderInput = "Search...", onSubmitSearch, search = true, back }: Props) => {
+    const { state, setState } = useContext(UserContext);
+
     const [open, setOpen] = useState(false);
 
     const hide = () => {
@@ -28,6 +31,12 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
     const logoutHandler = () => {
         hide();
         Utils.SignOut();
+        if (setState) {
+            setState((prev) => ({
+                ...prev,
+                user: null,
+            }));
+        }
     };
 
     const onSubmit = (e: any) => {
@@ -62,13 +71,13 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                     <Popover
                         content={
                             <div className="flex flex-col">
-                                <p className="text-gray-400 m-0 lowercase">telkom.corcomm1@gmail.com</p>
+                                <p className="text-gray-400 m-0 lowercase">{state.user?.email}</p>
                                 <Button onClick={logoutHandler} className="items-center flex mt-4">
                                     Logout
                                 </Button>
                             </div>
                         }
-                        title="Telkom"
+                        title={state.user?.fullname}
                         trigger="click"
                         open={open}
                         placement="leftTop"

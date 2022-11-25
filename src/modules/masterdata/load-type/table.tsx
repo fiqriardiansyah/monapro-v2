@@ -58,11 +58,6 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "ID",
-            dataIndex: "id",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
             title: "Nama Beban",
             dataIndex: "load_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,

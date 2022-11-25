@@ -9,7 +9,6 @@ import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import agendaService from "services/api-endpoints/agenda";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import Utils from "utils";
 
@@ -43,7 +42,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
 
     const createMutation = useMutation(
         async ({ data }: { data: FDataAgenda }) => {
-            console.log(data);
+            await agendaDataService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -108,7 +107,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 )}
             </EditAgendaData>
             <Header
-                title="Agenda Data"
+                title="Data Agenda"
                 action={
                     <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (

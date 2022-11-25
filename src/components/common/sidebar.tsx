@@ -51,18 +51,18 @@ function Sidebar({ collapse }: Props) {
         getItem("Master Data", "master-data", <AiFillDatabase />, [
             getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH),
             getItem("Role Management", MASTER_DATA_ROLE_MANAGE_PATH),
-            getItem("Load Type", MASTER_DATA_LOAD_TYPE_PATH),
-            getItem("Approval Position", MASTER_DATA_APPROVAL_POSITION_PATH),
+            getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH),
+            getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH),
         ]),
         getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-            getItem("Agenda Data", AGENDA_DATA_PATH),
-            getItem("Agenda Disposition", AGENDA_DISPOSITION_PATH),
+            getItem("Data Agenda", AGENDA_DATA_PATH),
+            getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH),
         ]),
         getItem("Procurement", "procurement", <AiFillDatabase />, [
-            getItem("Justification", PROCUREMENT_JUSTIFICATION_PATH),
-            getItem("Negotiation", PROCUREMENT_NEGOTIATION_PATH),
-            getItem("Contract, Sp, Nopes", PROCUREMENT_CONTRACT_PATH),
-            getItem("News", PROCUREMENT_NEWS_PATH),
+            getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH),
+            getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH),
+            getItem("Kontrak/SP/NOPES", PROCUREMENT_CONTRACT_PATH),
+            getItem("Berita Acara", PROCUREMENT_NEWS_PATH),
             getItem("Finance", PROCUREMENT_FINANCE_PATH),
         ]),
     ];

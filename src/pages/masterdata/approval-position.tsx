@@ -131,20 +131,8 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
                     </button>
                 )}
             </EditApprovalPosition>
-            {/* <DetailApprovalPosition>
-                {(data) => (
-                    <button
-                        type="button"
-                        ref={detailTriggerRef}
-                        onClick={() => data.openModalWithData(detailTriggerRef.current?.dataset.data)}
-                        className="hidden"
-                    >
-                        detail
-                    </button>
-                )}
-            </DetailApprovalPosition> */}
             <Header
-                title="Approval Position"
+                title="Jabatan Approval"
                 action={
                     <AddApprovalPosition loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (

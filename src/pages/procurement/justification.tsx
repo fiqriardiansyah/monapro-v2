@@ -27,7 +27,7 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     const createMutation = useMutation(
         async (data: FDataJustification) => {
-            console.log(data);
+            await justificationService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -42,7 +42,7 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     const editMutation = useMutation(
         async (data: FDataJustification) => {
-            console.log(data);
+            await justificationService.Edit(data as any);
         },
         {
             onSuccess: () => {

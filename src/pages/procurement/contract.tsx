@@ -87,7 +87,7 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
                 )}
             </EditContractSpNopes>
             <Header
-                title="Kontrak Sp Nopes"
+                title="Kontrak/SP/NOPES"
                 action={
                     <AddContract loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (

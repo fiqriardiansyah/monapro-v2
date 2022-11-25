@@ -172,6 +172,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
     return (
         <>
             <Modal
+                width={800}
                 confirmLoading={loading}
                 title={`${detailMutation.isLoading ? "Mengambil data" : "Edit Justifikasi"}`}
                 open={isModalOpen}
@@ -182,7 +183,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -270,7 +271,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                         </Row>
 
-                        <Row justify="start">
+                        <Row justify="start" className="mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan

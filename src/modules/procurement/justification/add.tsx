@@ -13,6 +13,8 @@ import ControlledInputNumber from "components/form/controlled-inputs/controlled-
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
+import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataJustification } from "./models";
 
 type ChildrenProps = {
@@ -99,7 +101,14 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, closeModal);
+        const parseData: FDataJustification = {
+            ...data,
+            justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
+            event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
+            estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
+            doc_justification: null,
+        };
+        onSubmit(parseData, closeModal);
     });
 
     const childrenData: ChildrenProps = {
@@ -114,7 +123,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -207,7 +216,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                         </Row>
 
-                        <Row justify="start">
+                        <Row justify="start" className="mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan

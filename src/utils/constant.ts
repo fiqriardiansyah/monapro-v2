@@ -1,4 +1,6 @@
 export const TOKEN_USER = "token";
+export const NAME_USER = "name";
+export const EMAIL_USER = "email";
 export const locale = "en-us";
 
 export const FORMAT_DATE = "yyyy-MM-DD";

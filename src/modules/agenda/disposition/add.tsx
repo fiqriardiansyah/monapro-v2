@@ -89,7 +89,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal confirmLoading={loading} title="Tambah Agenda Disposisi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Agenda Disposisi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -150,7 +150,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                 </Col>
                             </Row>
                         </Space>
-                        <Row justify="start">
+                        <Row justify="start" className="mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan

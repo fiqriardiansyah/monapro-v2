@@ -130,20 +130,8 @@ const LoadTypePage = <T extends TDataLoadType>() => {
                     </button>
                 )}
             </EditLoadType>
-            {/* <DetailLoadType>
-                {(data) => (
-                    <button
-                        type="button"
-                        ref={detailTriggerRef}
-                        onClick={() => data.openModalWithData(detailTriggerRef.current?.dataset.data)}
-                        className="hidden"
-                    >
-                        detail
-                    </button>
-                )}
-            </DetailLoadType> */}
             <Header
-                title="Load Type"
+                title="Jenis Beban"
                 action={
                     <AddLoadType loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (

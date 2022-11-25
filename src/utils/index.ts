@@ -5,7 +5,7 @@ import { message } from "antd";
 import type { RcFile } from "antd/es/upload/interface";
 import Cookies from "js-cookie";
 import { BasePaginationResponse, BaseTableData } from "models";
-import { DEFAULT_ERROR_MESSAGE, locale, TOKEN_USER } from "./constant";
+import { DEFAULT_ERROR_MESSAGE, EMAIL_USER, locale, NAME_USER, TOKEN_USER } from "./constant";
 
 export default class Utils {
     static charCodeA = 65;
@@ -98,7 +98,8 @@ export default class Utils {
 
     static SignOut = () => {
         Cookies.remove(TOKEN_USER);
-        window.location.href = "/";
+        Cookies.remove(NAME_USER);
+        Cookies.remove(EMAIL_USER);
     };
 
     static pause(time: number) {

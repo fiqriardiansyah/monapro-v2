@@ -83,7 +83,7 @@ const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal confirmLoading={loading} title="Tambah Negosiasi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Negosiasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -125,7 +125,7 @@ const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                         </Row>
 
-                        <Row justify="start">
+                        <Row justify="start" className="mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan

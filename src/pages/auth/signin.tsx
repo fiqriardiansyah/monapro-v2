@@ -5,12 +5,12 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { AuthData, SignInEmailData } from "models";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import AuthEndPoints from "services/api-endpoints/auth";
-import { DEFAULT_ERROR_MESSAGE, TOKEN_USER } from "utils/constant";
+import { DEFAULT_ERROR_MESSAGE, EMAIL_USER, NAME_USER, TOKEN_USER } from "utils/constant";
 import * as yup from "yup";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "context/user";
+import authService from "services/api-endpoints/auth";
 
 const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
     email: yup.string().required("Email wajib diisi"),
@@ -28,15 +28,8 @@ const SignInPage = () => {
 
     const signInMutation = useMutation(
         async (data: SignInEmailData) => {
-            const user: AuthData = {
-                id: "fawsdef234",
-                is_new: false,
-                email: "telkom@gmail.com",
-                fullname: "telkom",
-                phone: "23142314234",
-                token: "$2a$10$Qt/8ZvEbnLtUUO0IaHca2e7Ic4KubSMvPgxlLW",
-            };
-            return user;
+            const req = await authService.SignInEmail(data);
+            return req.data.data;
         },
         {
             onError: (error: any) => {
@@ -48,6 +41,8 @@ const SignInPage = () => {
     const onSubmitHandler = handleSubmit(async (data) => {
         const user = await signInMutation.mutateAsync(data);
         Cookies.set(TOKEN_USER, user.token);
+        Cookies.set(NAME_USER, user.fullname);
+        Cookies.set(EMAIL_USER, user.email);
         if (setState) {
             setState((prev) => ({
                 ...prev,

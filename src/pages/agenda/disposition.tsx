@@ -87,7 +87,7 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
                 )}
             </EditAgendaDisposition>
             <Header
-                title="Agenda Disposition"
+                title="Disposisi Agenda"
                 action={
                     <AddAgendaDisposition loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (
