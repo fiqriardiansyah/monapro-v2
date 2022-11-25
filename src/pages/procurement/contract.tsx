@@ -1,6 +1,5 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, ContractSpNopes } from "models";
 import AddContract from "modules/procurement/contract-sp-nopes/add";
 import EditContractSpNopes from "modules/procurement/contract-sp-nopes/edit";
 import { FDataContractSpNopes, TDataContractSpNopes } from "modules/procurement/contract-sp-nopes/models";
@@ -11,6 +10,8 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import contractService from "services/api-endpoints/procurement/contract";
 
+// [FINISH]
+
 const ContractPage = <T extends TDataContractSpNopes>() => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -19,14 +20,14 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([contractService.getAll], async () => {
+    const getList = useQuery([contractService.getAll, page], async () => {
         const req = await contractService.GetAll({ page });
         return req.data.data;
     });
 
     const createMutation = useMutation(
         async (data: FDataContractSpNopes) => {
-            console.log(data);
+            await contractService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -41,7 +42,7 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
 
     const editMutation = useMutation(
         async (data: FDataContractSpNopes) => {
-            console.log(data);
+            await contractService.Edit(data as any);
         },
         {
             onSuccess: () => {

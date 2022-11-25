@@ -1,6 +1,5 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, Negotiation } from "models";
 import AddNegotiation from "modules/procurement/negotiation/add";
 import EditNegotiation from "modules/procurement/negotiation/edit";
 import { FDataNegotiation, TDataNegotiation } from "modules/procurement/negotiation/models";
@@ -11,6 +10,8 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import negotiationService from "services/api-endpoints/procurement/negotiation";
 
+// [FINISH]
+
 const NegotiationPage = <T extends TDataNegotiation>() => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -19,14 +20,14 @@ const NegotiationPage = <T extends TDataNegotiation>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([negotiationService.getAll], async () => {
+    const getList = useQuery([negotiationService.getAll, page], async () => {
         const req = await negotiationService.GetAll({ page });
         return req.data.data;
     });
 
     const createMutation = useMutation(
         async (data: FDataNegotiation) => {
-            console.log(data);
+            await negotiationService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -41,7 +42,7 @@ const NegotiationPage = <T extends TDataNegotiation>() => {
 
     const editMutation = useMutation(
         async (data: FDataNegotiation) => {
-            console.log(data);
+            await negotiationService.Edit(data as any);
         },
         {
             onSuccess: () => {

@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -62,17 +62,25 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const subUnitQuery = useQuery([agendaService.getSubUnit], async () => {
-        const req = await agendaService.GetSubUnit();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.subunit_name,
-                    value: el.subunit_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const subUnitQuery = useQuery(
+        [agendaService.getSubUnit],
+        async () => {
+            const req = await agendaService.GetSubUnit();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.subunit_name,
+                        value: el.subunit_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: agendaService.getSubUnit, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -82,30 +90,30 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data) => {
                 form.setFieldsValue({
-                    date: moment(data?.date) || moment(),
+                    date: data.date ? moment(data?.date) : moment(),
                     endorse: data?.endorse || 0,
                     letter_no: data?.letter_no || "",
-                    letter_date: moment(data?.letter_date) || moment(),
+                    letter_date: data?.letter_date ? moment(data?.letter_date) : moment(),
                     sender: data?.sender || "",
                     about: data?.about || "",
                     subunit_id: data?.subunit_id || "",
                     follow_up: data?.follow_up || "",
                     decision: data?.decision || "",
-                    event_date: moment(data?.event_date) || moment(),
-                    estimation_paydate: moment(data?.estimation_paydate) || moment(),
+                    event_date: data?.event_date ? moment(data?.event_date) : moment(),
+                    estimation_paydate: data?.estimation_paydate ? moment(data?.estimation_paydate) : moment(),
                     document: data?.document || "",
                 });
-                setValue("date", (moment(data?.date) as any) || moment());
+                setValue("date", data?.date ? (moment(data?.date) as any) : moment());
                 setValue("endorse", data?.endorse || 0);
                 setValue("letter_no", data?.letter_no || "");
-                setValue("letter_date", (moment(data?.letter_date) as any) || moment());
+                setValue("letter_date", data?.letter_date ? (moment(data?.letter_date) as any) : moment());
                 setValue("sender", data?.sender || "");
                 setValue("about", data?.about || "");
                 setValue("subunit_id", data?.subunit_id || "");
                 setValue("follow_up", data?.follow_up || "");
                 setValue("decision", data?.decision || "");
-                setValue("event_date", (moment(data?.event_date) as any) || moment());
-                setValue("estimation_paydate", (moment(data?.estimation_paydate) as any) || moment());
+                setValue("event_date", data?.event_date ? (moment(data?.event_date) as any) : moment());
+                setValue("estimation_paydate", data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment());
                 setValue("document", data?.document || "");
             },
         }
@@ -130,9 +138,17 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataAgenda = {
+            ...data,
+            date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
+            letter_date: data.letter_date ? moment(data.letter_date).format(FORMAT_DATE) : "",
+            event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
+            estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
+            document: null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
             closeModal
@@ -164,7 +180,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

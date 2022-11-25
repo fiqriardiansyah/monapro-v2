@@ -4,6 +4,7 @@ export const EMAIL_USER = "email";
 export const locale = "en-us";
 
 export const FORMAT_DATE = "yyyy-MM-DD";
+export const FORMAT_SHOW_DATE = "DD MMM yyyy";
 
 export const DEFAULT_ERROR_MESSAGE = "Ooops something wrong!";
 export const FILE_TYPE_ERROR = "file type not support!";

@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -9,12 +9,12 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { Negotiation, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import negotiationService from "services/api-endpoints/procurement/negotiation";
 import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataNegotiation } from "./models";
 
 type ChildrenProps = {
@@ -52,17 +52,25 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const justificationQuery = useQuery([procurementService.getJustification], async () => {
-        const req = await procurementService.GetJustification();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.no_justification,
-                    value: el.justification_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const justificationQuery = useQuery(
+        [procurementService.getJustification],
+        async () => {
+            const req = await procurementService.GetJustification();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_justification,
+                        value: el.justification_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getJustification, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -72,13 +80,13 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data) => {
                 form.setFieldsValue({
-                    justification_id: data?.no_justification || "", // [IMPORTANT] JUSTIFICATION_ID
-                    negotiation_date: (moment(data?.negotiation_date) as any) || moment(),
+                    justification_id: data?.justification_id || "",
+                    negotiation_date: data?.negotiation_date ? (moment(data?.negotiation_date) as any) : moment(),
                     note: data?.note || "",
                     doc_negotiation: data?.doc_negotiation || "",
                 });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
-                setValue("negotiation_date", (moment(data?.negotiation_date) as any) || moment());
+                setValue("justification_id", data?.justification_id || "");
+                setValue("negotiation_date", data?.negotiation_date ? (moment(data?.negotiation_date) as any) : moment());
                 setValue("note", data?.note || "");
                 setValue("doc_negotiation", data?.doc_negotiation || "");
             },
@@ -104,9 +112,14 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataNegotiation = {
+            ...data,
+            negotiation_date: data.negotiation_date ? moment(data.negotiation_date).format(FORMAT_DATE) : "",
+            doc_negotiation: null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
             closeModal
@@ -138,7 +151,7 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

@@ -1,6 +1,5 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, News } from "models";
 import AddNews from "modules/procurement/news/add";
 import EditNews from "modules/procurement/news/edit";
 import { FDataNews, TDataNews } from "modules/procurement/news/models";
@@ -11,6 +10,8 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import newsService from "services/api-endpoints/procurement/news";
 
+// [FINISH]
+
 const NewsPage = <T extends TDataNews>() => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -19,14 +20,14 @@ const NewsPage = <T extends TDataNews>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([newsService.getAll], async () => {
+    const getList = useQuery([newsService.getAll, page], async () => {
         const req = await newsService.GetAll({ page });
         return req.data.data;
     });
 
     const createMutation = useMutation(
         async (data: FDataNews) => {
-            console.log(data);
+            await newsService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -41,7 +42,7 @@ const NewsPage = <T extends TDataNews>() => {
 
     const editMutation = useMutation(
         async (data: FDataNews) => {
-            console.log(data);
+            await newsService.Edit(data as any);
         },
         {
             onSuccess: () => {

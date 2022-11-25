@@ -1,18 +1,20 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Justification, SelectOption } from "models";
+import { SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
+import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
@@ -48,17 +50,25 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const justificationQuery = useQuery([procurementService.getJustification], async () => {
-        const req = await procurementService.GetJustification();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.no_justification,
-                    value: el.justification_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const justificationQuery = useQuery(
+        [procurementService.getJustification],
+        async () => {
+            const req = await procurementService.GetJustification();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_justification,
+                        value: el.justification_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getJustification, description: error?.message });
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;
@@ -70,7 +80,12 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, closeModal);
+        const parseData: FDataContractSpNopes = {
+            ...data,
+            date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
+            doc: null,
+        };
+        onSubmit(parseData, closeModal);
     });
 
     const childrenData: ChildrenProps = {

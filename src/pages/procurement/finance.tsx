@@ -1,7 +1,6 @@
 import { Alert, Button, message } from "antd";
-import { equal } from "assert";
 import Header from "components/common/header";
-import { AgendaDataLockBudgetData, BasePaginationResponse, Finance, FinanceIsPaid } from "models";
+import { IsPaid } from "models";
 import AddFinance from "modules/procurement/finance/add";
 import EditFinance from "modules/procurement/finance/edit";
 import { FDataFinance, TDataFinance } from "modules/procurement/finance/models";
@@ -12,6 +11,8 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import financeService from "services/api-endpoints/procurement/finance";
 
+// [FINISH]
+
 const FinancePage = <T extends TDataFinance>() => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -20,14 +21,14 @@ const FinancePage = <T extends TDataFinance>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([financeService.getAll], async () => {
+    const getList = useQuery([financeService.getAll, page], async () => {
         const req = await financeService.GetAll({ page });
         return req.data.data;
     });
 
     const createMutation = useMutation(
         async (data: FDataFinance) => {
-            console.log(data);
+            await financeService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -42,7 +43,7 @@ const FinancePage = <T extends TDataFinance>() => {
 
     const editMutation = useMutation(
         async (data: FDataFinance) => {
-            console.log(data);
+            await financeService.Edit(data as any);
         },
         {
             onSuccess: () => {
@@ -56,13 +57,13 @@ const FinancePage = <T extends TDataFinance>() => {
     );
 
     const setPaidMutation = useMutation(
-        async (data: FinanceIsPaid) => {
+        async (data: IsPaid) => {
             await financeService.SetPaid(data);
         },
         {
             onSuccess: () => {
                 getList.refetch();
-                message.success("Budget Locked!");
+                message.success("Bayar dikunci!");
             },
             onError: (error: any) => {
                 message.error(error?.message);

@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from "axios";
 import {
     AgendaData,
     AgendaDisposition,
+    AgendaFinance,
     ApprovalPosition,
     ContractSpNopes,
     Finance,
@@ -156,6 +157,23 @@ export interface AgendaDispositionDetailPath {
     id: string | number;
 }
 
+// AGENDA - AGENDA FINANCE
+export interface AgendaFinanceGetAllParam {
+    page: string | number;
+}
+
+export interface AgendaFinanceCreateData extends Omit<AgendaFinance, "id"> {
+    _?: any;
+}
+
+export interface AgendaFinanceEditData extends AgendaFinance {
+    _?: any;
+}
+
+export interface AgendaFinanceDetailPath {
+    id: string | number;
+}
+
 // PROCUREMENT - JUSTIFICATION
 export interface JustificationGetAllParam {
     page: string | number;
@@ -246,7 +264,7 @@ export interface FinanceDetailPath {
     id: string | number;
 }
 
-export interface FinanceIsPaid {
+export interface IsPaid {
     id: string | number;
     isPaid: string | number;
 }

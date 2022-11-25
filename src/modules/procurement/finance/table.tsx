@@ -7,6 +7,7 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
+import { FORMAT_SHOW_DATE } from "utils/constant";
 import { TDataFinance } from "./models";
 
 type Props<T> = {
@@ -69,22 +70,22 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "Tanggal TEL21/SPB",
             dataIndex: "tel21_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Tanggal SPB Finance",
             dataIndex: "spb_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Tanggal pembayaran",
             dataIndex: "payment_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Nilai Pembayaran",
             dataIndex: "value_payment",
-            render: (text) => <p className="capitalize m-0">{parseInt(text, 10).ToIndCurrency("Rp")}</p>,
+            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Catatan",

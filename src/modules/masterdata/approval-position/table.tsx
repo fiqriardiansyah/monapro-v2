@@ -7,7 +7,6 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { TDataApprovalPosition } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -62,15 +61,6 @@ const ApprovalPositionTable = <T extends TDataApprovalPosition>({ fetcher, onCli
             dataIndex: "name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        // {
-        //     title: "Nama",
-        //     dataIndex: "name",
-        //     render: (text, record, i) => (
-        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-        //             {text}
-        //         </Button>
-        //     ),
-        // },
         {
             title: "Jabatan",
             dataIndex: "position",

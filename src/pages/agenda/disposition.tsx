@@ -1,15 +1,17 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { AgendaDisposition, BasePaginationResponse } from "models";
+import { AgendaDisposition } from "models";
 import AddAgendaDisposition from "modules/agenda/disposition/add";
 import EditAgendaDisposition from "modules/agenda/disposition/edit";
-import { FDataAgendaDisposition, TDataAgendaDisposition } from "modules/agenda/disposition/models";
+import { FDataAgendaDisposition } from "modules/agenda/disposition/models";
 import AgendaDispositionTable from "modules/agenda/disposition/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import agendaDispositionService from "services/api-endpoints/agenda/agenda-disposition";
+
+// [FINISH]
 
 const AgendaDispositionPage = <T extends AgendaDisposition>() => {
     const [searchParams] = useSearchParams();
@@ -19,14 +21,14 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([agendaDispositionService.getAll], async () => {
+    const getList = useQuery([agendaDispositionService.getAll, page], async () => {
         const req = await agendaDispositionService.GetAll({ page });
         return req.data.data;
     });
 
     const createMutation = useMutation(
         async (data: FDataAgendaDisposition) => {
-            console.log(data);
+            await agendaDispositionService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -41,7 +43,7 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
 
     const editMutation = useMutation(
         async (data: FDataAgendaDisposition) => {
-            console.log(data);
+            await agendaDispositionService.Edit(data as any);
         },
         {
             onSuccess: () => {

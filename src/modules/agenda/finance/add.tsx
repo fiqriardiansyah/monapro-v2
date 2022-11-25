@@ -9,12 +9,10 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import InputFile from "components/form/inputs/input-file";
-import { FORMAT_DATE } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
-import moment from "moment";
-import { FDataAgendaDisposition } from "./models";
+import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
+import { FDataAgendaFinance } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -23,29 +21,33 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: FDataAgendaDisposition, callback: () => void) => void;
+    onSubmit: (data: FDataAgendaFinance, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Partial<FDataAgendaDisposition>> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<FDataAgendaFinance>> = yup.object().shape({
     agenda_data_id: yup.string(),
-    disposition_doc: yup.string(),
-    disposition_date: yup.string(),
-    disposition_to: yup.string(),
-    letter_no: yup.string(),
+    finnest_no: yup.string(),
+    finnest_date: yup.string(),
+    load_type_id: yup.string(),
+    date: yup.string(),
+    value_payment: yup.string(),
+    spb_date: yup.string(),
+    transfer_to: yup.string(),
+    no_rekening: yup.string(),
+    payment_date: yup.string(),
     note: yup.string(),
-    _: yup.string(),
 });
 
-const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
+const AddAgendaFinance = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
         handleSubmit,
         control,
         formState: { isValid },
-    } = useForm<FDataAgendaDisposition>({
+    } = useForm<FDataAgendaFinance>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -69,6 +71,25 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const getLoadType = useQuery(
+        [agendaService.getLoadType],
+        async () => {
+            const req = await agendaService.GetLoadType();
+            return req.data.data.map(
+                (el) =>
+                    ({
+                        label: el.load_name,
+                        value: el.load_type_id,
+                    } as SelectOption)
+            );
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: agendaService.getLoadType, description: error?.message });
+            },
+        }
+    );
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
@@ -79,12 +100,12 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        const parseData: FDataAgendaDisposition = {
-            ...data,
-            disposition_date: data.disposition_date ? moment(data.disposition_date).format(FORMAT_DATE) : "",
-            disposition_doc: null,
-        };
-        onSubmit(parseData, closeModal);
+        // const parseData: FDataAgendaFinance = {
+        //     ...data,
+        //     disposition_date: data.disposition_date ? moment(data.disposition_date).format(FORMAT_DATE) : "",
+        //     disposition_doc: null,
+        // };
+        // onSubmit(parseData, closeModal);
     });
 
     const childrenData: ChildrenProps = {
@@ -99,7 +120,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal width={800} confirmLoading={loading} title="Tambah Agenda Disposisi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Agenda Finance" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -129,34 +150,64 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     <ControlledInputText
                                         control={control}
                                         labelCol={{ xs: 12 }}
-                                        name="disposition_to"
-                                        label="Disposisi kepada"
-                                        placeholder="Disposisi kepada"
+                                        name="finnest_no"
+                                        label="Finnest kepada"
+                                        placeholder="Finnest kepada"
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="finnest_date" label="Tanggal Finnest" />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledSelectInput
+                                        showSearch
+                                        name="load_type_id"
+                                        label="Jenis Beban"
+                                        placeholder="Jenis Beban"
+                                        optionFilterProp="children"
+                                        control={control}
+                                        loading={getLoadType.isLoading}
+                                        options={getLoadType.data || []}
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledInputNumber
+                                        control={control}
+                                        labelCol={{ xs: 24 }}
+                                        name="value_payment"
+                                        label="Nilai Pembayaran"
+                                        placeholder="Nilai Pembayaran"
+                                    />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="spb_date" label="Tanggal SPB" />
+                                </Col>
+                                <Col span={12}>
+                                    <ControlledInputText
+                                        control={control}
+                                        labelCol={{ xs: 24 }}
+                                        name="transfer_to"
+                                        label="Transfer kepada"
+                                        placeholder="Transfer kepada"
                                     />
                                 </Col>
                                 <Col span={12}>
                                     <ControlledInputText
                                         control={control}
-                                        labelCol={{ xs: 12 }}
-                                        name="letter_no"
-                                        label="Nomor surat"
-                                        placeholder="Nomor surat"
+                                        labelCol={{ xs: 24 }}
+                                        name="no_rekening"
+                                        label="Nomor Rekening"
+                                        placeholder="Nomor Rekening"
                                     />
                                 </Col>
                                 <Col span={12}>
-                                    <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="disposition_date" label="Tanggal" />
+                                    <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="payment_date" label="Tanggal Pembayaran" />
                                 </Col>
                                 <Col span={12}>
                                     <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
-                                </Col>
-                                <Col span={12}>
-                                    <InputFile
-                                        handleChange={onFileChangeHandler}
-                                        label="file document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
-                                        multiple={false}
-                                        name="document"
-                                    />
                                 </Col>
                             </Row>
                         </Space>
@@ -178,4 +229,4 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default AddAgendaDisposition;
+export default AddAgendaFinance;

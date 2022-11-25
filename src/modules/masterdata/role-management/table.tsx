@@ -1,13 +1,11 @@
 import React from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
 import { TDataRoleManagement } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;

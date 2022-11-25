@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -15,6 +15,7 @@ import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import financeService from "services/api-endpoints/procurement/finance";
 import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataFinance } from "./models";
 
 type ChildrenProps = {
@@ -56,17 +57,25 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const justificationQuery = useQuery([procurementService.getJustification], async () => {
-        const req = await procurementService.GetJustification();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.no_justification,
-                    value: el.justification_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const justificationQuery = useQuery(
+        [procurementService.getJustification],
+        async () => {
+            const req = await procurementService.GetJustification();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_justification,
+                        value: el.justification_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getJustification, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -76,20 +85,20 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data) => {
                 form.setFieldsValue({
-                    justification_id: data?.no_justification || "",
+                    justification_id: data?.justification_id || "",
                     invoice_file: data?.invoice_file || "",
-                    tel21_date: (moment(data?.tel21_date) as any) || moment(),
-                    spb_date: (moment(data?.spb_date) as any) || moment(),
-                    payment_date: (moment(data?.payment_date) as any) || moment(),
+                    tel21_date: data?.tel21_date ? (moment(data?.tel21_date) as any) : moment(),
+                    spb_date: data?.spb_date ? (moment(data?.spb_date) as any) : moment(),
+                    payment_date: data?.payment_date ? (moment(data?.payment_date) as any) : moment(),
                     value_payment: data?.value_payment || "",
                     note: data?.note || "",
                     attachment_file: data?.attachment_file || "",
                 });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
+                setValue("justification_id", data?.justification_id || "");
                 setValue("invoice_file", data?.invoice_file || "");
-                setValue("tel21_date", (moment(data?.tel21_date) as any) || moment());
-                setValue("spb_date", (moment(data?.spb_date) as any) || moment());
-                setValue("payment_date", (moment(data?.payment_date) as any) || moment());
+                setValue("tel21_date", data?.tel21_date ? (moment(data?.tel21_date) as any) : moment());
+                setValue("spb_date", data?.spb_date ? (moment(data?.spb_date) as any) : moment());
+                setValue("payment_date", data?.payment_date ? (moment(data?.payment_date) as any) : moment());
                 setValue("value_payment", data?.value_payment || "");
                 setValue("note", data?.note || "");
                 setValue("attachment_file", data?.attachment_file || "");
@@ -116,9 +125,17 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataFinance = {
+            ...data,
+            tel21_date: data.tel21_date ? moment(data.tel21_date).format(FORMAT_DATE) : "",
+            spb_date: data.spb_date ? moment(data.spb_date).format(FORMAT_DATE) : "",
+            payment_date: data.payment_date ? moment(data.payment_date).format(FORMAT_DATE) : "",
+            attachment_file: null,
+            invoice_file: null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
             closeModal
@@ -150,7 +167,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

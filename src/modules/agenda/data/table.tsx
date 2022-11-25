@@ -7,7 +7,7 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { DECISION, FOLLOW_UP } from "utils/constant";
+import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
 import { TDataAgenda } from "./models";
 
 type Props<T> = {
@@ -70,7 +70,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
         {
             title: "Tanggal",
             dataIndex: "date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Endorse",
@@ -85,7 +85,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
         {
             title: "Tanggal Surat",
             dataIndex: "letter_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Pengirim",
@@ -120,12 +120,12 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Perkiraan bayar",
             dataIndex: "payment_estimation_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             width: "200px",

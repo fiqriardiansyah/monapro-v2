@@ -1,8 +1,7 @@
-import { Alert, Descriptions, Image, Modal } from "antd";
+import { Alert, Descriptions, Modal } from "antd";
 import { SubUnitData } from "models";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
-import { DEFAULT_ERROR_MESSAGE, IMAGE_FALLBACK } from "utils/constant";
 
 type ChildrenProps = {
     isModalOpen: boolean;

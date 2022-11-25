@@ -1,26 +1,28 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, ContractSpNopes, Finance, Justification, Negotiation, News } from "models";
+import { AgendaDisposition, AgendaFinance, BasePaginationResponse } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
-class FinanceService extends BaseService {
-    getAll = "/procurement/get-all-finance";
+// [IMPORTANT] tipe data untuk agenda data dari BE blum tau
 
-    detail = "/procurement/detail-finance";
+class AgendaFinanceService extends BaseService {
+    getAll = "/agenda-finance/get-all";
 
-    create = "/procurement/create-finance";
+    create = "/agenda-finance/create-agenda-finance";
 
-    edit = "/procurement/edit-finance";
+    edit = "/agenda-finance/edit-agenda-finance";
 
-    setPaid = "/procurement/set-paid";
+    detail = "/agenda-finance/detail-agenda-finance";
+
+    setPaid = "/agenda-finance/set-paid";
 
     constructor() {
         super();
     }
 
-    GetAll<T = any>(param: Models.FinanceGetAllParam) {
+    GetAll<T = any>(param: Models.AgendaDispositionGetAllParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,
@@ -35,7 +37,7 @@ class FinanceService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.FinanceCreateData) {
+    Create<T = any>(data: Models.AgendaFinanceCreateData) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
@@ -46,21 +48,21 @@ class FinanceService extends BaseService {
         });
     }
 
-    Detail<T = Finance>({ id }: Models.FinanceDetailPath) {
+    Edit<T = any>(data: Models.AgendaFinanceEditData) {
         return this.ProxyRequest(async () => {
-            const req = await ApiMethod.get<T>({
-                url: `${this.detail}/${id}`,
+            const req = await ApiMethod.put<T>({
+                url: this.edit,
+                data,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
         });
     }
 
-    Edit<T = any>(data: Models.FinanceEditData) {
+    Detail<T extends AgendaFinance>({ id }: Models.AgendaFinanceDetailPath) {
         return this.ProxyRequest(async () => {
-            const req = await ApiMethod.put<T>({
-                url: this.edit,
-                data,
+            const req = await ApiMethod.get<T>({
+                url: `${this.detail}/${id}`,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
@@ -79,5 +81,5 @@ class FinanceService extends BaseService {
     }
 }
 
-const financeService = new FinanceService();
-export default financeService;
+const agendaFinanceService = new AgendaFinanceService();
+export default agendaFinanceService;

@@ -10,6 +10,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
     AGENDA_DATA_PATH,
     AGENDA_DISPOSITION_PATH,
+    AGENDA_FINANCE_PATH,
     DASHBOARD_PATH,
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
@@ -57,6 +58,7 @@ function Sidebar({ collapse }: Props) {
         getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
             getItem("Data Agenda", AGENDA_DATA_PATH),
             getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH),
+            getItem("Finance Agenda", AGENDA_FINANCE_PATH),
         ]),
         getItem("Procurement", "procurement", <AiFillDatabase />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH),

@@ -1,14 +1,11 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Form, Modal, Row, Space, Upload } from "antd";
-import type { UploadChangeParam } from "antd/es/upload";
-import type { RcFile, UploadFile, UploadProps } from "antd/es/upload/interface";
+import { Button, Form, Modal, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import Utils from "utils";
 import { ApprovalPosition } from "models";
 
 type ChildrenProps = {

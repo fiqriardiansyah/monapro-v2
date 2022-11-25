@@ -1,13 +1,12 @@
 import React from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { AgendaDisposition, BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { TDataAgendaDisposition } from "./models";
+import { FORMAT_SHOW_DATE } from "utils/constant";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -69,7 +68,7 @@ const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickE
         {
             title: "Tanggal disposisi",
             dataIndex: "disposition_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Catatan",
@@ -79,7 +78,7 @@ const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickE
         {
             title: "Catatan disposisi",
             dataIndex: "disposition_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Dokumen",

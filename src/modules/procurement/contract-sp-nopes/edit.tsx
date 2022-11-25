@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -15,6 +15,7 @@ import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import contractService from "services/api-endpoints/procurement/contract";
 import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
@@ -53,17 +54,25 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const justificationQuery = useQuery([procurementService.getJustification], async () => {
-        const req = await procurementService.GetJustification();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.no_justification,
-                    value: el.justification_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const justificationQuery = useQuery(
+        [procurementService.getJustification],
+        async () => {
+            const req = await procurementService.GetJustification();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_justification,
+                        value: el.justification_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getJustification, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -73,17 +82,17 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data) => {
                 form.setFieldsValue({
-                    justification_id: data?.no_justification || "",
+                    justification_id: data?.justification_id || "",
                     no_contract: data?.no_contract || "",
                     about_manage: data?.about_manage || "",
                     value: data?.value || "",
                     doc: data?.doc || "",
-                    date: (moment(data?.date) as any) || moment(),
+                    date: data?.date ? (moment(data?.date) as any) : moment(),
                 });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
+                setValue("justification_id", data?.justification_id || "");
                 setValue("no_contract", data?.no_contract || "");
                 setValue("about_manage", data?.about_manage || "");
-                setValue("date", (moment(data?.date) as any) || moment());
+                setValue("date", data?.date ? (moment(data?.date) as any) : moment());
                 setValue("value", data?.value || "");
                 setValue("doc", data?.doc || "");
             },
@@ -109,9 +118,14 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataContractSpNopes = {
+            ...data,
+            date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
+            doc: null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
             closeModal
@@ -143,7 +157,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

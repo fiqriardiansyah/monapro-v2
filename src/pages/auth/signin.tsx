@@ -2,15 +2,16 @@ import React, { useContext } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Alert, Button, Form, message, Row, Space } from "antd";
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { AuthData, SignInEmailData } from "models";
+import { SignInEmailData } from "models";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { DEFAULT_ERROR_MESSAGE, EMAIL_USER, NAME_USER, TOKEN_USER } from "utils/constant";
+import { EMAIL_USER, NAME_USER, TOKEN_USER } from "utils/constant";
 import * as yup from "yup";
 import Cookies from "js-cookie";
-import { useNavigate } from "react-router-dom";
 import { UserContext } from "context/user";
 import authService from "services/api-endpoints/auth";
+
+// [FINISH]
 
 const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
     email: yup.string().required("Email wajib diisi"),

@@ -7,7 +7,6 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import { TDataSubUnit } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -70,7 +69,7 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
         {
             title: "Anggaran",
             dataIndex: "budget",
-            render: (text) => <p className="capitalize m-0">{parseInt(text, 10).ToIndCurrency("Rp")}</p>,
+            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Action",

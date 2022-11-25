@@ -1,8 +1,7 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, LoadType } from "models";
+import { LoadType } from "models";
 import AddLoadType from "modules/masterdata/load-type/add";
-import DetailLoadType from "modules/masterdata/load-type/detail";
 import EditLoadType from "modules/masterdata/load-type/edit";
 import { TDataLoadType } from "modules/masterdata/load-type/models";
 import LoadTypeTable from "modules/masterdata/load-type/table";

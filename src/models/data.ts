@@ -79,6 +79,27 @@ export interface AgendaDisposition {
     disposition_doc: any;
 }
 
+export interface AgendaFinance {
+    id: string | number;
+    no_agenda_secretariat: string;
+    agenda_data_id?: string;
+    load_type_id?: string;
+    sender: string;
+    about: string;
+    finnest_no: string;
+    finnest_date: string;
+    letter_no: string;
+    load_name: string;
+    date: string;
+    value_payment: string;
+    spb_date: string;
+    transfer_to: string;
+    no_rekening: string;
+    payment_date: string;
+    note: string;
+    is_paid?: number;
+}
+
 export interface Justification {
     id: string | number;
     no_justification: string;
@@ -98,6 +119,7 @@ export interface Justification {
 
 export interface Negotiation {
     id: string | number;
+    justification_id: string;
     no_justification: string;
     about_justification: string;
     negotiation_date: string;
@@ -107,6 +129,7 @@ export interface Negotiation {
 
 export interface ContractSpNopes {
     id: string | number;
+    justification_id: string;
     no_justification: string;
     about_justification: string;
     no_contract: string;
@@ -118,6 +141,7 @@ export interface ContractSpNopes {
 
 export interface News {
     id: string | number;
+    justification_id: string;
     no_justification: string;
     about_justification: string;
     no_bap: string;
@@ -130,9 +154,10 @@ export interface News {
 
 export interface Finance {
     id: string | number;
+    justification_id: string;
     no_justification: string;
     about_justification: string;
-    invoice_file: string;
+    invoice_file: any;
     tel21_date: string;
     spb_date: string;
     payment_date: string;
@@ -165,4 +190,9 @@ export interface JustificationProcurement {
 export interface AgendaDataDisposition {
     agenda_data_id: number;
     no_agenda_secretariat: string;
+}
+
+export interface AgendaLoadType {
+    load_type_id: number;
+    load_name: string;
 }

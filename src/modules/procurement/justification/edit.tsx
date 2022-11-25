@@ -103,7 +103,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data: any) => {
                 form.setFieldsValue({
-                    justification_date: (moment(data?.justification_date) as any) || moment(),
+                    justification_date: data?.justification_date ? (moment(data?.justification_date) as any) : moment(),
                     no_agenda: data?.no_agenda || "",
                     value: data?.value || 0,
                     about_justification: data?.about_justification || "",
@@ -111,11 +111,11 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                     load_type_id: data?.load_type_id || "",
                     subunit_id: data?.subunit_id || "",
                     note: data?.note || "",
-                    event_date: (moment(data?.event_date) as any) || moment(),
-                    estimation_paydate: (moment(data?.estimation_paydate) as any) || moment(),
+                    event_date: data?.event_date ? (moment(data?.event_date) as any) : moment(),
+                    estimation_paydate: data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment(),
                     doc_justification: data?.doc_justification || "",
                 });
-                setValue("justification_date", (moment(data?.justification_date) as any) || moment());
+                setValue("justification_date", data?.justification_date ? (moment(data?.justification_date) as any) : moment());
                 setValue("no_agenda", data?.no_agenda || "");
                 setValue("value", data?.value || 0);
                 setValue("about_justification", data?.about_justification || "");
@@ -123,8 +123,8 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                 setValue("load_type_id", data?.load_type_id || "");
                 setValue("subunit_id", data?.subunit_id || "");
                 setValue("note", data?.note || "");
-                setValue("event_date", (moment(data?.event_date) as any) || moment());
-                setValue("estimation_paydate", (moment(data?.estimation_paydate) as any) || moment());
+                setValue("event_date", data?.event_date ? (moment(data?.event_date) as any) : moment());
+                setValue("estimation_paydate", data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment());
                 setValue("doc_justification", data?.doc_justification || "");
             },
         }

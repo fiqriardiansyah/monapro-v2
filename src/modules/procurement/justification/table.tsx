@@ -89,7 +89,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "Nilai",
             dataIndex: "value",
-            render: (text) => <p className="capitalize m-0">{parseInt(text, 10).ToIndCurrency("Rp")}</p>,
+            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Sub unit",

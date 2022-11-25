@@ -7,7 +7,6 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import { TDataLoadType } from "./models";
-import { datatable } from "./data";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -62,15 +61,6 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             dataIndex: "load_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        // {
-        //     title: "Nama Beban",
-        //     dataIndex: "load_name",
-        //     render: (text, record, i) => (
-        //         <Button onClick={() => onClickDetail(record)} className="capitalize" type="link">
-        //             {text}
-        //         </Button>
-        //     ),
-        // },
         {
             title: "Action",
             key: "action",

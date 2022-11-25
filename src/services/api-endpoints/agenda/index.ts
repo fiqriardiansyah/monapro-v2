@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { AgendaDataDisposition, BasePaginationResponse, SubUnitProcurement } from "models";
+import { AgendaDataDisposition, AgendaLoadType, BasePaginationResponse, SubUnitProcurement } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -11,6 +11,8 @@ class AgendaService extends BaseService {
     getSubUnit = "/agenda-data/get-subunit";
 
     getAgendaData = "/agenda-dispo/get-agenda-data";
+
+    getLoadType = "/agenda-finance/get-load-type";
 
     constructor() {
         super();
@@ -30,6 +32,16 @@ class AgendaService extends BaseService {
         return this.ProxyRequest<T>(async () => {
             const req = await ApiMethod.get<T>({
                 url: this.getAgendaData,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    GetLoadType<T extends AgendaLoadType[]>() {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.getLoadType,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

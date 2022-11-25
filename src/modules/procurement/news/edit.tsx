@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -52,17 +52,25 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const justificationQuery = useQuery([procurementService.getJustification], async () => {
-        const req = await procurementService.GetJustification();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.no_justification,
-                    value: el.justification_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const justificationQuery = useQuery(
+        [procurementService.getJustification],
+        async () => {
+            const req = await procurementService.GetJustification();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_justification,
+                        value: el.justification_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getJustification, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -72,7 +80,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         {
             onSuccess: (data) => {
                 form.setFieldsValue({
-                    justification_id: data?.no_justification || "",
+                    justification_id: data?.justification_id || "",
                     no_bap: data?.no_bap || "",
                     no_bar: data?.no_bar || "",
                     no_bapp: data?.no_bapp || "",
@@ -80,7 +88,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                     file_bar: data?.file_bar || "",
                     file_bapp: data?.file_bapp || "",
                 });
-                setValue("justification_id", data?.no_justification || ""); // [IMPORTANT] JUSTIFICATION_ID
+                setValue("justification_id", data?.justification_id || "");
                 setValue("no_bap", data?.no_bap || "");
                 setValue("no_bar", data?.no_bar || "");
                 setValue("no_bapp", data?.no_bapp || "");
@@ -110,9 +118,15 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataNews = {
+            ...data,
+            file_bap: null,
+            file_bapp: null,
+            file_bar: null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
             closeModal
@@ -144,7 +158,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

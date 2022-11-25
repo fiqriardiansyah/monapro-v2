@@ -1,8 +1,7 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { BasePaginationResponse, SubUnitData } from "models";
+import { SubUnitData } from "models";
 import AddSubUnit from "modules/masterdata/sub-unit/add";
-import DetailSubUnit from "modules/masterdata/sub-unit/detail";
 import EditSubUnit from "modules/masterdata/sub-unit/edit";
 import { TDataSubUnit } from "modules/masterdata/sub-unit/models";
 import SubUnitTable from "modules/masterdata/sub-unit/table";
@@ -132,18 +131,6 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
                     </button>
                 )}
             </EditSubUnit>
-            {/* <DetailSubUnit>
-                {(data) => (
-                    <button
-                        type="button"
-                        ref={detailTriggerRef}
-                        onClick={() => data.openModalWithData(detailTriggerRef.current?.dataset.data)}
-                        className="hidden"
-                    >
-                        detail
-                    </button>
-                )}
-            </DetailSubUnit> */}
             <Header
                 title="Sub Unit"
                 action={

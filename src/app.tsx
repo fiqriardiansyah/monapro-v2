@@ -5,6 +5,7 @@ import Layout from "components/common/layout";
 import {
     AGENDA_DATA_PATH,
     AGENDA_DISPOSITION_PATH,
+    AGENDA_FINANCE_PATH,
     DASHBOARD_PATH,
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
@@ -34,6 +35,7 @@ import FinancePage from "pages/procurement/finance";
 import JustificationPage from "pages/procurement/justification";
 import DashboardDetail from "pages/dashboard/detail";
 import { UserContext } from "context/user";
+import AgendaFinancePage from "pages/agenda/finance";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -55,6 +57,7 @@ function App() {
                         <Route path={MASTER_DATA_APPROVAL_POSITION_PATH} element={<ApprovalPositionPage />} />
                         <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
                         <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
+                        <Route path={AGENDA_FINANCE_PATH} element={<AgendaFinancePage />} />
                         <Route path={PROCUREMENT_JUSTIFICATION_PATH} element={<JustificationPage />} />
                         <Route path={PROCUREMENT_NEGOTIATION_PATH} element={<NegotiationPage />} />
                         <Route path={PROCUREMENT_CONTRACT_PATH} element={<ContractPage />} />

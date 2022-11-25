@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -9,12 +9,12 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { AgendaDisposition, SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import agendaDispositionService from "services/api-endpoints/agenda/agenda-disposition";
 import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataAgendaDisposition } from "./models";
 
 type ChildrenProps = {
@@ -25,7 +25,7 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: FDataAgendaDisposition, callback: () => void) => void;
+    onSubmit: (data: FDataAgendaDisposition & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
@@ -41,7 +41,7 @@ const schema: yup.SchemaOf<Partial<FDataAgendaDisposition>> = yup.object().shape
 });
 
 const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
-    const [prevData, setPrevData] = useState<FDataAgendaDisposition | null>(null);
+    const [prevData, setPrevData] = useState<AgendaDisposition | null>(null);
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -55,16 +55,24 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const getAgendaDataDisposition = useQuery([agendaService.getAgendaData], async () => {
-        const req = await agendaService.GetAgendaData();
-        return req.data.data.map(
-            (el) =>
-                ({
-                    label: el.no_agenda_secretariat,
-                    value: el.agenda_data_id,
-                } as SelectOption)
-        );
-    });
+    const getAgendaData = useQuery(
+        [agendaService.getAgendaData],
+        async () => {
+            const req = await agendaService.GetAgendaData();
+            return req.data.data.map(
+                (el) =>
+                    ({
+                        label: el.no_agenda_secretariat,
+                        value: el.agenda_data_id,
+                    } as SelectOption)
+            );
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: agendaService.getAgendaData, description: error?.message });
+            },
+        }
+    );
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -79,14 +87,14 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                     letter_no: data?.letter_no || "",
                     note: data?.note || "",
                     disposition_doc: data?.disposition_doc || "",
-                    disposition_date: (moment(data?.disposition_date) as any) || moment(),
+                    disposition_date: data?.disposition_date ? (moment(data?.disposition_date) as any) : moment(),
                 });
                 setValue("agenda_data_id", data?.agenda_data_id || "");
                 setValue("disposition_to", data?.disposition_to || "");
                 setValue("letter_no", data?.letter_no || "");
                 setValue("note", data?.note || "");
                 setValue("disposition_doc", data?.disposition_doc || "");
-                setValue("disposition_date", (moment(data?.disposition_date) as any) || moment());
+                setValue("disposition_date", data?.disposition_date ? (moment(data?.disposition_date) as any) : moment());
             },
         }
     );
@@ -110,9 +118,18 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        const parseData: FDataAgendaDisposition = {
+            ...data,
+            disposition_date: data.disposition_date ? moment(data.disposition_date).format(FORMAT_DATE) : "",
+            disposition_doc: null,
+        };
+        onSubmit(
+            {
+                ...parseData,
+                id: prevData?.id as any,
+            },
+            closeModal
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -140,7 +157,7 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || detailMutation.isLoading}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -156,8 +173,8 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     placeholder="Agenda data"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={getAgendaDataDisposition.isLoading}
-                                    options={getAgendaDataDisposition.data || []}
+                                    loading={getAgendaData.isLoading}
+                                    options={getAgendaData.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -166,7 +183,7 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     labelCol={{ xs: 12 }}
                                     name="disposition_to"
                                     label="Disposisi kepada"
-                                    placeholder="Nomor"
+                                    placeholder="Disposisi kepada"
                                 />
                             </Col>
                             <Col span={12}>

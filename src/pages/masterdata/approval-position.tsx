@@ -1,7 +1,7 @@
 import { Alert, Button, message } from "antd";
 import { AiOutlinePlus } from "react-icons/ai";
 import Header from "components/common/header";
-import { ApprovalPosition, BasePaginationResponse, BaseTableData } from "models";
+import { ApprovalPosition } from "models";
 import AddApprovalPosition from "modules/masterdata/approval-position/add";
 import { TDataApprovalPosition } from "modules/masterdata/approval-position/models";
 import ApprovalPositionTable from "modules/masterdata/approval-position/table";

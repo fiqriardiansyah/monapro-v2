@@ -1,12 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { Justification, SelectOption } from "models";
+import { SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
@@ -55,41 +55,65 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
-        const req = await procurementService.GetSubUnit();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.subunit_name,
-                    value: el.subunit_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const subUnitQuery = useQuery(
+        [procurementService.getSubUnit],
+        async () => {
+            const req = await procurementService.GetSubUnit();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.subunit_name,
+                        value: el.subunit_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getSubUnit, description: error?.message });
+            },
+        }
+    );
 
-    const loadTypeQuery = useQuery([procurementService.getLoadType], async () => {
-        const req = await procurementService.GetLoadType();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.load_name,
-                    value: el.load_type_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const loadTypeQuery = useQuery(
+        [procurementService.getLoadType],
+        async () => {
+            const req = await procurementService.GetLoadType();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.load_name,
+                        value: el.load_type_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getLoadType, description: error?.message });
+            },
+        }
+    );
 
-    const approvalQuery = useQuery([procurementService.getApprovalPosition], async () => {
-        const req = await procurementService.GetApprovalPosition();
-        const subunit = req.data.data?.map(
-            (el) =>
-                ({
-                    label: el.position,
-                    value: el.approval_position_id,
-                } as SelectOption)
-        );
-        return subunit;
-    });
+    const approvalQuery = useQuery(
+        [procurementService.getApprovalPosition],
+        async () => {
+            const req = await procurementService.GetApprovalPosition();
+            const subunit = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.position,
+                        value: el.approval_position_id,
+                    } as SelectOption)
+            );
+            return subunit;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getApprovalPosition, description: error?.message });
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;

@@ -1,4 +1,5 @@
-import { notification } from "antd";
+/* eslint-disable react/react-in-jsx-scope */
+import { Button, notification } from "antd";
 import axios from "axios";
 import { errorLogger, requestLogger, responseLogger } from "axios-logger";
 import Cookies from "js-cookie";
@@ -36,6 +37,11 @@ axiosClient.interceptors.response.use(
             notification.error({
                 message: "Authentication",
                 description: data.message || DEFAULT_ERROR_MESSAGE,
+                btn: (
+                    <Button type="primary" onClick={() => window.location.reload()}>
+                        Refresh
+                    </Button>
+                ),
             });
         }
         return process.env.NODE_ENV === "development" ? responseLogger(res) : res;
@@ -46,6 +52,11 @@ axiosClient.interceptors.response.use(
             notification.error({
                 message: "Authentication",
                 description: error.response?.message || DEFAULT_ERROR_MESSAGE,
+                btn: (
+                    <Button type="primary" onClick={() => window.location.reload()}>
+                        Refresh
+                    </Button>
+                ),
             });
         }
         return process.env.NODE_ENV === "development" ? errorLogger(error) : error;

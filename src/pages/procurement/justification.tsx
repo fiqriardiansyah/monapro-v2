@@ -20,7 +20,7 @@ const JustificationPage = <T extends TDataJustification>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([justificationService.getAll], async () => {
+    const getList = useQuery([justificationService.getAll, page], async () => {
         const res = await justificationService.GetAll<Justification>({ page });
         return Utils.toBaseTable<Justification, T>(res.data.data);
     });

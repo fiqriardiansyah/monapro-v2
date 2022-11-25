@@ -1,12 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Col, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { AgendaData, SelectOption, SubUnitProcurement } from "models";
+import { SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
@@ -14,7 +14,6 @@ import InputFile from "components/form/inputs/input-file";
 import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
-import { OptionProps } from "antd/lib/select";
 import moment from "moment";
 import { FDataAgenda } from "./models";
 
@@ -58,16 +57,24 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const subUnitQuery = useQuery([agendaService.getSubUnit], async () => {
-        const req = await agendaService.GetSubUnit();
-        return req.data.data.map(
-            (el) =>
-                ({
-                    label: el.subunit_name,
-                    value: el.subunit_id,
-                } as SelectOption)
-        );
-    });
+    const subUnitQuery = useQuery(
+        [agendaService.getSubUnit],
+        async () => {
+            const req = await agendaService.GetSubUnit();
+            return req.data.data.map(
+                (el) =>
+                    ({
+                        label: el.subunit_name,
+                        value: el.subunit_id,
+                    } as SelectOption)
+            );
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: agendaService.getSubUnit, description: error?.message });
+            },
+        }
+    );
 
     const closeModal = () => {
         if (loading) return;

@@ -1,9 +1,8 @@
-import { Alert, Descriptions, Image, Modal } from "antd";
+import { Alert, Descriptions, Modal } from "antd";
 import { ApprovalPosition } from "models";
 import React, { useState } from "react";
 import { useMutation } from "react-query";
 import approvalPositionService from "services/api-endpoints/masterdata/approval-position";
-import { DEFAULT_ERROR_MESSAGE, IMAGE_FALLBACK } from "utils/constant";
 
 type ChildrenProps = {
     isModalOpen: boolean;

@@ -1,20 +1,17 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
-import { AgendaData, AgendaDataLockBudgetData } from "models";
-import AddAgendaData from "modules/agenda/data/add";
-import EditAgendaData from "modules/agenda/data/edit";
-import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
-import AgendaDataTable from "modules/agenda/data/table";
+import { AgendaFinance, IsPaid } from "models";
+import AddAgendaFinance from "modules/agenda/finance/add";
+import EditAgendaFinance from "modules/agenda/finance/edit";
+import { FDataAgendaFinance } from "modules/agenda/finance/models";
+import AgendaFinanceTable from "modules/agenda/finance/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import agendaDataService from "services/api-endpoints/agenda/agenda-data";
-import Utils from "utils";
+import agendaFinanceService from "services/api-endpoints/agenda/agenda-finance";
 
-// [FINISH]
-
-const AgendaDataPage = <T extends TDataAgenda>() => {
+const AgendaFinancePage = <T extends AgendaFinance>() => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -22,34 +19,20 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([agendaDataService.getAll, page], async () => {
-        const res = await agendaDataService.GetAll<AgendaData>({ page });
-        return Utils.toBaseTable<AgendaData, T>(res.data.data);
+    const getList = useQuery([agendaFinanceService.getAll, page], async () => {
+        const req = await agendaFinanceService.GetAll({ page });
+        return req.data.data;
     });
 
-    const lockBudgetMutation = useMutation(
-        async (data: AgendaDataLockBudgetData) => {
-            await agendaDataService.LockBudget(data);
-        },
-        {
-            onSuccess: () => {
-                getList.refetch();
-                message.success("Budget Locked!");
-            },
-            onError: (error: any) => {
-                message.error(error?.message);
-            },
-        }
-    );
-
     const createMutation = useMutation(
-        async ({ data }: { data: FDataAgenda }) => {
-            await agendaDataService.Create(data as any);
+        async (data: FDataAgendaFinance) => {
+            // await agendaDispositionService.Create(data as any);
+            console.log(data);
         },
         {
             onSuccess: () => {
                 getList.refetch();
-                message.success("Agenda Data dibuat!");
+                message.success("Agenda Finance dibuat!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -58,13 +41,14 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
     );
 
     const editMutation = useMutation(
-        async ({ data }: { data: FDataAgenda }) => {
-            await agendaDataService.Edit(data as any);
+        async (data: FDataAgendaFinance) => {
+            // await agendaDispositionService.Edit(data as any);
+            console.log(data);
         },
         {
             onSuccess: () => {
                 getList.refetch();
-                message.success("Agenda Data diedit!");
+                message.success("Agenda Finance diedit!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -72,6 +56,20 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         }
     );
 
+    const setPaidMutation = useMutation(
+        async (data: IsPaid) => {
+            await agendaFinanceService.SetPaid(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Bayar dikunci!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
     // crud handler
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
@@ -79,16 +77,16 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
             editTriggerRef.current.click();
         }
     };
-    const onClickLockBudget = async (data: T, callback: () => void) => {
-        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
+    const onClickPaidHandler = async (data: any, callback: () => void) => {
+        await setPaidMutation.mutateAsync({ id: data.id, isPaid: 1 });
         callback();
     };
-    const addHandler = async (data: FDataAgenda, callback: () => void) => {
-        await createMutation.mutateAsync({ data });
+    const addHandler = async (data: FDataAgendaFinance, callback: () => void) => {
+        await createMutation.mutateAsync(data);
         callback();
     };
-    const editHandler = async (data: FDataAgenda, callback: () => void) => {
-        await editMutation.mutateAsync({ data });
+    const editHandler = async (data: FDataAgendaFinance, callback: () => void) => {
+        await editMutation.mutateAsync(data);
         callback();
     };
 
@@ -96,7 +94,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
 
     return (
         <div className="min-h-screen px-10">
-            <EditAgendaData loading={editMutation.isLoading} onSubmit={editHandler}>
+            <EditAgendaFinance loading={editMutation.isLoading} onSubmit={editHandler}>
                 {(data) => (
                     <button
                         type="button"
@@ -107,23 +105,23 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                         edit
                     </button>
                 )}
-            </EditAgendaData>
+            </EditAgendaFinance>
             <Header
-                title="Data Agenda"
+                title="Finance Agenda"
                 action={
-                    <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
+                    <AddAgendaFinance loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (
                             <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Agenda
+                                Tambah Agenda Finance
                             </Button>
                         )}
-                    </AddAgendaData>
+                    </AddAgendaFinance>
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <AgendaDataTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
+            <AgendaFinanceTable onClickEdit={onClickEdit} fetcher={getList} onClickPaid={onClickPaidHandler} />
         </div>
     );
 };
 
-export default AgendaDataPage;
+export default AgendaFinancePage;

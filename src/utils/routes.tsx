@@ -6,6 +6,7 @@ export const MASTER_DATA_LOAD_TYPE_PATH = "/masterdata/load-type";
 export const MASTER_DATA_APPROVAL_POSITION_PATH = "/masterdata/approval-position";
 export const AGENDA_DATA_PATH = "/agenda/data";
 export const AGENDA_DISPOSITION_PATH = "/agenda/disposition";
+export const AGENDA_FINANCE_PATH = "/agenda/finance";
 export const PROCUREMENT_JUSTIFICATION_PATH = "/procurement/justification";
 export const PROCUREMENT_NEGOTIATION_PATH = "/procurement/negotiation";
 export const PROCUREMENT_CONTRACT_PATH = "/procurement/contract";
