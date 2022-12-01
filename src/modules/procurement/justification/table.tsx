@@ -76,12 +76,12 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "Perihal",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Posisi",
             dataIndex: "position",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Beban",
@@ -96,7 +96,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "Sub unit",
             dataIndex: "subunit_name",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pembuat",
@@ -106,7 +106,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "Catatan",
             dataIndex: "note",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pelaksanaan acara",

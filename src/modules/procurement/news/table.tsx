@@ -44,7 +44,7 @@ const NewsTable = <T extends TDataNews>({ fetcher, onClickEdit }: Props<T>) => {
         {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "No BAP",

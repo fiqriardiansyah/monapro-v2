@@ -1,3 +1,4 @@
+import { Skeleton } from "antd";
 import React from "react";
 import { progressColor } from "../data";
 import { RemainingBudgetType } from "../models";
@@ -5,6 +6,15 @@ import ProgressCustome from "./progress-custome";
 
 type Props = {
     data: RemainingBudgetType;
+};
+
+const Loading = ({ title }: { title: string }) => {
+    return (
+        <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
+            <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">{title}</p>
+            <Skeleton paragraph={{ rows: 3 }} className="mt-4" />
+        </div>
+    );
 };
 
 const RemainingBudget = ({ data }: Props) => {
@@ -23,5 +33,7 @@ const RemainingBudget = ({ data }: Props) => {
         </div>
     );
 };
+
+RemainingBudget.Loading = Loading;
 
 export default RemainingBudget;

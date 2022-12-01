@@ -76,7 +76,7 @@ const AgendaFinancePage = <T extends AgendaFinance>() => {
         }
     };
     const onClickPaidHandler = async (data: any, callback: () => void) => {
-        await setPaidMutation.mutateAsync({ id: data.id, isPaid: 1 });
+        await setPaidMutation.mutateAsync({ id: data.id, is_paid: 1 });
         callback();
     };
     const addHandler = async (data: FDataAgendaFinance, callback: () => void) => {

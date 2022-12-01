@@ -1,3 +1,4 @@
+export const PROFILE_PATH = "/profile";
 export const SIGN_IN_PATH = "/signin";
 export const DASHBOARD_PATH = "/dashboard";
 export const MASTER_DATA_SUB_UNIT_PATH = "/masterdata/sub-unit";

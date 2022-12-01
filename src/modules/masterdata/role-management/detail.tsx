@@ -32,7 +32,7 @@ const DetailRole = ({ children }: Props) => {
     const openModalWithData = (data: string | undefined) => {
         if (data) {
             const parse = JSON.parse(data) as Role;
-            detailMutation.mutate(parse.id);
+            // detailMutation.mutate(parse.id);
             openModal();
         }
     };
@@ -57,7 +57,7 @@ const DetailRole = ({ children }: Props) => {
                         labelStyle={{ color: "#919EAB", width: 200 }}
                         bordered
                     >
-                        <Descriptions.Item label="ID">{detailMutation.data?.id}</Descriptions.Item>
+                        {/* <Descriptions.Item label="ID">{detailMutation.data?.id}</Descriptions.Item> */}
                         <Descriptions.Item label="Nama">{detailMutation.data?.full_name}</Descriptions.Item>
                         <Descriptions.Item label="Email">{detailMutation.data?.email}</Descriptions.Item>
                         <Descriptions.Item label="Status">{detailMutation.data?.role_id}</Descriptions.Item>

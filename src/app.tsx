@@ -16,6 +16,7 @@ import {
     PROCUREMENT_JUSTIFICATION_PATH,
     PROCUREMENT_NEGOTIATION_PATH,
     PROCUREMENT_NEWS_PATH,
+    PROFILE_PATH,
     SIGN_IN_PATH,
 } from "utils/routes";
 
@@ -36,6 +37,7 @@ import JustificationPage from "pages/procurement/justification";
 import DashboardDetail from "pages/dashboard/detail";
 import { UserContext } from "context/user";
 import AgendaFinancePage from "pages/agenda/finance";
+import ProfilePage from "pages/profile";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -50,6 +52,7 @@ function App() {
                 <Layout>
                     <Routes>
                         <Route path="/" element={<DashboardPage />} />
+                        <Route path={PROFILE_PATH} element={<ProfilePage />} />
                         <Route path={`${DASHBOARD_PATH}/:id`} element={<DashboardDetail />} />
                         <Route path={MASTER_DATA_SUB_UNIT_PATH} element={<SubUnitPage />} />
                         <Route path={MASTER_DATA_ROLE_MANAGE_PATH} element={<RoleManagementPage />} />

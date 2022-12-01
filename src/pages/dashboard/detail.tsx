@@ -59,7 +59,7 @@ const DashboardDetail = () => {
             <Header
                 back={() => (
                     <Link to="/">
-                        <Button type="text" icon={<IoMdArrowBack className="text-xl mr-3" />} className="!flex !items-center">
+                        <Button type="text" icon={<IoMdArrowBack className="text-xl mr-3" />} className="!flex !items-center !bg-gray-200">
                             Kembali
                         </Button>
                     </Link>

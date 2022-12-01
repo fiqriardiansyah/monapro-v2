@@ -22,12 +22,12 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
-    role_id: yup.string().required("Role id wajib diisi"),
-    role_name: yup.string().required("Role name wajib diisi"),
-    email: yup.string().required("Email wajib diisi"),
-    full_name: yup.string().required("Name wajib diisi"),
-});
+// const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
+//     role_id: yup.string().required("Role id wajib diisi"),
+//     role_name: yup.string().required("Role name wajib diisi"),
+//     email: yup.string().required("Email wajib diisi"),
+//     full_name: yup.string().required("Name wajib diisi"),
+// });
 
 const EditRole = ({ onSubmit, loading, children }: Props) => {
     const [prevData, setPrevData] = useState<Role | null>(null);
@@ -41,7 +41,7 @@ const EditRole = ({ onSubmit, loading, children }: Props) => {
         setValue,
     } = useForm<Role>({
         mode: "onChange",
-        resolver: yupResolver(schema),
+        // resolver: yupResolver(schema),
     });
 
     const detailMutation = useMutation(async (id: string) => {}, {
@@ -73,7 +73,7 @@ const EditRole = ({ onSubmit, loading, children }: Props) => {
             const dataParse = JSON.parse(data) as Role;
             setPrevData(dataParse);
             setIsModalOpen(true);
-            detailMutation.mutate(dataParse?.id as any);
+            // detailMutation.mutate(dataParse?.id as any);
         }
     };
 

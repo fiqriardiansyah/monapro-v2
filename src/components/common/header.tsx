@@ -3,10 +3,12 @@ import { UserContext } from "context/user";
 import React, { useContext, useState } from "react";
 import { FaUserCircle } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
+import { Link } from "react-router-dom";
 import Utils from "utils";
+import { PROFILE_PATH } from "utils/routes";
 
 type Props = {
-    title: string;
+    title?: string;
     action?: React.ReactNode;
     placeholderInput?: string;
     search?: boolean;
@@ -47,7 +49,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
     };
 
     return (
-        <div className="flex flex-col w-full mb-5 z-10 container mx-auto py-2 mt-5">
+        <div className="flex flex-col w-full 5 z-10 container mx-auto py-2 mt-5">
             <div className="w-full flex items-center justify-between">
                 <>
                     <Space className="">
@@ -67,7 +69,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                         </>
                     </Space>
                     {additional && additional()}
-                    {!search && !additional && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
+                    {title && !search && !additional && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
                     <Popover
                         content={
                             <div className="flex flex-col">
@@ -78,12 +80,14 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                             </div>
                         }
                         title={state.user?.fullname}
-                        trigger="click"
+                        trigger="hover"
                         open={open}
                         placement="leftTop"
                         onOpenChange={handleOpenChange}
                     >
-                        <FaUserCircle className="w-8 h-8 text-gray-400 cursor-pointer" />
+                        <Link to={PROFILE_PATH}>
+                            <FaUserCircle className="w-8 h-8 text-gray-400 cursor-pointer" />
+                        </Link>
                     </Popover>
                 </>
             </div>

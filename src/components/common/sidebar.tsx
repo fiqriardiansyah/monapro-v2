@@ -2,8 +2,18 @@ import React from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { MdDashboard } from "react-icons/md";
-import { AiFillDatabase } from "react-icons/ai";
-import { BsFillCalendarCheckFill } from "react-icons/bs";
+import { AiFillDatabase, AiOutlineDeploymentUnit } from "react-icons/ai";
+import { BsFillCalendarCheckFill, BsPersonCheck } from "react-icons/bs";
+import { HiClipboardDocumentCheck, HiOutlineBanknotes, HiScale } from "react-icons/hi2";
+import { TfiHandPointUp, TfiWrite } from "react-icons/tfi";
+import { CiMoneyBill } from "react-icons/ci";
+import { IoDocumentAttachOutline } from "react-icons/io5";
+import { GrNotes } from "react-icons/gr";
+import { CgNotes } from "react-icons/cg";
+import { GiTakeMyMoney } from "react-icons/gi";
+
+import MonaproImage from "assets/svgs/monapro.svg";
+import MonaproIcon from "assets/svgs/monapro-icon.svg";
 
 // utils
 import { useLocation, useNavigate } from "react-router-dom";
@@ -50,28 +60,28 @@ function Sidebar({ collapse }: Props) {
     const items: MenuProps["items"] = [
         getItem("Dashboard", "/", <MdDashboard />),
         getItem("Master Data", "master-data", <AiFillDatabase />, [
-            getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH),
-            getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH),
-            getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH),
+            getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
+            getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />),
+            getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />),
         ]),
         getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-            getItem("Data Agenda", AGENDA_DATA_PATH),
-            getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH),
-            getItem("Finance Agenda", AGENDA_FINANCE_PATH),
+            getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
+            getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />),
+            getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />),
         ]),
-        getItem("Procurement", "procurement", <AiFillDatabase />, [
-            getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH),
-            getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH),
-            getItem("Kontrak/SP/NOPES", PROCUREMENT_CONTRACT_PATH),
-            getItem("Berita Acara", PROCUREMENT_NEWS_PATH),
-            getItem("Finance", PROCUREMENT_FINANCE_PATH),
+        getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
+            getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
+            getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />),
+            getItem("Kontrak/SP/NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
+            getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
+            getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
     ];
 
     return (
         <div style={{ borderRight: "1px solid #e7e7e7" }} className="h-screen overflow-y-auto overflow-x-hidden pb-20">
-            <div className="w-full relative p-5">
-                <h1 className=" rounded-lg text-center">{collapse ? "M" : "MONAPRO"}</h1>
+            <div className="w-full relative p-5 flex justify-center">
+                <img src={collapse ? MonaproIcon : MonaproImage} alt="monapro" className="h-[80px]" />
             </div>
             <Menu onClick={onClick} defaultSelectedKeys={[DASHBOARD_PATH]} mode="inline" items={items} selectedKeys={[location.pathname]} />
         </div>

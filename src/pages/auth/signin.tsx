@@ -11,6 +11,9 @@ import Cookies from "js-cookie";
 import { UserContext } from "context/user";
 import authService from "services/api-endpoints/auth";
 
+import MonaproImage from "assets/svgs/monapro.svg";
+import Background from "assets/background.jpg";
+
 // [FINISH]
 
 const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
@@ -29,8 +32,13 @@ const SignInPage = () => {
 
     const signInMutation = useMutation(
         async (data: SignInEmailData) => {
-            const req = await authService.SignInEmail(data);
-            return req.data.data;
+            // const req = await authService.SignInEmail(data);
+            // return req.data.data;
+            return {
+                token: "$2a$10$gbVjlLpqVgBxqAxwuPrgQ.XvXR8qSBauRu1djwApYzlBY7qn",
+                fullname: "Dev Corcomm",
+                email: "dev.corcomm@gmail.com",
+            };
         },
         {
             onError: (error: any) => {
@@ -54,8 +62,9 @@ const SignInPage = () => {
 
     return (
         <div className=" w-full !h-screen overflow-y-hidden flex items-center justify-center flex-col">
+            <img src={Background} alt="" className="absolute w-full h-full object-cover" />
             <div className="flex flex-col items-center z-10">
-                <h1 className="text-3xl font-semibold">MONAPRO</h1>
+                <img src={MonaproImage} alt="monapro" className="h-[100px]" />
                 <div className="bg-white rounded-2xl w-40vw 2xl:w-[500px] p-10 shadow-xl z-10">
                     <Form
                         form={form}

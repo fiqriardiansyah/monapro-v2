@@ -102,7 +102,7 @@ const FinancePage = <T extends TDataFinance>() => {
 
     // crud handler
     const onClickPaidHandler = async (data: TDataFinance, callback: () => void) => {
-        await setPaidMutation.mutateAsync({ id: data.id, isPaid: 1 });
+        await setPaidMutation.mutateAsync({ id: data.id, is_paid: 1 });
         callback();
     };
     const onClickEdit = (data: T) => {

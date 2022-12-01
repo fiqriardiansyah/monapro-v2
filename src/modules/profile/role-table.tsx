@@ -1,21 +1,21 @@
-import React from "react";
-import { Button, Space, Table } from "antd";
+import React, { useState } from "react";
+import { Button, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
-import moment from "moment";
-import ButtonDownload from "components/common/button-donwload";
-import Utils from "utils";
-import { TDataNegotiation } from "./models";
+import { BasePaginationResponse, Role } from "models";
+import { ROLE } from "utils/constant";
 
-type Props<T> = {
-    fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
-    onClickEdit: (data: T) => void;
+type Props = {
+    fetcher: UseQueryResult<BasePaginationResponse<Role>, unknown>;
+    loading?: boolean;
+    onClickEdit: (data: Role) => void;
 };
 
-const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: Props<T>) => {
+const RoleManagementTable = <T extends Role>({ fetcher, onClickEdit, loading }: Props) => {
+    const [role, setRole] = useState<Role | null>(null);
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -30,7 +30,16 @@ const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: 
         });
     };
 
-    const columns: ColumnsType<T> = [
+    const editHandler = (record: Role) => {
+        if (!role) return;
+        onClickEdit({
+            ...record,
+            role_id: role.role_id,
+        });
+        setRole(null);
+    };
+
+    const columns: ColumnsType<Role> = [
         {
             width: "50px",
             title: "No",
@@ -38,41 +47,29 @@ const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: 
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "No Justifikasi",
-            dataIndex: "no_justification",
+            title: "Full Name",
+            dataIndex: "full_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Perihal Justifikasi",
-            dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
+            title: "Role Name",
+            dataIndex: "role_name",
+            render: (text, record) => (
+                <Select defaultValue={record.role_id} onChange={(value) => setRole({ ...record, role_id: value })} options={ROLE} />
+            ),
         },
         {
-            title: "Tanggal Negosiasi",
-            dataIndex: "negotiation_date",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+            title: "Email",
+            dataIndex: "email",
+            render: (text) => <p className="lowercase m-0">{text}</p>,
         },
         {
-            title: "Catatan",
-            dataIndex: "note",
-            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
-        },
-        {
-            title: "Dokumen",
-            dataIndex: "doc_negotiation",
-            render: (url, record) => {
-                if (!url) return "-";
-                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Negosiasi_${record.id}` })} />;
-            },
-        },
-        {
-            width: "100px",
             title: "Action",
             key: "action",
             fixed: "right",
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
+                    <Button type={role && role.email === record.email ? "primary" : "text"} onClick={() => editHandler(record)}>
                         Edit
                     </Button>
                 </Space>
@@ -83,7 +80,7 @@ const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: 
     return (
         <Table
             size="small"
-            loading={fetcher.isLoading}
+            loading={fetcher.isLoading || loading}
             columns={columns}
             dataSource={fetcher.data?.list || []}
             className="w-full"
@@ -97,4 +94,4 @@ const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: 
     );
 };
 
-export default NegotiationTable;
+export default RoleManagementTable;

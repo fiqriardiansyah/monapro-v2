@@ -69,7 +69,7 @@ const AgendaFinanceTable = <T extends AgendaFinance>({ fetcher, onClickEdit, onC
         {
             title: "Perihal",
             dataIndex: "about",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Nomor Finnest",
@@ -119,7 +119,7 @@ const AgendaFinanceTable = <T extends AgendaFinance>({ fetcher, onClickEdit, onC
         {
             title: "Catatan",
             dataIndex: "note",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             width: "200px",

@@ -20,12 +20,13 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
-    role_id: yup.string().required("Role id wajib diisi"),
-    role_name: yup.string().required("Role name wajib diisi"),
-    email: yup.string().required("Email wajib diisi"),
-    full_name: yup.string().required("Name wajib diisi"),
-});
+// const schema: yup.SchemaOf<Omit<Role, "id">> = yup.object().shape({
+//     user_id: yup.string().required("Role id wajib diisi"),
+//     role_id: yup.string().required("Role id wajib diisi"),
+//     role_name: yup.string().required("Role name wajib diisi"),
+//     email: yup.string().required("Email wajib diisi"),
+//     full_name: yup.string().required("Name wajib diisi"),
+// });
 
 const AddRole = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
@@ -36,7 +37,7 @@ const AddRole = ({ onSubmit, loading, children }: Props) => {
         formState: { isValid },
     } = useForm<Role>({
         mode: "onChange",
-        resolver: yupResolver(schema),
+        // resolver: yupResolver(schema),
     });
 
     const closeModal = () => {

@@ -45,7 +45,7 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
         {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "No Kontrak",
@@ -55,7 +55,7 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
         {
             title: "Perihal Data Manage",
             dataIndex: "about_manage",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Tanggal",

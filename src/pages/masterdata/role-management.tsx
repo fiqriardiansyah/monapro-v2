@@ -26,7 +26,7 @@ const RoleManagementPage = <T extends TDataRoleManagement>() => {
     // crud fetcher
     const getList = useQuery([roleManagementService.getAll, page], async () => {
         const res = await roleManagementService.GetAll<Role>({ page });
-        return Utils.toBaseTable<Role, T>(res.data.data);
+        // return Utils.toBaseTable<Role, T>(res.data.data);
     });
 
     const deleteMutation = useMutation(async ({ id, callback }: { id: string; callback: () => void }) => {});
@@ -112,7 +112,7 @@ const RoleManagementPage = <T extends TDataRoleManagement>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <RoleManagementTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} />
+            {/* <RoleManagementTable onClickEdit={onClickEdit} onClickDetail={onClickDetail} onClickDelete={onClickDelete} fetcher={getList} /> */}
         </div>
     );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { Alert, Divider, Progress, Skeleton, Tooltip } from "antd";
+import { Alert, Card, Divider, Progress, Skeleton, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -25,6 +25,11 @@ const DashboardPage = () => {
         Chart.register(...registerables);
     }
 
+    const getAllHeader = useQuery([dashboardService.getAllHeader], async () => {
+        const res = await dashboardService.GetAllHeader();
+        return res.data.data;
+    });
+
     const remainingBudgetQuery = useQuery([dashboardService.getRemainingBudget], async () => {
         const res = await dashboardService.GetRemainingBudget();
         return res.data.data;
@@ -41,19 +46,68 @@ const DashboardPage = () => {
         <div className="min-h-screen px-10">
             <Header title="Dashboard" />
             <div className="grid grid-cols-3 grid-rows-3 gap-4 mb-10">
-                {mainBudget.map((budget) => (
-                    <RemainingBudget data={budget} key={budget.title} />
-                ))}
+                <State data={getAllHeader.data} isLoading={getAllHeader.isLoading} isError={getAllHeader.isError}>
+                    {(state) => (
+                        <>
+                            <State.Data state={state}>
+                                {getAllHeader.data?.total_usage &&
+                                    getAllHeader.data.total_usage?.map((el, i) => (
+                                        <RemainingBudget
+                                            data={{ title: "Total Pemaikaian", budget: el.total_usage, percent: el.percentage_total }}
+                                            key={i}
+                                        />
+                                    ))}
+                                {getAllHeader.data?.remaining_usage &&
+                                    getAllHeader.data.remaining_usage?.map((el, i) => (
+                                        <RemainingBudget
+                                            data={{ title: "Sisa Pemaikaian", budget: el.remaining_usage, percent: el.percentage_remaining }}
+                                            key={i}
+                                        />
+                                    ))}
+                            </State.Data>
+                            <State.Loading state={state}>
+                                <RemainingBudget.Loading title="Total Pemakaian" />
+                                <RemainingBudget.Loading title="Sisa Pemakaian" />
+                            </State.Loading>
+                            <State.Error state={state}>
+                                <Alert message={(getAllHeader.error as any)?.message} type="error" />
+                            </State.Error>
+                        </>
+                    )}
+                </State>
                 <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
-                    <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">Total Aktivitas</p>
-                    <div className="w-full flex justify-between items-center">
-                        <p className="m-0 font-medium">Sponsorship</p>
-                        <p className="m-0 font-bold text-gray-500 text-xl">Rp. 200.000.000</p>
-                    </div>
-                    <div className="w-full flex justify-between items-center">
-                        <p className="m-0 font-medium">Procurement</p>
-                        <p className="m-0 font-bold text-gray-500 text-xl">Rp. 350.000.000</p>
-                    </div>
+                    <State data={getAllHeader.data} isLoading={getAllHeader.isLoading} isError={getAllHeader.isError}>
+                        {(state) => (
+                            <>
+                                <State.Data state={state}>
+                                    <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">Total Aktivitas</p>
+                                    {getAllHeader.data?.total_activity &&
+                                        getAllHeader.data?.total_activity?.map((el, i) => (
+                                            <React.Fragment key={i}>
+                                                <div className="w-full flex justify-between items-center">
+                                                    <p className="m-0 font-medium">Sponsorship</p>
+                                                    <p className="m-0 font-bold text-gray-500 text-xl">
+                                                        {!Number.isNaN(el.sponsorship) ? Number(el.sponsorship).ToIndCurrency("Rp") : "-"}
+                                                    </p>
+                                                </div>
+                                                <div className="w-full flex justify-between items-center">
+                                                    <p className="m-0 font-medium">Procurement</p>
+                                                    <p className="m-0 font-bold text-gray-500 text-xl">
+                                                        {!Number.isNaN(el.procurement) ? Number(el.procurement).ToIndCurrency("Rp") : "-"}
+                                                    </p>
+                                                </div>
+                                            </React.Fragment>
+                                        ))}
+                                </State.Data>
+                                <State.Loading state={state}>
+                                    <RemainingBudget.Loading title="Total Aktifitas" />
+                                </State.Loading>
+                                <State.Error state={state}>
+                                    <Alert message={(getAllHeader.error as any)?.message} type="error" />
+                                </State.Error>
+                            </>
+                        )}
+                    </State>
                 </div>
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <Line data={dataRevenue} />

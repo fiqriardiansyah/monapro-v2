@@ -13,7 +13,7 @@ export const progressColor: { color: string; min: number }[] = [
     },
     {
         color: "#FF7E7E",
-        min: 0,
+        min: -1,
     },
 ];
 

@@ -60,7 +60,7 @@ const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickE
         {
             title: "Perihal",
             dataIndex: "about",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pengirim",
@@ -75,7 +75,7 @@ const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickE
         {
             title: "Catatan",
             dataIndex: "note",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Catatan disposisi",

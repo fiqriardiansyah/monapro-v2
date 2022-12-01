@@ -106,7 +106,7 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal width={800} confirmLoading={loading} title="Tambah Negosiasi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Kontrak" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -146,7 +146,7 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
                                     labelCol={{ xs: 24 }}
                                     name="about_manage"
                                     label="Perihal"
-                                    placeholder="Perihal"
+                                    placeholder="Perihal Data Manage"
                                 />
                             </Col>
                             <Col span={12}>

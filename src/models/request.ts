@@ -266,7 +266,7 @@ export interface FinanceDetailPath {
 
 export interface IsPaid {
     id: string | number;
-    isPaid: string | number;
+    is_paid: string | number;
 }
 
 // dashboard subunit detail
@@ -286,4 +286,14 @@ export interface GetAgendaSubUnitPathParam {
 export interface GetJustificationSubUnitPathParam {
     id: string | number;
     page: number | string;
+}
+
+// PROFILE
+export interface GetRoleProfileParam {
+    page: string | number;
+}
+
+export interface EditRoleData {
+    user_id: number | string;
+    role_id: number | string;
 }

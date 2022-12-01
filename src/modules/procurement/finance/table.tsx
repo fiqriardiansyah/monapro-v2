@@ -67,7 +67,7 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Tanggal TEL21/SPB",
@@ -92,7 +92,7 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "Catatan",
             dataIndex: "note",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Berkas Tagihan",

@@ -9,6 +9,12 @@ export interface AuthData {
     phone: any;
 }
 
+export interface Profile extends Omit<AuthData, "is_new" | "token" | "phone" | "fullname"> {
+    profile_image: string | null;
+    full_name: string;
+    _?: any;
+}
+
 export interface BaseTableData {
     key: string | number;
     id: string | number;
@@ -27,8 +33,8 @@ export interface SubUnitData {
 }
 
 export interface Role {
-    id: number | string;
-    role_id: number | string;
+    user_id: number;
+    role_id: number;
     role_name: string;
     full_name: string;
     email: string;

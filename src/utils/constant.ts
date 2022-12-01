@@ -52,6 +52,17 @@ export const DECISION = [
     },
 ];
 
+export const ROLE = [
+    {
+        value: 1,
+        label: "Super Admin",
+    },
+    {
+        value: 2,
+        label: "Employee",
+    },
+];
+
 export const COLORS = [
     "rgb(0, 158, 255)",
     "rgb(244, 157, 26)",

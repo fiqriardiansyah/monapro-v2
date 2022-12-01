@@ -210,7 +210,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                     labelCol={{ xs: 24 }}
                                     name="about_manage"
                                     label="Perihal"
-                                    placeholder="Perihal"
+                                    placeholder="Perihal Data Manage"
                                 />
                             </Col>
                             <Col span={12}>
