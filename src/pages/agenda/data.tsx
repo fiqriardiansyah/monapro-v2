@@ -19,14 +19,18 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 const AgendaDataPage = <T extends TDataAgenda>() => {
     const { notificationInstance } = useContext(StateContext);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([agendaDataService.getAll, page], async () => {
+    const getList = useQuery([query ? agendaDataService.search : agendaDataService.getAll, page, query], async () => {
+        if (query) {
+            const res = await agendaDataService.Search<AgendaData>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<AgendaData, T>(res.data.data);
+        }
         const res = await agendaDataService.GetAll<AgendaData>({ page });
         return Utils.toBaseTable<AgendaData, T>(res.data.data);
     });
@@ -121,6 +125,10 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -138,6 +146,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 )}
             </EditAgendaData>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Data Agenda"
                 action={
                     <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>

@@ -32,7 +32,7 @@ const Layout = ({ children }: Props) => {
                 >
                     <Sidebar collapse={collapsed} />
                 </LayoutAntd.Sider>
-                <LayoutAntd style={{ marginLeft: collapsed ? 80 : 300, transition: "all .4s" }} className="w-screen">
+                <LayoutAntd style={{ marginLeft: collapsed ? 80 : 300, transition: "all .4s", background: "#f4f4f4" }} className="w-screen">
                     <LayoutAntd.Content>{children}</LayoutAntd.Content>
                 </LayoutAntd>
             </LayoutAntd>

@@ -26,21 +26,21 @@ const SubUnitAnalytic = ({ data }: Props) => {
                             <React.Fragment key={i}>
                                 <div className="bg-white p-3 rounded-md flex flex-col items-center">
                                     <p className="m-0 font-medium text-gray-400">PEMAKAIAN</p>
-                                    <p className="m-0 text-blue-400 font-bold text-xl my-3">
+                                    <p className="m-0 text-blue-400 font-medium text-lg my-3">
                                         {!Number.isNaN(analytic.total_usage) ? Number(analytic.total_usage).ToIndCurrency("Rp") : "-"}
                                     </p>
                                     <img src={BlueWaveImage} alt="" className="w-full" />
                                 </div>
                                 <div className="bg-white p-3 rounded-md flex flex-col items-center">
                                     <p className="m-0 font-medium text-gray-400">SUDAH DIBAYAR</p>
-                                    <p className="m-0 text-orange-400 font-bold text-xl my-3">
+                                    <p className="m-0 text-orange-400 font-medium text-lg my-3">
                                         {!Number.isNaN(analytic.total_paid) ? Number(analytic.total_paid).ToIndCurrency("Rp") : "-"}
                                     </p>
                                     <img src={OrangeWaveImage} alt="" className="w-full" />
                                 </div>
                                 <div className="bg-white p-3 rounded-md flex flex-col items-center">
                                     <p className="m-0 font-medium text-gray-400">BELUM DIBAYAR</p>
-                                    <p className="m-0 text-green-400 font-bold text-xl my-3">
+                                    <p className="m-0 text-green-400 font-medium text-lg my-3">
                                         {!Number.isNaN(analytic.not_paid) ? Number(analytic.not_paid).ToIndCurrency("Rp") : "-"}
                                     </p>
                                     <img src={GreenWaveImage} alt="" className="w-full" />
@@ -49,10 +49,10 @@ const SubUnitAnalytic = ({ data }: Props) => {
                         ))}
                     </div>
                 </div>
-                <div className="col-span-1">
-                    <div className="bg-white p-3 rounded-md">
+                <div className="col-span-1 h-full">
+                    <div className="bg-white p-3 rounded-md h-full">
                         <p className="m-0 font-medium text-gray-400">Recently News</p>
-                        <p className="mt-2">-</p>
+                        <p className="mt-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores architecto illo quia</p>
                     </div>
                 </div>
             </div>

@@ -17,14 +17,18 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 const NewsPage = <T extends TDataNews>() => {
     const { notificationInstance } = useContext(StateContext);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([newsService.getAll, page], async () => {
+    const getList = useQuery([query ? newsService.search : newsService.getAll, page, query], async () => {
+        if (query) {
+            const req = await newsService.Search({ page: page as any, query: query as any });
+            return req.data.data;
+        }
         const req = await newsService.GetAll({ page });
         return req.data.data;
     });
@@ -100,6 +104,10 @@ const NewsPage = <T extends TDataNews>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -117,6 +125,7 @@ const NewsPage = <T extends TDataNews>() => {
                 )}
             </EditNews>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Berita Acara"
                 action={
                     <AddNews loading={createMutation.isLoading} onSubmit={addHandler}>

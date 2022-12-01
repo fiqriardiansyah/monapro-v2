@@ -15,7 +15,7 @@ import Utils from "utils";
 // [FINISH]
 
 const LoadTypePage = <T extends TDataLoadType>() => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
@@ -23,7 +23,11 @@ const LoadTypePage = <T extends TDataLoadType>() => {
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([loadTypeService.getAll, page], async () => {
+    const getList = useQuery([query ? loadTypeService.search : loadTypeService.getAll, page, query], async () => {
+        if (query) {
+            const res = await loadTypeService.Search<LoadType>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<LoadType, T>(res.data.data);
+        }
         const res = await loadTypeService.GetAll<LoadType>({ page });
         return Utils.toBaseTable<LoadType, T>(res.data.data);
     });
@@ -113,6 +117,10 @@ const LoadTypePage = <T extends TDataLoadType>() => {
         });
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, deleteMutation, createMutation, editMutation];
 
     return (
@@ -130,6 +138,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
                 )}
             </EditLoadType>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Jenis Beban"
                 action={
                     <AddLoadType loading={createMutation.isLoading} onSubmit={addHandler}>

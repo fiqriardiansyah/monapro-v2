@@ -15,7 +15,7 @@ import Utils from "utils";
 // [FINISH]
 
 const SubUnitPage = <T extends TDataSubUnit>() => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
@@ -23,7 +23,11 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([subUnitService.getAll, page], async () => {
+    const getList = useQuery([query ? subUnitService.search : subUnitService.getAll, page, query], async () => {
+        if (query) {
+            const res = await subUnitService.Search<SubUnitData>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<SubUnitData, T>(res.data.data);
+        }
         const res = await subUnitService.GetAll<SubUnitData>({ page });
         return Utils.toBaseTable<SubUnitData, T>(res.data.data);
     });
@@ -115,6 +119,10 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
         });
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, deleteMutation, createMutation, editMutation];
 
     return (
@@ -132,6 +140,7 @@ const SubUnitPage = <T extends TDataSubUnit>() => {
                 )}
             </EditSubUnit>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Sub Unit"
                 action={
                     <AddSubUnit loading={createMutation.isLoading} onSubmit={addHandler}>

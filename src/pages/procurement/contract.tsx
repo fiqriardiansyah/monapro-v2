@@ -17,14 +17,18 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 const ContractPage = <T extends TDataContractSpNopes>() => {
     const { notificationInstance } = useContext(StateContext);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([contractService.getAll, page], async () => {
+    const getList = useQuery([query ? contractService.search : contractService.getAll, page, query], async () => {
+        if (query) {
+            const req = await contractService.Search({ page: page as any, query: query as any });
+            return req.data.data;
+        }
         const req = await contractService.GetAll({ page });
         return req.data.data;
     });
@@ -100,6 +104,10 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -117,6 +125,7 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
                 )}
             </EditContractSpNopes>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Kontrak/SP/NOPES"
                 action={
                     <AddContract loading={createMutation.isLoading} onSubmit={addHandler}>

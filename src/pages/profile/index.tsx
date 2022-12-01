@@ -11,6 +11,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import profileService from "services/api-endpoints/profile";
+import ProfileImage from "assets/profile.jpeg";
 
 const ProfilePage = () => {
     const [searchParams] = useSearchParams();
@@ -63,12 +64,13 @@ const ProfilePage = () => {
                             <span className="">Hi, {getProfile.data?.full_name} selamat datang kembali</span>
                             <Card className="!mt-6 !w-full">
                                 <div className="w-full flex items-center gap-6">
-                                    {getProfile.data?.profile_image ? (
+                                    {/* {getProfile.data?.profile_image ? (
                                         <img src={getProfile.data.profile_image} alt="" className="w-36 h-36 bg-gray-200 rounded-full" />
                                     ) : (
                                         <FaUserCircle className="w-36 h-36 text-gray-300 cursor-pointer" />
-                                    )}
-                                    <div className="grid grid-cols-2 gap-6 flex-1">
+                                    )} */}
+                                    <img src={ProfileImage} alt="" className="w-36 h-36 bg-gray-200 rounded-full object-cover" />
+                                    <div className="w-[400px] gap-4 flex flex-col">
                                         <Input disabled value={getProfile.data?.full_name} name="full_name" />
                                         <Input disabled value={getProfile.data?.email} name="email" />
                                     </div>

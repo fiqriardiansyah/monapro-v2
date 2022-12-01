@@ -18,8 +18,25 @@ class AgendaDispositionService extends BaseService {
 
     getAgendaData = "/agenda-dispo/get-agenda-data";
 
+    search = "/agenda-dispo/search-agenda-disposition";
+
     constructor() {
         super();
+    }
+
+    Search<T = any>(param: Models.SearchParam) {
+        return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<BasePaginationResponse<T>>({
+                url: this.search,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     GetAll<T = any>(param: Models.AgendaDispositionGetAllParam) {

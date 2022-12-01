@@ -297,3 +297,8 @@ export interface EditRoleData {
     user_id: number | string;
     role_id: number | string;
 }
+
+export interface SearchParam {
+    query: string;
+    page: number;
+}

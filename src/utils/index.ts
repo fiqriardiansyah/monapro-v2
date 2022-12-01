@@ -143,6 +143,6 @@ export default class Utils {
 
     static remainPercent(remaining: number, total: number) {
         const percent = 100
-        return ((remaining * percent) / total)
+        return (total - remaining) / total * percent;
     }
 }

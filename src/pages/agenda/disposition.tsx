@@ -18,14 +18,18 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 const AgendaDispositionPage = <T extends AgendaDisposition>() => {
     const { notificationInstance } = useContext(StateContext);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([agendaDispositionService.getAll, page], async () => {
+    const getList = useQuery([query ? agendaDispositionService.search : agendaDispositionService.getAll, page, query], async () => {
+        if (query) {
+            const req = await agendaDispositionService.Search({ page: page as any, query: query as any });
+            return req.data.data;
+        }
         const req = await agendaDispositionService.GetAll({ page });
         return req.data.data;
     });
@@ -101,6 +105,10 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -118,6 +126,7 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
                 )}
             </EditAgendaDisposition>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Disposisi Agenda"
                 action={
                     <AddAgendaDisposition loading={createMutation.isLoading} onSubmit={addHandler}>

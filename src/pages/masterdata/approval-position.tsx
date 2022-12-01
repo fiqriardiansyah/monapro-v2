@@ -16,7 +16,7 @@ import { useSearchParams } from "react-router-dom";
 // [FINISH]
 
 const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
@@ -24,7 +24,11 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
     const detailTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([approvalPositionService.getAll, page], async () => {
+    const getList = useQuery([query ? approvalPositionService.search : approvalPositionService.getAll, page, query], async () => {
+        if (query) {
+            const res = await approvalPositionService.Search<ApprovalPosition>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<ApprovalPosition, T>(res.data.data);
+        }
         const res = await approvalPositionService.GetAll<ApprovalPosition>({ page });
         return Utils.toBaseTable<ApprovalPosition, T>(res.data.data);
     });
@@ -115,6 +119,10 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
         });
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, deleteMutation, createMutation, editMutation];
 
     return (
@@ -132,6 +140,7 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
                 )}
             </EditApprovalPosition>
             <Header
+                onSubmitSearch={onSearchHandler}
                 title="Jabatan Approval"
                 action={
                     <AddApprovalPosition loading={createMutation.isLoading} onSubmit={addHandler}>

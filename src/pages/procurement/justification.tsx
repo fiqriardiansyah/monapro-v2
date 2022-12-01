@@ -17,14 +17,18 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 const JustificationPage = <T extends TDataJustification>() => {
     const { notificationInstance } = useContext(StateContext);
 
-    const [searchParams] = useSearchParams();
+    const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
 
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([justificationService.getAll, page], async () => {
+    const getList = useQuery([query ? justificationService.search : justificationService.getAll, page, query], async () => {
+        if (query) {
+            const res = await justificationService.Search<Justification>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<Justification, T>(res.data.data);
+        }
         const res = await justificationService.GetAll<Justification>({ page });
         return Utils.toBaseTable<Justification, T>(res.data.data);
     });
@@ -119,6 +123,10 @@ const JustificationPage = <T extends TDataJustification>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -137,6 +145,7 @@ const JustificationPage = <T extends TDataJustification>() => {
             </EditJustification>
             <Header
                 title="Justifikasi"
+                onSubmitSearch={onSearchHandler}
                 action={
                     <AddJustification loading={createMutation.isLoading} onSubmit={addHandler}>
                         {(data) => (

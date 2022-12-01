@@ -223,7 +223,7 @@ export interface RemainingBudget {
     id: number;
     subunit_name: string;
     budget: number;
-    remaining_budget: number;
+    total_usage: number;
 }
 
 export interface AnalyticSubUnit {

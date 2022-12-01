@@ -9,7 +9,7 @@ import BlueWaveImage from "assets/svgs/blue-wave.svg";
 import GreenWaveImage from "assets/svgs/green-wave.svg";
 import OrangeWaveImage from "assets/svgs/orange-wave.svg";
 import { Link } from "react-router-dom";
-import { dataRevenueDefault, mainBudget } from "modules/dashboard/data";
+import { mainBudget, randomRevenue } from "modules/dashboard/data";
 import RemainingBudget from "modules/dashboard/component/remaining-budget";
 import ProgressCustome from "modules/dashboard/component/progress-custome";
 import { DASHBOARD_PATH } from "utils/routes";
@@ -20,27 +20,52 @@ import { COLORS } from "utils/constant";
 import Utils from "utils";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 
+export const dataRevenueDefault = {
+    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"],
+    datasets: [],
+    options: {
+        responsive: true,
+    },
+};
+
 const DashboardPage = () => {
     if (typeof window !== "undefined") {
         Chart.register(...registerables);
     }
+
+    const [chartData, setChartData] = useState(dataRevenueDefault);
 
     const getAllHeader = useQuery([dashboardService.getAllHeader], async () => {
         const res = await dashboardService.GetAllHeader();
         return res.data.data;
     });
 
-    const remainingBudgetQuery = useQuery([dashboardService.getRemainingBudget], async () => {
-        const res = await dashboardService.GetRemainingBudget();
-        return res.data.data;
-    });
+    const remainingBudgetQuery = useQuery(
+        [dashboardService.getRemainingBudget],
+        async () => {
+            const res = await dashboardService.GetRemainingBudget();
+            return res.data.data;
+        },
+        {
+            onSuccess: (data) => {
+                setChartData((prev) => ({
+                    ...prev,
+                    datasets: [...data].map((el, i) => ({
+                        label: el.subunit_name,
+                        data: randomRevenue[i] ?? randomRevenue[0],
+                        backgroundColor: COLORS[i],
+                        borderColor: COLORS[i],
+                        borderWidth: 1,
+                    })) as any,
+                }));
+            },
+        }
+    );
 
     const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit], async () => {
         const res = await dashboardService.GetAnalyticSubUnit();
         return res.data.data;
     });
-
-    const [dataRevenue, setDataRevenue] = useState(dataRevenueDefault);
 
     return (
         <div className="min-h-screen px-10">
@@ -53,14 +78,14 @@ const DashboardPage = () => {
                                 {getAllHeader.data?.total_usage &&
                                     getAllHeader.data.total_usage?.map((el, i) => (
                                         <RemainingBudget
-                                            data={{ title: "Total Pemaikaian", budget: el.total_usage, percent: el.percentage_total }}
+                                            data={{ title: "Total Pemakaian", budget: el.total_usage, percent: el.percentage_total }}
                                             key={i}
                                         />
                                     ))}
                                 {getAllHeader.data?.remaining_usage &&
                                     getAllHeader.data.remaining_usage?.map((el, i) => (
                                         <RemainingBudget
-                                            data={{ title: "Sisa Pemaikaian", budget: el.remaining_usage, percent: el.percentage_remaining }}
+                                            data={{ title: "Sisa Pemakaian", budget: el.remaining_usage, percent: el.percentage_remaining }}
                                             key={i}
                                         />
                                     ))}
@@ -86,13 +111,13 @@ const DashboardPage = () => {
                                             <React.Fragment key={i}>
                                                 <div className="w-full flex justify-between items-center">
                                                     <p className="m-0 font-medium">Sponsorship</p>
-                                                    <p className="m-0 font-bold text-gray-500 text-xl">
+                                                    <p className="m-0 font-medium text-gray-500 text-lg">
                                                         {!Number.isNaN(el.sponsorship) ? Number(el.sponsorship).ToIndCurrency("Rp") : "-"}
                                                     </p>
                                                 </div>
                                                 <div className="w-full flex justify-between items-center">
                                                     <p className="m-0 font-medium">Procurement</p>
-                                                    <p className="m-0 font-bold text-gray-500 text-xl">
+                                                    <p className="m-0 font-medium text-gray-500 text-lg">
                                                         {!Number.isNaN(el.procurement) ? Number(el.procurement).ToIndCurrency("Rp") : "-"}
                                                     </p>
                                                 </div>
@@ -110,10 +135,10 @@ const DashboardPage = () => {
                     </State>
                 </div>
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
-                    <Line data={dataRevenue} />
+                    <Line data={chartData} />
                 </div>
                 <div className="p-3 bg-white rounded-md row-span-2">
-                    <p className="m-0 font-medium text-gray-400 mb-2">Sisa Anggaran Tiap Sub Unit</p>
+                    <p className="m-0 font-medium text-gray-400 mb-6 capitalize">anggaran terpakai tiap unit</p>
                     <State data={remainingBudgetQuery.data} isLoading={remainingBudgetQuery.isLoading} isError={remainingBudgetQuery.isError}>
                         {(state) => (
                             <>
@@ -122,15 +147,15 @@ const DashboardPage = () => {
                                         return (
                                             <Tooltip
                                                 placement="left"
-                                                title={`Sisa Anggaran: ${el.remaining_budget ? el.remaining_budget.ToIndCurrency("Rp") : "-"} / ${
-                                                    el.budget
-                                                }`}
+                                                title={`Anggaran Terpakai: ${
+                                                    !Number.isNaN(el.total_usage) ? el.total_usage.ToIndCurrency("Rp") : "-"
+                                                } / ${el.budget?.ToIndCurrency("Rp")}`}
                                                 key={el.id}
                                             >
                                                 <div className="flex flex-col w-full mb-3">
-                                                    <p className="m-0 text-gray-400 capitalize font-medium">{el.subunit_name}</p>
+                                                    <p className="m-0 text-gray-400 capitalize text-xs">{el.subunit_name}</p>
                                                     <Progress
-                                                        percent={Math.floor(Utils.remainPercent(el.remaining_budget, el.budget))}
+                                                        percent={Math.floor(Utils.remainPercent(el.total_usage, el.budget))}
                                                         showInfo={false}
                                                         status="active"
                                                         strokeColor={{ from: COLORS[i], to: COLORS[i] }}
