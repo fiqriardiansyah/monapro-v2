@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, Justification, Negotiation } from "models";
+import { BasePaginationResponse, Justification, Negotiation, PostMethodParams } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -33,11 +33,12 @@ class NegotiationService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.NegotiationCreateData) {
+    Create<T = any>(data: Models.NegotiationCreateData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
@@ -54,11 +55,12 @@ class NegotiationService extends BaseService {
         });
     }
 
-    Edit<T = any>(data: Models.NegotiationEditData) {
+    Edit<T = any>(data: Models.NegotiationEditData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.put<T>({
                 url: this.edit,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

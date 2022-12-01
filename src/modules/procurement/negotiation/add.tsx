@@ -14,6 +14,7 @@ import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment from "moment";
 import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
 import { FDataNegotiation } from "./models";
 
 type ChildrenProps = {
@@ -36,6 +37,8 @@ const schema: yup.SchemaOf<Partial<FDataNegotiation>> = yup.object().shape({
 });
 
 const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -80,9 +83,12 @@ const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
         const parseData: FDataNegotiation = {
             ...data,
             negotiation_date: data.negotiation_date ? moment(data.negotiation_date).format(FORMAT_DATE) : "",
-            doc_negotiation: null,
+            doc_negotiation: base64,
         };
-        onSubmit(parseData, closeModal);
+        onSubmit(parseData, () => {
+            closeModal();
+            processFile(null);
+        });
     });
 
     const childrenData: ChildrenProps = {
@@ -92,7 +98,7 @@ const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onFileChangeHandler = (file: any) => {
-        console.log(file);
+        processFile(file);
     };
 
     return (
@@ -102,7 +108,7 @@ const AddNegotiation = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

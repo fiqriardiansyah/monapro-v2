@@ -1,18 +1,22 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import AddNegotiation from "modules/procurement/negotiation/add";
 import EditNegotiation from "modules/procurement/negotiation/edit";
 import { FDataNegotiation, TDataNegotiation } from "modules/procurement/negotiation/models";
 import NegotiationTable from "modules/procurement/negotiation/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import negotiationService from "services/api-endpoints/procurement/negotiation";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 // [FINISH]
 
 const NegotiationPage = <T extends TDataNegotiation>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -27,7 +31,19 @@ const NegotiationPage = <T extends TDataNegotiation>() => {
 
     const createMutation = useMutation(
         async (data: FDataNegotiation) => {
-            await negotiationService.Create(data as any);
+            await negotiationService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.doc_negotiation) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-negotiation`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -42,7 +58,20 @@ const NegotiationPage = <T extends TDataNegotiation>() => {
 
     const editMutation = useMutation(
         async (data: FDataNegotiation) => {
-            await negotiationService.Edit(data as any);
+            await negotiationService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.doc_negotiation) return;
+                    if (data.doc_negotiation?.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-negotiation`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

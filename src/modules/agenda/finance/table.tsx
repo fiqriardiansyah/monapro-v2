@@ -94,7 +94,7 @@ const AgendaFinanceTable = <T extends AgendaFinance>({ fetcher, onClickEdit, onC
         {
             title: "Nilai Pembayaran",
             dataIndex: "value_payment",
-            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
         {
             title: "Tanggal SPB",

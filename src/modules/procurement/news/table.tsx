@@ -5,6 +5,8 @@ import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
 import { TDataNews } from "./models";
 
 type Props<T> = {
@@ -62,17 +64,26 @@ const NewsTable = <T extends TDataNews>({ fetcher, onClickEdit }: Props<T>) => {
         {
             title: "File BAP",
             dataIndex: "file_bap",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Bap_${record.id}` })} />;
+            },
         },
         {
             title: "File BAR",
             dataIndex: "file_bar",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Bar_${record.id}` })} />;
+            },
         },
         {
             title: "File BAPP",
             dataIndex: "file_bapp",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Bapp_${record.id}` })} />;
+            },
         },
         {
             width: "100px",

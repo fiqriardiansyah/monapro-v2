@@ -1,19 +1,23 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import { IsPaid } from "models";
 import AddFinance from "modules/procurement/finance/add";
 import EditFinance from "modules/procurement/finance/edit";
 import { FDataFinance, TDataFinance } from "modules/procurement/finance/models";
 import FinanceTable from "modules/procurement/finance/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import financeService from "services/api-endpoints/procurement/finance";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 // [FINISH]
 
 const FinancePage = <T extends TDataFinance>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -28,7 +32,19 @@ const FinancePage = <T extends TDataFinance>() => {
 
     const createMutation = useMutation(
         async (data: FDataFinance) => {
-            await financeService.Create(data as any);
+            await financeService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.invoice_file && !data.attachment_file) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-finance`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading Files",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -43,7 +59,20 @@ const FinancePage = <T extends TDataFinance>() => {
 
     const editMutation = useMutation(
         async (data: FDataFinance) => {
-            await financeService.Edit(data as any);
+            await financeService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.invoice_file && !data.attachment_file) return;
+                    if (data.invoice_file.includes(AWS_PATH) && data.attachment_file.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-finance`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading Files",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

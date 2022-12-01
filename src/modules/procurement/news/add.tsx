@@ -11,6 +11,7 @@ import ControlledSelectInput from "components/form/controlled-inputs/controlled-
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
+import useBase64File from "hooks/useBase64File";
 import { FDataNews } from "./models";
 
 type ChildrenProps = {
@@ -36,6 +37,10 @@ const schema: yup.SchemaOf<Partial<FDataNews>> = yup.object().shape({
 });
 
 const AddNews = ({ onSubmit, loading, children }: Props) => {
+    const { base64: base64BAP, processFile: processFileBAP, isProcessLoad: isProcessLoadBAP } = useBase64File();
+    const { base64: base64BAR, processFile: processFileBAR, isProcessLoad: isProcessLoadBAR } = useBase64File();
+    const { base64: base64BAPP, processFile: processFileBAPP, isProcessLoad: isProcessLoadBAPP } = useBase64File();
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -79,11 +84,16 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: FDataNews = {
             ...data,
-            file_bap: null,
-            file_bapp: null,
-            file_bar: null,
+            file_bap: base64BAP,
+            file_bapp: base64BAPP,
+            file_bar: base64BAR,
         };
-        onSubmit(parseData, closeModal);
+        onSubmit(parseData, () => {
+            closeModal();
+            processFileBAP(null);
+            processFileBAPP(null);
+            processFileBAR(null);
+        });
     });
 
     const childrenData: ChildrenProps = {
@@ -92,8 +102,14 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
         closeModal,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileBAPChangeHandler = (file: any) => {
+        processFileBAP(file);
+    };
+    const onFileBAPPChangeHandler = (file: any) => {
+        processFileBAPP(file);
+    };
+    const onFileBARChangeHandler = (file: any) => {
+        processFileBAR(file);
     };
 
     return (
@@ -103,7 +119,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoadBAP || isProcessLoadBAPP || isProcessLoadBAR}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -134,7 +150,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <InputFile
-                                    handleChange={onFileChangeHandler}
+                                    handleChange={onFileBAPChangeHandler}
                                     label="bap document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
@@ -143,7 +159,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <InputFile
-                                    handleChange={onFileChangeHandler}
+                                    handleChange={onFileBARChangeHandler}
                                     label="bar document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
@@ -152,7 +168,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <InputFile
-                                    handleChange={onFileChangeHandler}
+                                    handleChange={onFileBAPPChangeHandler}
                                     label="bapp document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}

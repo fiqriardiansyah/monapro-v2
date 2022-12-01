@@ -268,3 +268,22 @@ export interface IsPaid {
     id: string | number;
     isPaid: string | number;
 }
+
+// dashboard subunit detail
+export interface GetHeaderSubUnitPath {
+    id: string | number;
+}
+
+export interface GetChartSubUnitPath {
+    id: string | number;
+}
+
+export interface GetAgendaSubUnitPathParam {
+    id: string | number;
+    page: number | string;
+}
+
+export interface GetJustificationSubUnitPathParam {
+    id: string | number;
+    page: number | string;
+}

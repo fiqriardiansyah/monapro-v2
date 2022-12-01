@@ -12,6 +12,8 @@ import ControlledSelectInput from "components/form/controlled-inputs/controlled-
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
+import moment from "moment";
+import { FORMAT_DATE } from "utils/constant";
 import { FDataAgendaFinance } from "./models";
 
 type ChildrenProps = {
@@ -100,22 +102,20 @@ const AddAgendaFinance = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        // const parseData: FDataAgendaFinance = {
-        //     ...data,
-        //     disposition_date: data.disposition_date ? moment(data.disposition_date).format(FORMAT_DATE) : "",
-        //     disposition_doc: null,
-        // };
-        // onSubmit(parseData, closeModal);
+        const parseData: FDataAgendaFinance = {
+            ...data,
+            finnest_date: data.finnest_date ? moment(data.finnest_date).format(FORMAT_DATE) : "",
+            date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
+            spb_date: data.spb_date ? moment(data.spb_date).format(FORMAT_DATE) : "",
+            payment_date: data.payment_date ? moment(data.spb_date).format(FORMAT_DATE) : "",
+        };
+        onSubmit(parseData, closeModal);
     });
 
     const childrenData: ChildrenProps = {
         isModalOpen,
         openModal,
         closeModal,
-    };
-
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
     };
 
     return (

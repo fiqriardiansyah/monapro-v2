@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { AgendaDisposition, BasePaginationResponse } from "models";
+import { AgendaDisposition, BasePaginationResponse, PostMethodParams } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -37,22 +37,24 @@ class AgendaDispositionService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.AgendaDispositionCreateData) {
+    Create<T = any>(data: Models.AgendaDispositionCreateData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
         });
     }
 
-    Edit<T = any>(data: Models.AgendaDispositionEditData) {
+    Edit<T = any>(data: Models.AgendaDispositionEditData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.put<T>({
                 url: this.edit,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

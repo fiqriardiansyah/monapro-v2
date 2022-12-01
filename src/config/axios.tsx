@@ -10,7 +10,7 @@ const axiosClient = axios.create();
 
 axiosClient.defaults.baseURL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL_PROD : process.env.REACT_APP_BASE_URL_DEV;
 
-axiosClient.defaults.timeout = 10000;
+axiosClient.defaults.timeout = 1000000;
 
 axiosClient.defaults.withCredentials = true;
 

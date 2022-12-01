@@ -51,7 +51,6 @@ function Sidebar({ collapse }: Props) {
         getItem("Dashboard", "/", <MdDashboard />),
         getItem("Master Data", "master-data", <AiFillDatabase />, [
             getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH),
-            getItem("Role Management", MASTER_DATA_ROLE_MANAGE_PATH),
             getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH),
             getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH),
         ]),

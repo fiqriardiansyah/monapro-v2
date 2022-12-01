@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, ContractSpNopes, Justification, Negotiation, News } from "models";
+import { BasePaginationResponse, ContractSpNopes, Justification, Negotiation, News, PostMethodParams } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -33,11 +33,12 @@ class NewsService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.NewsCreateData) {
+    Create<T = any>(data: Models.NewsCreateData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
@@ -54,11 +55,12 @@ class NewsService extends BaseService {
         });
     }
 
-    Edit<T = any>(data: Models.NewsEditData) {
+    Edit<T = any>(data: Models.NewsEditData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.put<T>({
                 url: this.edit,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

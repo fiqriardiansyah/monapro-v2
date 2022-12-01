@@ -16,6 +16,8 @@ import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
 import agendaService from "services/api-endpoints/agenda";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import moment from "moment";
+import useBase64File from "hooks/useBase64File";
+import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataAgenda } from "./models";
 
 type ChildrenProps = {
@@ -48,6 +50,8 @@ const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
 });
 
 const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [prevData, setPrevData] = useState<AgendaData | null>(null);
 
     const [form] = Form.useForm();
@@ -57,10 +61,14 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        getValues,
+        watch,
     } = useForm<FDataAgenda>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const docWatch = watch("document");
 
     const subUnitQuery = useQuery(
         [agendaService.getSubUnit],
@@ -144,14 +152,17 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
             letter_date: data.letter_date ? moment(data.letter_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
-            document: null,
+            document: base64 || getValues()?.document || null,
         };
         onSubmit(
             {
                 ...parseData,
                 id: prevData?.id as any,
             },
-            closeModal
+            () => {
+                closeModal();
+                processFile(null);
+            }
         );
     });
 
@@ -162,8 +173,15 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         openModalWithData,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileChangeHandler = (fl: any) => {
+        processFile(fl);
+    };
+
+    const onClickFileDeleteHandler = () => {
+        form.setFieldsValue({
+            document: "",
+        });
+        setValue("document", "");
     };
 
     return (
@@ -180,7 +198,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading || detailMutation.isLoading}
+                    disabled={loading || detailMutation.isLoading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -249,19 +267,26 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="document"
-                                />
+                                {docWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile url={docWatch} name="Document" label="File Document" onClick={onClickFileDeleteHandler} />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileChangeHandler}
+                                        label="file document"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="document"
+                                    />
+                                )}
                             </Col>
                         </Row>
 
                         <Row justify="start" className="mt-10">
                             <Space>
-                                <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
+                                <Button type="primary" htmlType="submit" loading={loading}>
                                     Simpan
                                 </Button>
                                 <Button type="primary" danger onClick={closeModal}>

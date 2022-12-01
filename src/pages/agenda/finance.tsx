@@ -26,8 +26,7 @@ const AgendaFinancePage = <T extends AgendaFinance>() => {
 
     const createMutation = useMutation(
         async (data: FDataAgendaFinance) => {
-            // await agendaDispositionService.Create(data as any);
-            console.log(data);
+            await agendaFinanceService.Create(data as any);
         },
         {
             onSuccess: () => {
@@ -42,8 +41,7 @@ const AgendaFinancePage = <T extends AgendaFinance>() => {
 
     const editMutation = useMutation(
         async (data: FDataAgendaFinance) => {
-            // await agendaDispositionService.Edit(data as any);
-            console.log(data);
+            await agendaFinanceService.Edit(data as any);
         },
         {
             onSuccess: () => {

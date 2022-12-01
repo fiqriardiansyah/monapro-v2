@@ -6,6 +6,8 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import moment from "moment";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
 import { TDataNegotiation } from "./models";
 
 type Props<T> = {
@@ -58,7 +60,10 @@ const NegotiationTable = <T extends TDataNegotiation>({ fetcher, onClickEdit }: 
         {
             title: "Dokumen",
             dataIndex: "doc_negotiation",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Negosiasi_${record.id}` })} />;
+            },
         },
         {
             width: "100px",

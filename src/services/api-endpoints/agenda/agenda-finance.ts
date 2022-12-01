@@ -5,8 +5,6 @@ import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
-// [IMPORTANT] tipe data untuk agenda data dari BE blum tau
-
 class AgendaFinanceService extends BaseService {
     getAll = "/agenda-finance/get-all";
 

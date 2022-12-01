@@ -15,6 +15,8 @@ import procurementService from "services/api-endpoints/procurement";
 import negotiationService from "services/api-endpoints/procurement/negotiation";
 import moment from "moment";
 import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
+import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataNegotiation } from "./models";
 
 type ChildrenProps = {
@@ -38,6 +40,8 @@ const schema: yup.SchemaOf<Partial<FDataNegotiation>> = yup.object().shape({
 });
 
 const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [prevData, setPrevData] = useState<Negotiation | null>(null);
 
     const [form] = Form.useForm();
@@ -47,10 +51,14 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        getValues,
+        watch,
     } = useForm<FDataNegotiation>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const docWatch = watch("doc_negotiation");
 
     const justificationQuery = useQuery(
         [procurementService.getJustification],
@@ -115,14 +123,17 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         const parseData: FDataNegotiation = {
             ...data,
             negotiation_date: data.negotiation_date ? moment(data.negotiation_date).format(FORMAT_DATE) : "",
-            doc_negotiation: null,
+            doc_negotiation: base64 || getValues()?.doc_negotiation || null,
         };
         onSubmit(
             {
                 ...parseData,
                 id: prevData?.id as any,
             },
-            closeModal
+            () => {
+                closeModal();
+                processFile(null);
+            }
         );
     });
 
@@ -133,8 +144,15 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
         openModalWithData,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileChangeHandler = (fl: any) => {
+        processFile(fl);
+    };
+
+    const onClickFileDeleteHandler = () => {
+        form.setFieldsValue({
+            doc_negotiation: "",
+        });
+        setValue("doc_negotiation", "");
     };
 
     return (
@@ -178,19 +196,26 @@ const EditNegotiation = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 24 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="doc_justification"
-                                />
+                                {docWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile url={docWatch} name="Document" label="File Document" onClick={onClickFileDeleteHandler} />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileChangeHandler}
+                                        label="file document"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="doc_justification"
+                                    />
+                                )}
                             </Col>
                         </Row>
 
                         <Row justify="start" className="mt-10">
                             <Space>
-                                <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
+                                <Button type="primary" htmlType="submit" loading={loading}>
                                     Simpan
                                 </Button>
                                 <Button type="primary" danger onClick={closeModal}>

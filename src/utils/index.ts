@@ -69,10 +69,10 @@ export default class Utils {
         }
     };
 
-    static getBase64 = (img: RcFile, callback: (url: string) => void) => {
+    static getBase64 = (file: RcFile, callback: (url: string) => void) => {
         const reader = new FileReader();
         reader.addEventListener("load", () => callback(reader.result as string));
-        reader.readAsDataURL(img);
+        reader.readAsDataURL(file);
     };
 
     static toBase64(file: File) {
@@ -136,4 +136,13 @@ export default class Utils {
         };
     }
 
+    static createFileNameDownload({ url, text }: { url: string; text: string }): string {
+        const extension = url.split('.')[url.split('.').length - 1];
+        return `${text}.${extension}`;
+    }
+
+    static remainPercent(remaining: number, total: number) {
+        const percent = 100
+        return ((remaining * percent) / total)
+    }
 }

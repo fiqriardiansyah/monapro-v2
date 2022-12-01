@@ -1,21 +1,20 @@
 import React from "react";
-import { Button, Space, Table } from "antd";
+import { Button, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse, ContractSpNopes } from "models";
+import { BasePaginationResponse, Justification } from "models";
+import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 
-type Props<T> = {
-    fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
-    onClickEdit: (data: T) => void;
+type Props = {
+    fetcher: UseQueryResult<BasePaginationResponse<Justification>, unknown>;
 };
 
-const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit }: Props<T>) => {
+const JustificationSubUnitTable = ({ fetcher }: Props) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -30,7 +29,7 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
         });
     };
 
-    const columns: ColumnsType<T> = [
+    const columns: ColumnsType<Justification> = [
         {
             width: "50px",
             title: "No",
@@ -43,24 +42,29 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Perihal Justifikasi",
+            title: "Tanggal Justifikasi",
+            dataIndex: "justification_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+        },
+        {
+            title: "No Agenda",
+            dataIndex: "no_agenda",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Perihal",
             dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "No Kontrak",
-            dataIndex: "no_contract",
+            title: "Posisi",
+            dataIndex: "position",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Perihal Data Manage",
-            dataIndex: "about_manage",
+            title: "Beban",
+            dataIndex: "load_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Tanggal",
-            dataIndex: "date",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Nilai",
@@ -68,30 +72,43 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
             render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
         },
         {
-            title: "Dokumen",
-            dataIndex: "doc",
-            render: (url, record) => {
-                if (!url) return "-";
-                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Kontrak-SP-NOPES_${record.id}` })} />;
-            },
+            title: "Sub unit",
+            dataIndex: "subunit_name",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            width: "100px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                </Space>
-            ),
+            title: "Pembuat",
+            dataIndex: "creator",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Catatan",
+            dataIndex: "note",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Pelaksanaan acara",
+            dataIndex: "event_date",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+        },
+        {
+            title: "Perkiraan bayar",
+            dataIndex: "estimation_paydate",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+        },
+        {
+            title: "Dok Justifikasi",
+            dataIndex: "doc_justification",
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
+            },
         },
     ];
 
     return (
         <Table
+            scroll={{ x: 1500 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -107,4 +124,4 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
     );
 };
 
-export default ContractSpNopesTable;
+export default JustificationSubUnitTable;

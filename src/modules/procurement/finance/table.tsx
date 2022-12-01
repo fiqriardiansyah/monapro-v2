@@ -8,6 +8,8 @@ import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
 import { FORMAT_SHOW_DATE } from "utils/constant";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
 import { TDataFinance } from "./models";
 
 type Props<T> = {
@@ -95,12 +97,18 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "Berkas Tagihan",
             dataIndex: "invoice_file",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Finance-Tagihan_${record.id}` })} />;
+            },
         },
         {
             title: "Lampiran berkas",
             dataIndex: "attachment_file",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Finance-Lampiran_${record.id}` })} />;
+            },
         },
         {
             width: "200px",

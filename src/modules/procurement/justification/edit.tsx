@@ -15,6 +15,9 @@ import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 import procurementService from "services/api-endpoints/procurement";
+import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
+import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataJustification } from "./models";
 
 type ChildrenProps = {
@@ -45,6 +48,8 @@ const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
 });
 
 const EditJustification = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [prevData, setPrevData] = useState<Justification | null>(null);
 
     const [form] = Form.useForm();
@@ -54,10 +59,14 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        getValues,
+        watch,
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const docWatch = watch("doc_justification");
 
     const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
         const req = await procurementService.GetSubUnit();
@@ -149,12 +158,22 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData: FDataJustification = {
+            ...data,
+            justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
+            event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
+            estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
+            doc_justification: base64 || getValues()?.doc_justification || null,
+        };
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
             },
-            closeModal
+            () => {
+                closeModal();
+                processFile(null);
+            }
         );
     });
 
@@ -165,8 +184,15 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         openModalWithData,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileChangeHandler = (fl: any) => {
+        processFile(fl);
+    };
+
+    const onClickFileDeleteHandler = () => {
+        form.setFieldsValue({
+            doc_justification: "",
+        });
+        setValue("doc_justification", "");
     };
 
     return (
@@ -183,7 +209,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading || detailMutation.isLoading}
+                    disabled={loading || detailMutation.isLoading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -261,19 +287,26 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="doc_justification"
-                                />
+                                {docWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile url={docWatch} name="Document" label="File Document" onClick={onClickFileDeleteHandler} />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileChangeHandler}
+                                        label="file document"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="doc_justification"
+                                    />
+                                )}
                             </Col>
                         </Row>
 
                         <Row justify="start" className="mt-10">
                             <Space>
-                                <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
+                                <Button type="primary" htmlType="submit" loading={loading}>
                                     Simpan
                                 </Button>
                                 <Button type="primary" danger onClick={closeModal}>

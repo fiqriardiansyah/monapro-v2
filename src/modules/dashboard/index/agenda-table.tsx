@@ -4,43 +4,21 @@ import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
+import { AgendaData, BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
 import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
-import { TDataAgenda } from "./models";
 
-type Props<T> = {
-    fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
-    onClickEdit: (data: T) => void;
-    onClickLockBudget: (data: T, callback: () => void) => void;
+type Props = {
+    fetcher: UseQueryResult<BasePaginationResponse<AgendaData>, unknown>;
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+const AgendaSubUnitTable = ({ fetcher }: Props) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
-
-    const onClickLockBudgetHandler = (data: T) => {
-        Modal.confirm({
-            title: "Lock",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Kunci anggaran dengan id ${data.id}?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickLockBudget(data, () => {
-                        resolve(true);
-                    });
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -52,7 +30,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
         });
     };
 
-    const columns: ColumnsType<T> = [
+    const columns: ColumnsType<AgendaData> = [
         {
             width: "50px",
             title: "No",
@@ -133,26 +111,15 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
-            width: "200px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
-                        {record?.lock_budget === 1 ? "Locked" : "Lock budget"}
-                    </Button>
-                </Space>
-            ),
+            title: "Kunci Anggaran",
+            dataIndex: "lock_budget",
+            render: (text) => <p className="capitalize m-0">{text ? "Dikunci" : "Belum Dikunci"}</p>,
         },
     ];
 
     return (
         <Table
-            scroll={{ x: 2000 }}
+            scroll={{ x: 1500 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -168,4 +135,4 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
     );
 };
 
-export default AgendaDataTable;
+export default AgendaSubUnitTable;

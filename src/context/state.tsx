@@ -1,22 +1,34 @@
+import { notification } from "antd";
+import { NotificationInstance } from "antd/lib/notification";
 import React, { createContext, useMemo, useState } from "react";
 
 type Props = {
     children: any;
 };
 
-const StateContext = createContext(null);
+type ValueContextType = {
+    notificationInstance: NotificationInstance | null;
+};
+
+const StateContext = createContext<ValueContextType>({
+    notificationInstance: null,
+});
 
 function StateProvider({ children }: Props) {
-    const [state, setState] = useState();
+    const [notificationInstance, contextHolder] = notification.useNotification();
 
     const value = useMemo(
         () => ({
-            state,
-            setState,
+            notificationInstance,
         }),
-        [state]
+        []
     );
-    return <StateContext.Provider value={value as any}>{children}</StateContext.Provider>;
+    return (
+        <StateContext.Provider value={value as any}>
+            {contextHolder}
+            {children}
+        </StateContext.Provider>
+    );
 }
 
 export { StateContext, StateProvider };

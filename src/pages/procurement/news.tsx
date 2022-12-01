@@ -1,18 +1,22 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import AddNews from "modules/procurement/news/add";
 import EditNews from "modules/procurement/news/edit";
 import { FDataNews, TDataNews } from "modules/procurement/news/models";
 import NewsTable from "modules/procurement/news/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import newsService from "services/api-endpoints/procurement/news";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 // [FINISH]
 
 const NewsPage = <T extends TDataNews>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -27,7 +31,19 @@ const NewsPage = <T extends TDataNews>() => {
 
     const createMutation = useMutation(
         async (data: FDataNews) => {
-            await newsService.Create(data as any);
+            await newsService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.file_bap && !data.file_bapp && !data.file_bar) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-news`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading Files",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -42,7 +58,20 @@ const NewsPage = <T extends TDataNews>() => {
 
     const editMutation = useMutation(
         async (data: FDataNews) => {
-            await newsService.Edit(data as any);
+            await newsService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.file_bap && !data.file_bapp && !data.file_bar) return;
+                    if (data.file_bap?.includes(AWS_PATH) && data.file_bapp?.includes(AWS_PATH) && data.file_bar?.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-news`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading Files",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

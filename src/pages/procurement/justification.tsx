@@ -1,18 +1,22 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import { AgendaDataLockBudgetData, BasePaginationResponse, Justification } from "models";
 import AddJustification from "modules/procurement/justification/add";
 import EditJustification from "modules/procurement/justification/edit";
 import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
 import JustificationTable from "modules/procurement/justification/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import justificationService from "services/api-endpoints/procurement/justification";
 import Utils from "utils";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const JustificationPage = <T extends TDataJustification>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -27,7 +31,19 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     const createMutation = useMutation(
         async (data: FDataJustification) => {
-            await justificationService.Create(data as any);
+            await justificationService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.doc_justification) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-justification`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -42,7 +58,20 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     const editMutation = useMutation(
         async (data: FDataJustification) => {
-            await justificationService.Edit(data as any);
+            await justificationService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.doc_justification) return;
+                    if (data.doc_justification.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-justification`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

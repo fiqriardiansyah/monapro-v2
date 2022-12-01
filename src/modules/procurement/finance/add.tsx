@@ -15,6 +15,7 @@ import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment from "moment";
 import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
 import { FDataFinance } from "./models";
 
 type ChildrenProps = {
@@ -41,6 +42,9 @@ const schema: yup.SchemaOf<Partial<FDataFinance>> = yup.object().shape({
 });
 
 const AddFinance = ({ onSubmit, loading, children }: Props) => {
+    const { base64: base64Attach, processFile: processFileAttach, isProcessLoad: isProcessLoadAttach } = useBase64File();
+    const { base64: base64Invoice, processFile: processFileInvoice, isProcessLoad: isProcessLoadInvoice } = useBase64File();
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -87,10 +91,14 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
             tel21_date: data.tel21_date ? moment(data.tel21_date).format(FORMAT_DATE) : "",
             spb_date: data.spb_date ? moment(data.spb_date).format(FORMAT_DATE) : "",
             payment_date: data.payment_date ? moment(data.payment_date).format(FORMAT_DATE) : "",
-            attachment_file: null,
-            invoice_file: null,
+            attachment_file: base64Attach,
+            invoice_file: base64Invoice,
         };
-        onSubmit(parseData, closeModal);
+        onSubmit(parseData, () => {
+            closeModal();
+            processFileAttach(null);
+            processFileInvoice(null);
+        });
     });
 
     const childrenData: ChildrenProps = {
@@ -99,8 +107,12 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
         closeModal,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileAttachChangeHandler = (file: any) => {
+        processFileAttach(file);
+    };
+
+    const onFileInvoiceChangeHandler = (file: any) => {
+        processFileInvoice(file);
     };
 
     return (
@@ -110,7 +122,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoadAttach || isProcessLoadInvoice}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
@@ -132,7 +144,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <InputFile
-                                    handleChange={onFileChangeHandler}
+                                    handleChange={onFileInvoiceChangeHandler}
                                     label="File invoice"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
@@ -162,7 +174,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <InputFile
-                                    handleChange={onFileChangeHandler}
+                                    handleChange={onFileAttachChangeHandler}
                                     label="File"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}

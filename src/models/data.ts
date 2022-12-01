@@ -109,6 +109,7 @@ export interface Justification {
     position: string;
     value: number | string;
     subunit_name: string;
+    load_name: string;
     creator: string;
     note: string;
     doc_justification: any | null;
@@ -195,4 +196,36 @@ export interface AgendaDataDisposition {
 export interface AgendaLoadType {
     load_type_id: number;
     load_name: string;
+}
+
+export interface TotalUsage {
+    total_usage: number;
+    percentage_total: 1;
+}
+
+export interface RemainingUsage {
+    remaining_usage: number;
+    percentage_remaining: number;
+}
+
+export interface TotalActivity {
+    sponsorship: number;
+    procurement: number;
+}
+
+export interface RemainingBudget {
+    id: number;
+    subunit_name: string;
+    budget: number;
+    remaining_budget: number;
+}
+
+export interface AnalyticSubUnit {
+    subunit_id: number;
+    subunit_name: string;
+    list_analytic: {
+        total_usage: number;
+        total_paid: number;
+        not_paid: number;
+    }[];
 }

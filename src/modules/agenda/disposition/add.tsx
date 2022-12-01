@@ -14,6 +14,7 @@ import { FORMAT_DATE } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import moment from "moment";
+import useBase64File from "hooks/useBase64File";
 import { FDataAgendaDisposition } from "./models";
 
 type ChildrenProps = {
@@ -39,6 +40,8 @@ const schema: yup.SchemaOf<Partial<FDataAgendaDisposition>> = yup.object().shape
 });
 
 const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -82,9 +85,12 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         const parseData: FDataAgendaDisposition = {
             ...data,
             disposition_date: data.disposition_date ? moment(data.disposition_date).format(FORMAT_DATE) : "",
-            disposition_doc: null,
+            disposition_doc: base64,
         };
-        onSubmit(parseData, closeModal);
+        onSubmit(parseData, () => {
+            closeModal();
+            processFile(null);
+        });
     });
 
     const childrenData: ChildrenProps = {
@@ -94,7 +100,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onFileChangeHandler = (file: any) => {
-        console.log(file);
+        processFile(file);
     };
 
     return (
@@ -104,7 +110,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

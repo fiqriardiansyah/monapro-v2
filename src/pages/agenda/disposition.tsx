@@ -1,19 +1,23 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import { AgendaDisposition } from "models";
 import AddAgendaDisposition from "modules/agenda/disposition/add";
 import EditAgendaDisposition from "modules/agenda/disposition/edit";
 import { FDataAgendaDisposition } from "modules/agenda/disposition/models";
 import AgendaDispositionTable from "modules/agenda/disposition/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import agendaDispositionService from "services/api-endpoints/agenda/agenda-disposition";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 // [FINISH]
 
 const AgendaDispositionPage = <T extends AgendaDisposition>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -28,7 +32,19 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
 
     const createMutation = useMutation(
         async (data: FDataAgendaDisposition) => {
-            await agendaDispositionService.Create(data as any);
+            await agendaDispositionService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.disposition_doc) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-disposition`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -43,7 +59,20 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
 
     const editMutation = useMutation(
         async (data: FDataAgendaDisposition) => {
-            await agendaDispositionService.Edit(data as any);
+            await agendaDispositionService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.disposition_doc) return;
+                    if (data.disposition_doc.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-disposition`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

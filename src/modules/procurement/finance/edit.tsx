@@ -16,6 +16,8 @@ import procurementService from "services/api-endpoints/procurement";
 import financeService from "services/api-endpoints/procurement/finance";
 import moment from "moment";
 import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
+import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataFinance } from "./models";
 
 type ChildrenProps = {
@@ -43,6 +45,9 @@ const schema: yup.SchemaOf<Partial<FDataFinance>> = yup.object().shape({
 });
 
 const EditFinance = ({ onSubmit, loading, children }: Props) => {
+    const { base64: base64Attach, processFile: processFileAttach, isProcessLoad: isProcessLoadAttach } = useBase64File();
+    const { base64: base64Invoice, processFile: processFileInvoice, isProcessLoad: isProcessLoadInvoice } = useBase64File();
+
     const [prevData, setPrevData] = useState<Finance | null>(null);
 
     const [form] = Form.useForm();
@@ -50,12 +55,17 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
     const {
         handleSubmit,
         control,
-        setValue,
         formState: { isValid },
+        setValue,
+        getValues,
+        watch,
     } = useForm<FDataFinance>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const invoiceFileWatch = watch("invoice_file");
+    const attachFileWatch = watch("attachment_file");
 
     const justificationQuery = useQuery(
         [procurementService.getJustification],
@@ -130,15 +140,19 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
             tel21_date: data.tel21_date ? moment(data.tel21_date).format(FORMAT_DATE) : "",
             spb_date: data.spb_date ? moment(data.spb_date).format(FORMAT_DATE) : "",
             payment_date: data.payment_date ? moment(data.payment_date).format(FORMAT_DATE) : "",
-            attachment_file: null,
-            invoice_file: null,
+            attachment_file: base64Attach || getValues()?.attachment_file || null,
+            invoice_file: base64Invoice || getValues()?.invoice_file || null,
         };
         onSubmit(
             {
                 ...parseData,
                 id: prevData?.id as any,
             },
-            closeModal
+            () => {
+                closeModal();
+                processFileAttach(null);
+                processFileInvoice(null);
+            }
         );
     });
 
@@ -149,8 +163,26 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
         openModalWithData,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileAttachChangeHandler = (file: any) => {
+        processFileAttach(file);
+    };
+
+    const onFileInvoiceChangeHandler = (file: any) => {
+        processFileInvoice(file);
+    };
+
+    const onClickFileAttachDeleteHandler = () => {
+        form.setFieldsValue({
+            attachment_file: "",
+        });
+        setValue("attachment_file", "");
+    };
+
+    const onClickFileInvoiceDeleteHandler = () => {
+        form.setFieldsValue({
+            invoice_file: "",
+        });
+        setValue("invoice_file", "");
     };
 
     return (
@@ -188,13 +220,25 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="File invoice"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="invoice_file"
-                                />
+                                {invoiceFileWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile
+                                            url={invoiceFileWatch}
+                                            name="Document"
+                                            label="File Document"
+                                            onClick={onClickFileInvoiceDeleteHandler}
+                                        />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileInvoiceChangeHandler}
+                                        label="File invoice"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="invoice_file"
+                                    />
+                                )}
                             </Col>
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="tel21_date" label="Tanggal TEL21/SPB" />
@@ -218,13 +262,25 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="File"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="attachment_file"
-                                />
+                                {attachFileWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile
+                                            url={attachFileWatch}
+                                            name="Document"
+                                            label="File Document"
+                                            onClick={onClickFileAttachDeleteHandler}
+                                        />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileAttachChangeHandler}
+                                        label="File"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="attachment_file"
+                                    />
+                                )}
                             </Col>
                         </Row>
 

@@ -16,6 +16,8 @@ import procurementService from "services/api-endpoints/procurement";
 import contractService from "services/api-endpoints/procurement/contract";
 import moment from "moment";
 import { FORMAT_DATE } from "utils/constant";
+import useBase64File from "hooks/useBase64File";
+import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
@@ -40,6 +42,8 @@ const schema: yup.SchemaOf<Partial<FDataContractSpNopes>> = yup.object().shape({
     doc: yup.string(),
 });
 const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [prevData, setPrevData] = useState<ContractSpNopes | null>(null);
 
     const [form] = Form.useForm();
@@ -49,10 +53,14 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        getValues,
+        watch,
     } = useForm<FDataContractSpNopes>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const docWatch = watch("doc");
 
     const justificationQuery = useQuery(
         [procurementService.getJustification],
@@ -121,14 +129,17 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         const parseData: FDataContractSpNopes = {
             ...data,
             date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
-            doc: null,
+            doc: base64 || getValues()?.doc || null,
         };
         onSubmit(
             {
                 ...parseData,
                 id: prevData?.id as any,
             },
-            closeModal
+            () => {
+                closeModal();
+                processFile(null);
+            }
         );
     });
 
@@ -139,8 +150,15 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         openModalWithData,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileChangeHandler = (fl: any) => {
+        processFile(fl);
+    };
+
+    const onClickFileDeleteHandler = () => {
+        form.setFieldsValue({
+            doc: "",
+        });
+        setValue("doc", "");
     };
 
     return (
@@ -202,13 +220,20 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="value" label="Nilai" placeholder="Nilai" />
                             </Col>
                             <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="doc_justification"
-                                />
+                                {docWatch ? (
+                                    <div className="w-full">
+                                        <p className="m-0 capitalize mb-2">file document</p>
+                                        <ButtonDeleteFile url={docWatch} name="Document" label="File Document" onClick={onClickFileDeleteHandler} />
+                                    </div>
+                                ) : (
+                                    <InputFile
+                                        handleChange={onFileChangeHandler}
+                                        label="file document"
+                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        multiple={false}
+                                        name="doc_justification"
+                                    />
+                                )}
                             </Col>
                         </Row>
 

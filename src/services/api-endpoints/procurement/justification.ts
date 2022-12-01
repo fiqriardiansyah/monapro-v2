@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
-import { BasePaginationResponse, Justification } from "models";
+import { BasePaginationResponse, Justification, PostMethodParams } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -10,7 +10,7 @@ class JustificationService extends BaseService {
 
     create = "/procurement/create-justification";
 
-    edit = "/procurement/create-justification";
+    edit = "/procurement/edit-justification";
 
     delete = "/approval/delete-approval";
 
@@ -37,22 +37,24 @@ class JustificationService extends BaseService {
         });
     }
 
-    Create<T = any>(data: Models.JustificationCreateData) {
+    Create<T = any>(data: Models.JustificationCreateData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.post<T>({
                 url: this.create,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
         });
     }
 
-    Edit<T = any>(data: Models.JustificationEditData) {
+    Edit<T = any>(data: Models.JustificationEditData, config?: PostMethodParams["config"]) {
         return this.ProxyRequest(async () => {
             const req = await ApiMethod.put<T>({
                 url: this.edit,
                 data,
+                config,
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

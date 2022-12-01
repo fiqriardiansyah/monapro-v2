@@ -7,6 +7,8 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
 import { TDataJustification } from "./models";
 
 type Props<T> = {
@@ -119,7 +121,10 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "Dok Justifikasi",
             dataIndex: "doc_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
+            },
         },
         {
             width: "200px",

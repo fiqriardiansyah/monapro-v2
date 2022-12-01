@@ -1,20 +1,24 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
+import { StateContext } from "context/state";
 import { AgendaData, AgendaDataLockBudgetData } from "models";
 import AddAgendaData from "modules/agenda/data/add";
 import EditAgendaData from "modules/agenda/data/edit";
 import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
 import AgendaDataTable from "modules/agenda/data/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import Utils from "utils";
+import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 // [FINISH]
 
 const AgendaDataPage = <T extends TDataAgenda>() => {
+    const { notificationInstance } = useContext(StateContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -44,7 +48,19 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
 
     const createMutation = useMutation(
         async ({ data }: { data: FDataAgenda }) => {
-            await agendaDataService.Create(data as any);
+            await agendaDataService.Create(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.document) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}create-agenda`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {
@@ -59,7 +75,20 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
 
     const editMutation = useMutation(
         async ({ data }: { data: FDataAgenda }) => {
-            await agendaDataService.Edit(data as any);
+            await agendaDataService.Edit(data as any, {
+                onUploadProgress: (eventUpload) => {
+                    if (!data.document) return;
+                    if (data.document.includes(AWS_PATH)) return;
+                    const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
+                    notificationInstance?.open({
+                        key: `${KEY_UPLOAD_FILE}edit-agenda`,
+                        duration: percentCompleted >= 100 ? 1 : 0,
+                        message: "Uploading File",
+                        description: <Progress percent={percentCompleted} status="active" />,
+                        placement: "bottomRight",
+                    });
+                },
+            });
         },
         {
             onSuccess: () => {

@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { Divider, Progress, Tooltip } from "antd";
+import { Alert, Divider, Progress, Skeleton, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -13,36 +13,34 @@ import { dataRevenueDefault, mainBudget } from "modules/dashboard/data";
 import RemainingBudget from "modules/dashboard/component/remaining-budget";
 import ProgressCustome from "modules/dashboard/component/progress-custome";
 import { DASHBOARD_PATH } from "utils/routes";
+import { useQuery } from "react-query";
+import dashboardService from "services/api-endpoints/dashboard";
+import State from "components/common/state";
+import { COLORS } from "utils/constant";
+import Utils from "utils";
+import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 
 const DashboardPage = () => {
     if (typeof window !== "undefined") {
         Chart.register(...registerables);
     }
 
-    const [dataRevenue, setDataRevenue] = useState(dataRevenueDefault);
+    const remainingBudgetQuery = useQuery([dashboardService.getRemainingBudget], async () => {
+        const res = await dashboardService.GetRemainingBudget();
+        return res.data.data;
+    });
 
-    const getTopBus = [
-        {
-            subUnit: "unit 1",
-            budget: 20,
-            color: "rgb(197, 57, 180)",
-        },
-        {
-            subUnit: "unit 2",
-            budget: 95,
-            color: "rgb(239, 154, 83)",
-        },
-        {
-            subUnit: "unit 3",
-            budget: 40,
-            color: "rgb(70, 73, 255)",
-        },
-    ];
+    const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit], async () => {
+        const res = await dashboardService.GetAnalyticSubUnit();
+        return res.data.data;
+    });
+
+    const [dataRevenue, setDataRevenue] = useState(dataRevenueDefault);
 
     return (
         <div className="min-h-screen px-10">
             <Header title="Dashboard" />
-            <div className="grid grid-cols-3 grid-rows-3 gap-4">
+            <div className="grid grid-cols-3 grid-rows-3 gap-4 mb-10">
                 {mainBudget.map((budget) => (
                     <RemainingBudget data={budget} key={budget.title} />
                 ))}
@@ -62,84 +60,61 @@ const DashboardPage = () => {
                 </div>
                 <div className="p-3 bg-white rounded-md row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-2">Sisa Anggaran Tiap Sub Unit</p>
-                    {getTopBus?.map((el, i) => (
-                        <Tooltip placement="left" title={`Sisa Anggaran: ${`${el.budget}00000`}`} key={i}>
-                            <div className="flex flex-col w-full mb-3">
-                                <p className="m-0 text-gray-400 capitalize font-medium">{el.subUnit}</p>
-                                <Progress percent={el.budget} showInfo={false} status="active" strokeColor={{ from: el.color, to: el.color }} />
-                            </div>
-                        </Tooltip>
-                    ))}
+                    <State data={remainingBudgetQuery.data} isLoading={remainingBudgetQuery.isLoading} isError={remainingBudgetQuery.isError}>
+                        {(state) => (
+                            <>
+                                <State.Data state={state}>
+                                    {remainingBudgetQuery.data?.map((el, i) => {
+                                        return (
+                                            <Tooltip
+                                                placement="left"
+                                                title={`Sisa Anggaran: ${el.remaining_budget ? el.remaining_budget.ToIndCurrency("Rp") : "-"} / ${
+                                                    el.budget
+                                                }`}
+                                                key={el.id}
+                                            >
+                                                <div className="flex flex-col w-full mb-3">
+                                                    <p className="m-0 text-gray-400 capitalize font-medium">{el.subunit_name}</p>
+                                                    <Progress
+                                                        percent={Math.floor(Utils.remainPercent(el.remaining_budget, el.budget))}
+                                                        showInfo={false}
+                                                        status="active"
+                                                        strokeColor={{ from: COLORS[i], to: COLORS[i] }}
+                                                    />
+                                                </div>
+                                            </Tooltip>
+                                        );
+                                    })}
+                                </State.Data>
+                                <State.Loading state={state}>
+                                    <Skeleton active paragraph={{ rows: 5 }} />
+                                </State.Loading>
+                                <State.Error state={state}>
+                                    <Alert message={(remainingBudgetQuery.error as any)?.message} />
+                                </State.Error>
+                            </>
+                        )}
+                    </State>
                 </div>
             </div>
-            <div className="flex items-center w-full justify-between">
-                <h1 className="capitalize text-xl font-bold text-gray-600 m-0 my-4">sub unit program & partnership</h1>
-                <Link to={`${DASHBOARD_PATH}/sub-unit-program-partnership`}>Lihat detail</Link>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">PEMAKAIAN</p>
-                            <p className="m-0 text-blue-400 font-bold text-xl my-3">Rp. 200.000.000</p>
-                            <img src={BlueWaveImage} alt="" className="w-full" />
-                        </div>
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">SUDAH DIBAYAR</p>
-                            <p className="m-0 text-orange-400 font-bold text-xl my-3">Rp. 400.000.000</p>
-                            <img src={OrangeWaveImage} alt="" className="w-full" />
-                        </div>
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">BELUM DIBAYAR</p>
-                            <p className="m-0 text-green-400 font-bold text-xl my-3">Rp. 240.000.000</p>
-                            <img src={GreenWaveImage} alt="" className="w-full" />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-span-1">
-                    <div className="bg-white p-3 rounded-md">
-                        <p className="m-0 font-medium text-gray-400">Recently News</p>
-                        <p className="mt-2">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, voluptatum tempora id inventore veniam accusantium
-                            commodi explicabo officiis. Voluptas nam illo enim laborum quas pariatur esse sint architecto labore odio!
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div className="flex items-center w-full justify-between">
-                <h1 className="capitalize text-xl font-bold text-gray-600 m-0 my-4">sub unit corporate communication</h1>
-                <Link to={`${DASHBOARD_PATH}/sub-unit-corporate-communication`}>Lihat detail</Link>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">PEMAKAIAN</p>
-                            <p className="m-0 text-blue-400 font-bold text-xl my-3">Rp. 200.000.000</p>
-                            <img src={BlueWaveImage} alt="" className="w-full" />
-                        </div>
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">SUDAH DIBAYAR</p>
-                            <p className="m-0 text-orange-400 font-bold text-xl my-3">Rp. 400.000.000</p>
-                            <img src={OrangeWaveImage} alt="" className="w-full" />
-                        </div>
-                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                            <p className="m-0 font-medium text-gray-400">BELUM DIBAYAR</p>
-                            <p className="m-0 text-green-400 font-bold text-xl my-3">Rp. 240.000.000</p>
-                            <img src={GreenWaveImage} alt="" className="w-full" />
-                        </div>
-                    </div>
-                </div>
-                <div className="col-span-1">
-                    <div className="bg-white p-3 rounded-md">
-                        <p className="m-0 font-medium text-gray-400">Recently News</p>
-                        <p className="mt-2">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia, voluptatum tempora id inventore veniam accusantium
-                            commodi explicabo officiis. Voluptas nam illo enim laborum quas pariatur esse sint architecto labore odio!
-                        </p>
-                    </div>
-                </div>
-            </div>
+            {/* sub unit */}
+            <State data={analyticSubUnit.data} isLoading={analyticSubUnit.isLoading} isError={analyticSubUnit.isError}>
+                {(state) => (
+                    <>
+                        <State.Data state={state}>
+                            {analyticSubUnit.data?.map((subUnit) => (
+                                <SubUnitAnalytic data={subUnit} key={subUnit.subunit_id} />
+                            ))}
+                        </State.Data>
+                        <State.Loading state={state}>
+                            <Skeleton paragraph={{ rows: 10 }} />
+                        </State.Loading>
+                        <State.Error state={state}>
+                            <Alert message={(analyticSubUnit.error as any)?.message} type="error" />
+                        </State.Error>
+                    </>
+                )}
+            </State>
         </div>
     );
 };

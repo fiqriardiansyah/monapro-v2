@@ -15,6 +15,8 @@ import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import moment from "moment";
+import Utils from "utils";
+import useBase64File from "hooks/useBase64File";
 import { FDataAgenda } from "./models";
 
 type ChildrenProps = {
@@ -46,6 +48,8 @@ const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
 });
 
 const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
+    const { base64, processFile, isProcessLoad } = useBase64File();
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -85,16 +89,20 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
         setIsModalOpen(true);
     };
 
-    const onSubmitHandler = handleSubmit((data) => {
+    const onSubmitHandler = handleSubmit(async (data) => {
         const parseData: FDataAgenda = {
             ...data,
             date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
             letter_date: data.letter_date ? moment(data.letter_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
-            document: null,
+            document: base64,
         };
-        onSubmit(parseData, closeModal);
+
+        onSubmit(parseData, () => {
+            closeModal();
+            processFile(null);
+        });
     });
 
     const childrenData: ChildrenProps = {
@@ -103,8 +111,8 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
         closeModal,
     };
 
-    const onFileChangeHandler = (file: any) => {
-        console.log(file);
+    const onFileChangeHandler = async (fl: any) => {
+        processFile(fl);
     };
 
     return (
@@ -114,7 +122,7 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

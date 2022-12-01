@@ -7,6 +7,8 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { AgendaDisposition, BasePaginationResponse } from "models";
 import moment from "moment";
 import { FORMAT_SHOW_DATE } from "utils/constant";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -83,7 +85,10 @@ const AgendaDispositionTable = <T extends AgendaDisposition>({ fetcher, onClickE
         {
             title: "Dokumen",
             dataIndex: "disposition_doc",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Agenda-Disposisi_${record.id}` })} />;
+            },
         },
         {
             width: "100px",
