@@ -11,7 +11,7 @@ import Cookies from "js-cookie";
 import { UserContext } from "context/user";
 import authService from "services/api-endpoints/auth";
 
-import MonaproImage from "assets/svgs/monapro.svg";
+import MonaproImage from "assets/monapro-white.png";
 import Background from "assets/background.jpg";
 
 // [FINISH]
