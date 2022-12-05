@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
-import { Button, Divider, Progress, Skeleton, Tooltip } from "antd";
+import { Button, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
@@ -21,21 +21,15 @@ import dashboardSubUnitService from "services/api-endpoints/dashboard/subunit-de
 import State from "components/common/state";
 import AgendaSubUnitTable from "modules/dashboard/index/agenda-table";
 import JustificationSubUnitTable from "modules/dashboard/index/justification-table";
-import { COLORS } from "utils/constant";
+import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
+import Utils from "utils";
+import { randomRevenue } from "modules/dashboard/data";
 
-const color = COLORS[Math.round(Math.random() * (COLORS.length - 1))] || COLORS[0];
+// const color = COLORS[Math.round(Math.random() * (COLORS.length - 1))] || COLORS[0];
 
 export const chartDataDefault = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"],
-    datasets: [
-        {
-            label: "Unit 1",
-            data: [100000, 120000, 154500, 193000, 123000, 144000, 210000, 160400, 189000, 164000, 200000, 180000],
-            backgroundColor: [color],
-            borderColor: [color],
-            borderWidth: 1,
-        },
-    ],
+    labels: [],
+    datasets: [],
     options: {
         responsive: true,
     },
@@ -46,6 +40,8 @@ const DashboardDetail = () => {
         Chart.register(...registerables);
     }
 
+    const [qtl, setQtl] = useState(1);
+
     const [chartData, setChartData] = useState(chartDataDefault);
 
     const { id } = useParams();
@@ -54,7 +50,7 @@ const DashboardDetail = () => {
     const pageJustification = searchParams.get("page_justification") || 1;
 
     const getHeaderSubUnit = useQuery(
-        [dashboardSubUnitService.getHeaderSubunit, id],
+        [dashboardSubUnitService.getHeaderSubunit, id, qtl],
         async () => {
             const res = await dashboardSubUnitService.GetHeaderSubunit({ id: id as any });
             return res.data.data;
@@ -64,10 +60,16 @@ const DashboardDetail = () => {
             onSuccess: (data) => {
                 setChartData((prev) => ({
                     ...prev,
-                    datasets: prev.datasets?.map((el) => ({
-                        ...el,
-                        label: data.subunit_name,
-                    })),
+                    labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+                    datasets: [
+                        {
+                            label: data.subunit_name,
+                            data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+                            backgroundColor: [COLORS[Utils.getRandomIntRange(0, COLORS.length - 1)]],
+                            borderColor: [COLORS[Utils.getRandomIntRange(0, COLORS.length - 1)]],
+                            borderWidth: 1,
+                        },
+                    ] as any,
                 }));
             },
         }
@@ -94,6 +96,11 @@ const DashboardDetail = () => {
                     </Link>
                 )}
                 title={getHeaderSubUnit.data?.subunit_name || "Getting data..."}
+                action={
+                    <Space>
+                        <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
+                    </Space>
+                }
             />
             <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
@@ -101,35 +108,33 @@ const DashboardDetail = () => {
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    <div className="grid grid-cols-3 gap-4">
-                                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                                            <p className="m-0 font-medium text-gray-400">PEMAKAIAN</p>
-                                            <p className="m-0 text-blue-400 text-lg font-medium my-3">
-                                                {!Number.isNaN(getHeaderSubUnit.data?.total_usage)
-                                                    ? Number(getHeaderSubUnit.data?.total_usage).ToIndCurrency("Rp")
-                                                    : "-"}
-                                            </p>
-                                            <img src={BlueWaveImage} alt="" className="w-full" />
-                                        </div>
-                                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                                            <p className="m-0 font-medium text-gray-400">SUDAH DIBAYAR</p>
-                                            <p className="m-0 text-orange-400 text-lg font-medium my-3">
-                                                {!Number.isNaN(getHeaderSubUnit.data?.total_paid)
-                                                    ? Number(getHeaderSubUnit.data?.total_paid).ToIndCurrency("Rp")
-                                                    : "-"}
-                                            </p>
-                                            <img src={OrangeWaveImage} alt="" className="w-full" />
-                                        </div>
-                                        <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                                            <p className="m-0 font-medium text-gray-400">BELUM DIBAYAR</p>
-                                            <p className="m-0 text-green-400 text-lg font-medium my-3">
-                                                {!Number.isNaN(getHeaderSubUnit.data?.not_paid)
-                                                    ? Number(getHeaderSubUnit.data?.not_paid).ToIndCurrency("Rp")
-                                                    : "-"}
-                                            </p>
-                                            <img src={GreenWaveImage} alt="" className="w-full" />
-                                        </div>
-                                    </div>
+                                    {getHeaderSubUnit.data?.list_analytic?.map((analytic, i) => (
+                                        <React.Fragment key={i}>
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <div className="bg-white p-3 rounded-md flex flex-col items-center">
+                                                    <p className="m-0 font-medium text-gray-400">Plan Budget</p>
+                                                    <p className="m-0 text-blue-400 text-lg font-medium my-3">
+                                                        {!Number.isNaN(analytic.plan_budget) ? Number(analytic.plan_budget).ToIndCurrency("Rp") : "-"}
+                                                    </p>
+                                                    <img src={BlueWaveImage} alt="" className="w-full" />
+                                                </div>
+                                                <div className="bg-white p-3 rounded-md flex flex-col items-center">
+                                                    <p className="m-0 font-medium text-gray-400">Total Pemakaian</p>
+                                                    <p className="m-0 text-orange-400 text-lg font-medium my-3">
+                                                        {!Number.isNaN(analytic.total_usage) ? Number(analytic.total_usage).ToIndCurrency("Rp") : "-"}
+                                                    </p>
+                                                    <img src={OrangeWaveImage} alt="" className="w-full" />
+                                                </div>
+                                                <div className="bg-white p-3 rounded-md flex flex-col items-center">
+                                                    <p className="m-0 font-medium text-gray-400">Belum Bayar</p>
+                                                    <p className="m-0 text-green-400 text-lg font-medium my-3">
+                                                        {!Number.isNaN(analytic.not_paid) ? Number(analytic.not_paid).ToIndCurrency("Rp") : "-"}
+                                                    </p>
+                                                    <img src={GreenWaveImage} alt="" className="w-full" />
+                                                </div>
+                                            </div>
+                                        </React.Fragment>
+                                    ))}
                                 </State.Data>
                                 <State.Loading state={state}>
                                     <Skeleton paragraph={{ rows: 4 }} active />
@@ -145,42 +150,34 @@ const DashboardDetail = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-4">
+            <div className="grid grid-cols-3 gap-4 mt-4 ">
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <Bar data={chartData} />
                 </div>
-                <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
-                    <p className="m-0 font-medium text-gray-400 mb-2 absolute top-4 left-4">Sisa Pemakaian</p>
-                    <p className="text-orange-400 m-0 text-3xl xl:text-3xl 2xl:text-5xl font-semibold">
-                        {!Number.isNaN(getHeaderSubUnit.data?.remaining_usage)
-                            ? Number(getHeaderSubUnit.data?.remaining_usage).ToIndCurrency("Rp")
-                            : "-"}
-                    </p>
-                </div>
-                <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
-                    <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">Total Aktivitas</p>
-                    {getHeaderSubUnit.data?.list_activity?.map((activity, i) => (
-                        <div className="mb-4" key={i}>
-                            <div className="w-full flex justify-between items-center">
-                                <p className="m-0 font-medium">Sponsorship</p>
-                                <p className="m-0 font-bold text-gray-500 text-lg">
-                                    {!Number.isNaN(activity.sponsorship) ? Number(activity.sponsorship).ToIndCurrency("Rp") : "-"}
-                                </p>
-                            </div>
-                            <div className="w-full flex justify-between items-center">
-                                <p className="m-0 font-medium">Procurement</p>
-                                <p className="m-0 font-bold text-gray-500 text-lg">
-                                    {!Number.isNaN(activity.procurement) ? Number(activity.procurement).ToIndCurrency("Rp") : "-"}
-                                </p>
-                            </div>
-                        </div>
-                    ))}
+                <div className="p-3 bg-white rounded-md h-full">
+                    <p className="m-0 font-medium text-gray-400 mb-2">Sisa Pemakaian</p>
+                    <State data={getHeaderSubUnit.data} isLoading={getHeaderSubUnit.isLoading} isError={getHeaderSubUnit.isError}>
+                        {(state) => (
+                            <>
+                                <State.Data state={state}>
+                                    {getHeaderSubUnit.data?.list_activity?.map((el, i: number) => {
+                                        return (
+                                            <div className="w-full flex items-center justify-between mb-2">
+                                                <p className="m-0 text-gray-400">{el.load_name}</p>
+                                                <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </State.Data>
+                                <State.Loading state={state}>
+                                    <Skeleton paragraph={{ rows: 4 }} active />
+                                </State.Loading>
+                            </>
+                        )}
+                    </State>
                 </div>
             </div>
-            <p className="capitalize font-semibold text-xl mt-8 mb-4">data agenda</p>
-            <AgendaSubUnitTable fetcher={getAgendaSubUnit} />
-            <p className="capitalize font-semibold text-xl mt-8 mb-4">data justifikasi</p>
-            <JustificationSubUnitTable fetcher={getJustificationSubUnit} />
+            <p className="capitalize font-semibold text-xl mt-8 mb-4">data rekapan</p>
         </div>
     );
 };

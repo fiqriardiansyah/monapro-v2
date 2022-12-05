@@ -1,6 +1,5 @@
 import { AxiosResponse } from "axios";
 import * as Models from "models";
-import { AnalyticSubUnit, AuthData, GetHeaderDashboard, RemainingBudget } from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -8,27 +7,49 @@ import BaseService from "../base";
 class DashboardService extends BaseService {
     getAllHeader = "/dashboard/get-header-dashboard";
 
+    getSubHeader = "/dashboard/get-sub-header";
+
     getRemainingBudget = "/dashboard/get-remaining-budget";
 
     getAnalyticSubUnit = "/dashboard/get-analytic-subunit";
 
-    GetAllHeader<T = GetHeaderDashboard>() {
+    GetAllHeader<T = Models.GetHeaderDashboard>(params: Models.QuartalParam) {
         return this.ProxyRequest<T>(async () => {
             const req = await ApiMethod.get<T>({
                 url: this.getAllHeader,
+                config: {
+                    params: {
+                        ...params,
+                    },
+                },
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
         });
     }
 
-    GetRemainingBudget<T = RemainingBudget[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
+    GetSubHeader<T = Models.GetSubHeaderDashboard>(params: Models.QuartalParam) {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.getSubHeader,
+                config: {
+                    params: {
+                        ...params,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    GetRemainingBudget<T = Models.RemainingBudget[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
         return ApiMethod.get<T>({
             url: this.getRemainingBudget,
         });
     }
 
-    GetAnalyticSubUnit<T = AnalyticSubUnit[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
+    GetAnalyticSubUnit<T = Models.AnalyticSubUnit[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
         return ApiMethod.get<T>({
             url: this.getAnalyticSubUnit,
         });

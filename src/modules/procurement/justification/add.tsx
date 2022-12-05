@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -14,7 +14,7 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment from "moment";
-import { FORMAT_DATE } from "utils/constant";
+import { FORMAT_DATE, QUARTAL } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import { FDataJustification } from "./models";
 
@@ -32,16 +32,18 @@ type Props = {
 
 const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    no_agenda: yup.string().required("No agenda wajib diisi"),
+    agenda_data_id: yup.number().required("Agenda Data wajib diisi"),
     value: yup.string().required("Nilai justifikasi wajib diisi"),
     about_justification: yup.string().required("Perihal wajib diisi"),
+    approval_position_id: yup.string().required("Approval posisi wajib diisi"),
+    load_type_id: yup.string().required("Jenis beban wajib diisi"),
+    sub_load_id: yup.string().required("Sub Load wajib diisi"),
+    subunit_id: yup.string().required("Sub unit wajib diisi"),
+    quartal_id: yup.number().required("Quartal wajib diisi"),
     note: yup.string().required("Catatan wajib diisi"),
     event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
     estimation_paydate: yup.string().required("Perkiraan pembayaran wajib diisi"),
     doc_justification: yup.string(),
-    approval_position_id: yup.string().required("Approval posisi wajib diisi"),
-    load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    subunit_id: yup.string().required("Sub unit wajib diisi"),
 });
 
 const AddJustification = ({ onSubmit, loading, children }: Props) => {
@@ -53,10 +55,14 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
+        watch,
+        setValue,
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const loadTypeId = watch("load_type_id");
 
     const subUnitQuery = useQuery(
         [procurementService.getSubUnit],
@@ -82,14 +88,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         [procurementService.getLoadType],
         async () => {
             const req = await procurementService.GetLoadType();
-            const subunit = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.load_name,
-                        value: el.load_type_id,
-                    } as SelectOption)
-            );
-            return subunit;
+            return req.data.data;
         },
         {
             onError: (error: any) => {
@@ -102,18 +101,67 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         [procurementService.getApprovalPosition],
         async () => {
             const req = await procurementService.GetApprovalPosition();
-            const subunit = req.data.data?.map(
+            const approval = req.data.data?.map(
                 (el) =>
                     ({
                         label: el.position,
                         value: el.approval_position_id,
                     } as SelectOption)
             );
-            return subunit;
+            return approval;
         },
         {
             onError: (error: any) => {
                 notification.error({ message: procurementService.getApprovalPosition, description: error?.message });
+            },
+        }
+    );
+
+    const agendaDataQuery = useQuery(
+        [procurementService.getNoAgenda],
+        async () => {
+            const req = await procurementService.GetNoAgenda();
+            const agenda = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.no_agenda_secretariat,
+                        value: el.agenda_data_id,
+                    } as SelectOption)
+            );
+            return agenda;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getSubUnit, description: error?.message });
+            },
+        }
+    );
+
+    const isHaveSubLoad = useMemo(() => {
+        form.setFieldsValue({
+            sub_load_id: "",
+        });
+        setValue("sub_load_id", "");
+        return loadTypeQuery.data?.find((el) => el.load_type_id === loadTypeId)?.sub_load === 1;
+    }, [loadTypeId]);
+
+    const subLoadQuery = useQuery(
+        [procurementService.getSubLoad],
+        async () => {
+            const req = await procurementService.GetSubLoad({ load_type_id: 1 });
+            const subLoad = req.data.data?.map(
+                (el) =>
+                    ({
+                        label: el.sub_load_name,
+                        value: el.sub_load_id,
+                    } as SelectOption)
+            );
+            return subLoad;
+        },
+        {
+            enabled: isHaveSubLoad,
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getSubUnit, description: error?.message });
             },
         }
     );
@@ -133,6 +181,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
+            sub_load_id: data.sub_load_id ?? null,
             doc_justification: base64,
         };
         onSubmit(parseData, () => {
@@ -169,9 +218,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
                             </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 24 }} name="no_agenda" label="No agenda" placeholder="Nomor" />
-                            </Col>
+
                             <Col span={12}>
                                 <ControlledInputNumber
                                     control={control}
@@ -211,7 +258,12 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     optionFilterProp="children"
                                     control={control}
                                     loading={loadTypeQuery.isLoading}
-                                    options={loadTypeQuery.data || []}
+                                    options={
+                                        loadTypeQuery.data?.map((el) => ({
+                                            label: el.load_name,
+                                            value: el.load_type_id,
+                                        })) || []
+                                    }
                                 />
                             </Col>
                             <Col span={12}>
@@ -236,12 +288,50 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="agenda_data_id"
+                                    label="No Agenda"
+                                    placeholder="No Agenda"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    loading={agendaDataQuery.isLoading}
+                                    options={agendaDataQuery.data || []}
+                                />
+                            </Col>
+                            {isHaveSubLoad && (
+                                <Col span={12}>
+                                    <ControlledSelectInput
+                                        showSearch
+                                        name="sub_load_id"
+                                        label="Sub Beban"
+                                        placeholder="Sub Beban"
+                                        optionFilterProp="children"
+                                        control={control}
+                                        loading={subLoadQuery.isLoading}
+                                        options={subLoadQuery.data || []}
+                                    />
+                                </Col>
+                            )}
+                            <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}
                                     label="file document"
                                     types={["pdf", "jpg", "jpeg", "png"]}
                                     multiple={false}
                                     name="doc_justification"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="quartal_id"
+                                    label="Quartal"
+                                    placeholder="Quartal"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    // loading={approvalQuery.isLoading}
+                                    options={QUARTAL}
                                 />
                             </Col>
                         </Row>

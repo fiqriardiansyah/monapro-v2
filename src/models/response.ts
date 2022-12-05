@@ -1,5 +1,3 @@
-import { RemainingUsage, TotalActivity, TotalUsage } from "./data";
-
 export default {};
 
 export interface BasePaginationResponse<T = any> {
@@ -10,20 +8,47 @@ export interface BasePaginationResponse<T = any> {
 }
 
 export interface GetHeaderDashboard {
-    total_usage: TotalUsage[];
-    remaining_usage: RemainingUsage[];
-    total_activity: TotalActivity[];
+    plan_budget: {
+        plan_budget: number;
+        percentage_plan: number;
+    }[];
+    total_usage: {
+        total_usage: number;
+        percentage_usage: number;
+    }[];
+    not_paid: {
+        not_paid: number;
+        percentage_notpaid: number;
+    }[];
+    remaining_budget: {
+        remaining_budget: number;
+        percentage_remaining: number;
+    }[];
+}
+
+export interface GetSubHeaderDashboard {
+    list_subunit_usage: {
+        subunit_name: string;
+        subunit_usage: number;
+        budget: number;
+    }[];
+    list_activity: {
+        load_name: string;
+        load_usage: number;
+    }[];
 }
 
 export interface GetHeaderSubUnitDashboard {
-    total_usage: number;
-    total_paid: number;
-    not_paid: number;
-    remaining_usage: number;
+    subunit_id: number;
     subunit_name: string;
+    list_analytic: {
+        plan_budget: number;
+        total_usage: number;
+        not_paid: number;
+    }[];
     list_activity: {
-        sponsorship: number;
-        procurement: number;
+        load_name: string;
+        load_usage: number;
     }[];
 }
 

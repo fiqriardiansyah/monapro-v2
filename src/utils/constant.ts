@@ -63,6 +63,44 @@ export const ROLE = [
     },
 ];
 
+export const QUARTAL = [
+    {
+        value: 1,
+        label: "Quartal 1",
+    },
+    {
+        value: 2,
+        label: "Quartal 2",
+    },
+    {
+        value: 3,
+        label: "Quartal 3",
+    },
+    {
+        value: 4,
+        label: "Quartal 4",
+    },
+];
+
+export const QUARTAL_MONTH = [
+    {
+        quartal: 1,
+        month: ["Januari", "Februari", "Maret"],
+    },
+    {
+        quartal: 2,
+        month: ["April", "Mei", "Juni"],
+    },
+    {
+        quartal: 3,
+        month: ["Juli", "Agustus", "September"],
+    },
+    {
+        quartal: 4,
+        month: ["Oktober", "November", "Desember"],
+    },
+];
+
 export const COLORS = [
     "rgb(0, 158, 255)",
     "rgb(244, 157, 26)",

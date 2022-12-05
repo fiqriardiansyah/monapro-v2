@@ -67,12 +67,28 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Anggaran",
-            dataIndex: "budget",
-            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
+            title: "Anggaran Q1",
+            dataIndex: "budget_q1",
+            render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+        },
+        {
+            title: "Anggaran Q2",
+            dataIndex: "budget_q2",
+            render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+        },
+        {
+            title: "Anggaran Q3",
+            dataIndex: "budget_q3",
+            render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+        },
+        {
+            title: "Anggaran Q4",
+            dataIndex: "budget_q4",
+            render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
         {
             title: "Action",
+            width: "200px",
             key: "action",
             fixed: "right",
             render: (_, record) => (

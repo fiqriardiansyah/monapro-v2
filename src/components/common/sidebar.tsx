@@ -3,7 +3,7 @@ import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { MdDashboard } from "react-icons/md";
 import { AiFillDatabase, AiOutlineDeploymentUnit } from "react-icons/ai";
-import { BsFillCalendarCheckFill, BsPersonCheck } from "react-icons/bs";
+import { BsClipboardData, BsFillCalendarCheckFill, BsPersonCheck } from "react-icons/bs";
 import { HiClipboardDocumentCheck, HiOutlineBanknotes, HiScale } from "react-icons/hi2";
 import { TfiHandPointUp, TfiWrite } from "react-icons/tfi";
 import { CiMoneyBill } from "react-icons/ci";
@@ -31,6 +31,7 @@ import {
     PROCUREMENT_JUSTIFICATION_PATH,
     PROCUREMENT_NEGOTIATION_PATH,
     PROCUREMENT_NEWS_PATH,
+    RECAP_PATH,
 } from "utils/routes";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -67,15 +68,16 @@ function Sidebar({ collapse }: Props) {
         getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
             getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
             getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />),
-            getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />),
+            // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
         ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
-            getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />),
-            getItem("Kontrak/SP/NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
+            // getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used
+            getItem("Kontrak/SPK/NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
             getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
+        getItem("Data Rekapan", RECAP_PATH, <BsClipboardData />),
     ];
 
     return (

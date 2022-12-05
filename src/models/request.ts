@@ -302,3 +302,11 @@ export interface SearchParam {
     query: string;
     page: number;
 }
+
+export interface QuartalParam {
+    quartal_id: number;
+}
+
+export interface GetSubLoadParam {
+    load_type_id: number;
+}

@@ -145,4 +145,10 @@ export default class Utils {
         const percent = 100
         return percent - ((total - remaining) / total * percent);
     }
+
+    static getRandomIntRange(min: number, max: number) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
 }

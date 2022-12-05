@@ -105,7 +105,7 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     // crud handler
     const onClickLockBudget = async (data: T, callback: () => void) => {
-        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
+        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: data.lock_budget === 1 ? 0 : 1 }); // [IMPORTANT] lock_budget need check
         callback();
     };
     const onClickEdit = (data: T) => {

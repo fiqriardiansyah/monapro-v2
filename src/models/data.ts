@@ -29,7 +29,10 @@ export interface SubUnitData {
     id: number | string;
     unit_name: string;
     pic_name: string;
-    budget: number | string;
+    budget_q1: number | string;
+    budget_q2: number | string;
+    budget_q3: number | string;
+    budget_q4: number | string;
 }
 
 export interface Role {
@@ -43,6 +46,7 @@ export interface Role {
 export interface LoadType {
     id: number | string;
     load_name: string;
+    sub_load_name?: string; // [IMPORTANT] property not sure
 }
 
 export interface ApprovalPosition {
@@ -174,6 +178,17 @@ export interface Finance {
     is_paid?: number;
 }
 
+export interface RecapData {
+    id: string | number;
+    no_agenda: string;
+    no_justification: string;
+    about_justification: string;
+    value_justification: string;
+    sub_unit: string;
+    contract: string;
+    news: string;
+}
+
 export interface SubUnitProcurement {
     subunit_id: number;
     subunit_name: string;
@@ -182,6 +197,7 @@ export interface SubUnitProcurement {
 export interface LoadTypeProcurement {
     load_type_id: number;
     load_name: string;
+    sub_load: number;
 }
 
 export interface ApprovalPositionProcurement {
@@ -194,6 +210,16 @@ export interface JustificationProcurement {
     no_justification: string;
 }
 
+export interface SubLoadProcurement {
+    sub_load_id: number;
+    sub_load_name: string;
+}
+
+export interface NoAgendaProcurement {
+    agenda_data_id: number;
+    no_agenda_secretariat: string;
+}
+
 export interface AgendaDataDisposition {
     agenda_data_id: number;
     no_agenda_secretariat: string;
@@ -202,21 +228,6 @@ export interface AgendaDataDisposition {
 export interface AgendaLoadType {
     load_type_id: number;
     load_name: string;
-}
-
-export interface TotalUsage {
-    total_usage: number;
-    percentage_total: 1;
-}
-
-export interface RemainingUsage {
-    remaining_usage: number;
-    percentage_remaining: number;
-}
-
-export interface TotalActivity {
-    sponsorship: number;
-    procurement: number;
 }
 
 export interface RemainingBudget {
@@ -230,8 +241,8 @@ export interface AnalyticSubUnit {
     subunit_id: number;
     subunit_name: string;
     list_analytic: {
+        plan_budget: number;
         total_usage: number;
-        total_paid: number;
         not_paid: number;
     }[];
 }

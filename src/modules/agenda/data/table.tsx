@@ -15,32 +15,32 @@ import { TDataAgenda } from "./models";
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickLockBudget: (data: T, callback: () => void) => void;
+    // onClickLockBudget: (data: T, callback: () => void) => void; [IMPORTANT] not used
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const onClickLockBudgetHandler = (data: T) => {
-        Modal.confirm({
-            title: "Lock",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Kunci anggaran dengan id ${data.id}?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickLockBudget(data, () => {
-                        resolve(true);
-                    });
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
+    // const onClickLockBudgetHandler = (data: T) => {
+    //     Modal.confirm({
+    //         title: "Lock",
+    //         icon: <ImWarning className="text-red-400" />,
+    //         content: `Kunci anggaran dengan id ${data.id}?`,
+    //         onOk() {
+    //             return new Promise((resolve, reject) => {
+    //                 onClickLockBudget(data, () => {
+    //                     resolve(true);
+    //                 });
+    //             });
+    //         },
+    //         onCancel() {},
+    //         okButtonProps: {
+    //             danger: true,
+    //         },
+    //     });
+    // }; // [IMPORTANT] not used
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -133,7 +133,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
-            width: "200px",
+            width: "100px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -142,9 +142,9 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickL
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
+                    {/* <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
                         {record?.lock_budget === 1 ? "Locked" : "Lock budget"}
-                    </Button>
+                    </Button> [IMPORTANT] not used */}
                 </Space>
             ),
         },

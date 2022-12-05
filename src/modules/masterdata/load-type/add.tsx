@@ -22,6 +22,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Omit<LoadType, "id">> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
+    sub_load_name: yup.string().required("Sub Jenis beban wajib diisi"),
 });
 
 const AddLoadType = ({ onSubmit, loading, children }: Props) => {
@@ -72,6 +73,13 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="load_name" label="Nama Beban" placeholder="Nama Beban" />
+                        <ControlledInputText
+                            control={control}
+                            labelCol={{ xs: 12 }}
+                            name="sub_load_name"
+                            label="Nama Sub Beban"
+                            placeholder="Nama Sub Beban"
+                        />
 
                         <Row justify="start">
                             <Space>

@@ -25,6 +25,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Omit<LoadType, "id">> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
+    sub_load_name: yup.string().required("Sub Jenis beban wajib diisi"),
 });
 
 const EditLoadType = ({ onSubmit, loading, children }: Props) => {
@@ -51,8 +52,10 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
             onSuccess: (data: any) => {
                 form.setFieldsValue({
                     load_name: data?.load_name || "",
+                    sub_load_name: data?.sub_load_name || "",
                 });
                 setValue("load_name", data?.load_name || "");
+                setValue("sub_load_name", data?.sub_load_name || ""); // [IMPORTANT] property not sure
             },
         }
     );
@@ -115,6 +118,13 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="load_name" label="Nama Beban" placeholder="Nama Beban" />
+                        <ControlledInputText
+                            control={control}
+                            labelCol={{ xs: 12 }}
+                            name="sub_load_name"
+                            label="Nama Sub Beban"
+                            placeholder="Nama Sub Beban"
+                        />
 
                         <Row justify="start">
                             <Space>

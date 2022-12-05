@@ -35,20 +35,20 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         return Utils.toBaseTable<AgendaData, T>(res.data.data);
     });
 
-    const lockBudgetMutation = useMutation(
-        async (data: AgendaDataLockBudgetData) => {
-            await agendaDataService.LockBudget(data);
-        },
-        {
-            onSuccess: () => {
-                getList.refetch();
-                message.success("Budget Locked!");
-            },
-            onError: (error: any) => {
-                message.error(error?.message);
-            },
-        }
-    );
+    // const lockBudgetMutation = useMutation(
+    //     async (data: AgendaDataLockBudgetData) => {
+    //         await agendaDataService.LockBudget(data);
+    //     },
+    //     {
+    //         onSuccess: () => {
+    //             getList.refetch();
+    //             message.success("Budget Locked!");
+    //         },
+    //         onError: (error: any) => {
+    //             message.error(error?.message);
+    //         },
+    //     }
+    // ); [IMPORTANT] not used
 
     const createMutation = useMutation(
         async ({ data }: { data: FDataAgenda }) => {
@@ -112,10 +112,10 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
             editTriggerRef.current.click();
         }
     };
-    const onClickLockBudget = async (data: T, callback: () => void) => {
-        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
-        callback();
-    };
+    // const onClickLockBudget = async (data: T, callback: () => void) => {
+    //     await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
+    //     callback();
+    // }; [IMPORTANT] not used
     const addHandler = async (data: FDataAgenda, callback: () => void) => {
         await createMutation.mutateAsync({ data });
         callback();
@@ -159,7 +159,11 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <AgendaDataTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
+            <AgendaDataTable
+                // onClickLockBudget={onClickLockBudget} [IMPORTANT] not used
+                onClickEdit={onClickEdit}
+                fetcher={getList}
+            />
         </div>
     );
 };

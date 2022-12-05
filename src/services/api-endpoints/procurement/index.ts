@@ -1,5 +1,13 @@
 /* eslint-disable no-useless-constructor */
-import { ApprovalPositionProcurement, JustificationProcurement, LoadTypeProcurement, SubUnitProcurement } from "models";
+import {
+    ApprovalPositionProcurement,
+    GetSubLoadParam,
+    JustificationProcurement,
+    LoadTypeProcurement,
+    NoAgendaProcurement,
+    SubLoadProcurement,
+    SubUnitProcurement,
+} from "models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -12,6 +20,10 @@ class ProcurementService extends BaseService {
     getApprovalPosition = "/procurement/get-approval-position";
 
     getJustification = "/procurement/list-justification";
+
+    getNoAgenda = "/procurement/get-no-agenda";
+
+    getSubLoad = "/procurement/get-sub-load";
 
     constructor() {
         super();
@@ -51,6 +63,31 @@ class ProcurementService extends BaseService {
         return this.ProxyRequest<T>(async () => {
             const req = await ApiMethod.get<T>({
                 url: this.getJustification,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    GetNoAgenda<T extends NoAgendaProcurement[]>() {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.getNoAgenda,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    GetSubLoad<T extends SubLoadProcurement[]>(param: GetSubLoadParam) {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.getNoAgenda,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

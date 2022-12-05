@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
-import { Alert, Card, Divider, Progress, Skeleton, Tooltip } from "antd";
+import { Alert, Button, Card, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Line } from "react-chartjs-2";
 
@@ -16,12 +16,12 @@ import { DASHBOARD_PATH } from "utils/routes";
 import { useQuery } from "react-query";
 import dashboardService from "services/api-endpoints/dashboard";
 import State from "components/common/state";
-import { COLORS } from "utils/constant";
+import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
 import Utils from "utils";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 
 export const dataRevenueDefault = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Des"],
+    labels: [],
     datasets: [],
     options: {
         responsive: true,
@@ -33,31 +33,39 @@ const DashboardPage = () => {
         Chart.register(...registerables);
     }
 
+    const [qtl, setQtl] = useState(1);
+
     const [chartData, setChartData] = useState(dataRevenueDefault);
 
-    const getAllHeader = useQuery([dashboardService.getAllHeader], async () => {
-        const res = await dashboardService.GetAllHeader();
+    const getAllHeader = useQuery([dashboardService.getAllHeader, qtl], async () => {
+        const res = await dashboardService.GetAllHeader({ quartal_id: qtl });
+        return res.data.data;
+    });
+
+    const getSubHeader = useQuery([dashboardService.getSubHeader, qtl], async () => {
+        const res = await dashboardService.GetSubHeader({ quartal_id: qtl });
         return res.data.data;
     });
 
     const remainingBudgetQuery = useQuery(
         [dashboardService.getRemainingBudget],
         async () => {
-            const res = await dashboardService.GetRemainingBudget();
-            return res.data.data;
+            // const res = await dashboardService.GetRemainingBudget();
+            // return res.data.data;
+            return [] as any;
         },
         {
             onSuccess: (data) => {
-                setChartData((prev) => ({
-                    ...prev,
-                    datasets: [...data].map((el, i) => ({
-                        label: el.subunit_name,
-                        data: randomRevenue[i] ?? randomRevenue[0],
-                        backgroundColor: COLORS[i],
-                        borderColor: COLORS[i],
-                        borderWidth: 1,
-                    })) as any,
-                }));
+                // setChartData((prev) => ({
+                //     ...prev,
+                //     datasets: [...data].map((el, i) => ({
+                //         label: el.subunit_name,
+                //         data: randomRevenue[i] ?? randomRevenue[0],
+                //         backgroundColor: COLORS[i],
+                //         borderColor: COLORS[i],
+                //         borderWidth: 1,
+                //     })) as any,
+                // }));
             },
         }
     );
@@ -67,32 +75,70 @@ const DashboardPage = () => {
         return res.data.data;
     });
 
+    useEffect(() => {
+        if (!getSubHeader.data) return;
+        setChartData((prev) => ({
+            ...prev,
+            labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+            datasets: [...getSubHeader.data.list_subunit_usage].map((el, i) => ({
+                label: el.subunit_name,
+                data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+                backgroundColor: COLORS[i],
+                borderColor: COLORS[i],
+                borderWidth: 1,
+            })) as any,
+        }));
+    }, [qtl, getSubHeader.data]);
+
     return (
         <div className="min-h-screen px-10">
-            <Header title="Dashboard" />
-            <div className="grid grid-cols-3 grid-rows-3 gap-4 mb-10">
+            <Header
+                title="Dashboard"
+                action={
+                    <Space>
+                        <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
+                    </Space>
+                }
+            />
+            <div className="grid grid-cols-4 grid-rows-3 gap-4 mb-10">
                 <State data={getAllHeader.data} isLoading={getAllHeader.isLoading} isError={getAllHeader.isError}>
                     {(state) => (
                         <>
                             <State.Data state={state}>
-                                {getAllHeader.data?.total_usage &&
-                                    getAllHeader.data.total_usage?.map((el, i) => (
+                                {getAllHeader.data?.plan_budget &&
+                                    getAllHeader.data.plan_budget?.map((el, i: number) => (
                                         <RemainingBudget
-                                            data={{ title: "Total Pemakaian", budget: el.total_usage, percent: el.percentage_total }}
+                                            data={{ title: "Plan Budget", budget: el.plan_budget, percent: el.percentage_plan }}
                                             key={i}
                                         />
                                     ))}
-                                {getAllHeader.data?.remaining_usage &&
-                                    getAllHeader.data.remaining_usage?.map((el, i) => (
+                                {getAllHeader.data?.total_usage &&
+                                    getAllHeader.data.total_usage?.map((el, i: number) => (
                                         <RemainingBudget
-                                            data={{ title: "Sisa Pemakaian", budget: el.remaining_usage, percent: el.percentage_remaining }}
+                                            data={{ title: "Total Pemakaian", budget: el.total_usage, percent: el.percentage_usage }}
+                                            key={i}
+                                        />
+                                    ))}
+                                {getAllHeader.data?.not_paid &&
+                                    getAllHeader.data?.not_paid?.map((el, i: number) => (
+                                        <RemainingBudget
+                                            data={{ title: "Belum Bayar", budget: el.not_paid, percent: el.percentage_notpaid }}
+                                            key={i}
+                                        />
+                                    ))}
+                                {getAllHeader.data?.remaining_budget &&
+                                    getAllHeader.data?.remaining_budget?.map((el, i: number) => (
+                                        <RemainingBudget
+                                            data={{ title: "Sisa Anggaran", budget: el.remaining_budget, percent: el.percentage_remaining }}
                                             key={i}
                                         />
                                     ))}
                             </State.Data>
                             <State.Loading state={state}>
+                                <RemainingBudget.Loading title="Plan Budget" />
                                 <RemainingBudget.Loading title="Total Pemakaian" />
-                                <RemainingBudget.Loading title="Sisa Pemakaian" />
+                                <RemainingBudget.Loading title="Belum Bayar" />
+                                <RemainingBudget.Loading title="Sisa Anggaran" />
                             </State.Loading>
                             <State.Error state={state}>
                                 <Alert message={(getAllHeader.error as any)?.message} type="error" />
@@ -100,62 +146,28 @@ const DashboardPage = () => {
                         </>
                     )}
                 </State>
-                <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
-                    <State data={getAllHeader.data} isLoading={getAllHeader.isLoading} isError={getAllHeader.isError}>
-                        {(state) => (
-                            <>
-                                <State.Data state={state}>
-                                    <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">Total Aktivitas</p>
-                                    {getAllHeader.data?.total_activity &&
-                                        getAllHeader.data?.total_activity?.map((el, i) => (
-                                            <React.Fragment key={i}>
-                                                <div className="w-full flex justify-between items-center">
-                                                    <p className="m-0 font-medium">Sponsorship</p>
-                                                    <p className="m-0 font-medium text-gray-500 text-lg">
-                                                        {!Number.isNaN(el.sponsorship) ? Number(el.sponsorship).ToIndCurrency("Rp") : "-"}
-                                                    </p>
-                                                </div>
-                                                <div className="w-full flex justify-between items-center">
-                                                    <p className="m-0 font-medium">Procurement</p>
-                                                    <p className="m-0 font-medium text-gray-500 text-lg">
-                                                        {!Number.isNaN(el.procurement) ? Number(el.procurement).ToIndCurrency("Rp") : "-"}
-                                                    </p>
-                                                </div>
-                                            </React.Fragment>
-                                        ))}
-                                </State.Data>
-                                <State.Loading state={state}>
-                                    <RemainingBudget.Loading title="Total Aktifitas" />
-                                </State.Loading>
-                                <State.Error state={state}>
-                                    <Alert message={(getAllHeader.error as any)?.message} type="error" />
-                                </State.Error>
-                            </>
-                        )}
-                    </State>
-                </div>
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <Line data={chartData} />
                 </div>
                 <div className="p-3 bg-white rounded-md row-span-2">
-                    <p className="m-0 font-medium text-gray-400 mb-6 capitalize">anggaran terpakai tiap unit</p>
-                    <State data={remainingBudgetQuery.data} isLoading={remainingBudgetQuery.isLoading} isError={remainingBudgetQuery.isError}>
+                    <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Pemakaian Sub Unit</p>
+                    <State data={getSubHeader.data} isLoading={getSubHeader.isLoading} isError={getSubHeader.isError}>
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    {remainingBudgetQuery.data?.map((el, i) => {
+                                    {getSubHeader.data?.list_subunit_usage?.map((el, i: number) => {
                                         return (
                                             <Tooltip
                                                 placement="left"
                                                 title={`Anggaran Terpakai: ${
-                                                    !Number.isNaN(el.total_usage) ? el.total_usage.ToIndCurrency("Rp") : "-"
+                                                    !Number.isNaN(el.subunit_usage) ? el.subunit_usage.ToIndCurrency("Rp") : "-"
                                                 } / ${el.budget?.ToIndCurrency("Rp")}`}
-                                                key={el.id}
+                                                key={i}
                                             >
                                                 <div className="flex flex-col w-full mb-3">
                                                     <p className="m-0 text-gray-400 capitalize text-xs">{el.subunit_name}</p>
                                                     <Progress
-                                                        percent={Math.floor(Utils.remainPercent(el.total_usage, el.budget))}
+                                                        percent={Math.floor(Utils.remainPercent(el.subunit_usage, el.budget))}
                                                         showInfo={false}
                                                         status="active"
                                                         strokeColor={{ from: COLORS[i], to: COLORS[i] }}
@@ -175,13 +187,38 @@ const DashboardPage = () => {
                         )}
                     </State>
                 </div>
+                <div className="p-3 bg-white rounded-md row-span-2">
+                    <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Jenis Aktivitas</p>
+                    <State data={getSubHeader.data} isLoading={getSubHeader.isLoading} isError={getSubHeader.isError}>
+                        {(state) => (
+                            <>
+                                <State.Data state={state}>
+                                    {getSubHeader.data?.list_activity?.map((el, i: number) => {
+                                        return (
+                                            <div className="w-full flex items-center justify-between mb-2">
+                                                <p className="m-0 text-gray-400">{el.load_name}</p>
+                                                <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                            </div>
+                                        );
+                                    })}
+                                </State.Data>
+                                <State.Loading state={state}>
+                                    <Skeleton active paragraph={{ rows: 5 }} />
+                                </State.Loading>
+                                <State.Error state={state}>
+                                    <Alert message={(remainingBudgetQuery.error as any)?.message} />
+                                </State.Error>
+                            </>
+                        )}
+                    </State>
+                </div>
             </div>
             {/* sub unit */}
             <State data={analyticSubUnit.data} isLoading={analyticSubUnit.isLoading} isError={analyticSubUnit.isError}>
                 {(state) => (
                     <>
                         <State.Data state={state}>
-                            {analyticSubUnit.data?.map((subUnit) => (
+                            {analyticSubUnit.data?.map((subUnit: any) => (
                                 <SubUnitAnalytic data={subUnit} key={subUnit.subunit_id} />
                             ))}
                         </State.Data>

@@ -6,38 +6,22 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
-import { TDataLoadType } from "./models";
+import moment from "moment";
+import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
+import { TDataRecapData } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
-    onClickEdit: (data: T) => void;
-    onClickDelete: (data: T, callback: () => void) => void;
-    onClickDetail: (data: T) => void;
 };
 
-const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+// [IMPORTANT] kolom table belum bener
+
+const RecapDataTable = <T extends TDataRecapData>({ fetcher }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
-
-    const onClickDlt = (data: T) => {
-        Modal.confirm({
-            title: "Delete",
-            icon: <ImWarning className="text-red-400" />,
-            content: `Hapus data dengan id ${data.id} ?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickDelete(data, () => {
-                        resolve(true);
-                    });
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
-    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -57,27 +41,49 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "Nama Beban",
-            dataIndex: "load_name",
+            title: "No Agenda",
+            dataIndex: "no_agenda",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Nama Sub Beban",
-            dataIndex: "sub_load_name", // [IMPORTANT] property not sure
+            title: "No Justifikasi",
+            dataIndex: "no_justification",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Perihal Justifikasi",
+            dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
+            title: "Nilai Justifikasi",
+            dataIndex: "value_justification",
+            render: (text) => <p className="capitalize m-0">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+        },
+        {
+            title: "Sub Unit",
+            dataIndex: "sub_unit",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Kontrak/SPK/NOPES",
+            dataIndex: "contract",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Berita Acara",
+            dataIndex: "news",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            width: "200px",
             title: "Action",
             key: "action",
             fixed: "right",
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
-                    </Button>
+                    <Button type="text">Lock</Button>
+                    <Button type="text">Bayar</Button>
                 </Space>
             ),
         },
@@ -85,6 +91,7 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
 
     return (
         <Table
+            scroll={{ x: 1500 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -100,4 +107,4 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
     );
 };
 
-export default LoadTypeTable;
+export default RecapDataTable;
