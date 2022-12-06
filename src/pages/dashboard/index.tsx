@@ -47,29 +47,6 @@ const DashboardPage = () => {
         return res.data.data;
     });
 
-    const remainingBudgetQuery = useQuery(
-        [dashboardService.getRemainingBudget],
-        async () => {
-            // const res = await dashboardService.GetRemainingBudget();
-            // return res.data.data;
-            return [] as any;
-        },
-        {
-            onSuccess: (data) => {
-                // setChartData((prev) => ({
-                //     ...prev,
-                //     datasets: [...data].map((el, i) => ({
-                //         label: el.subunit_name,
-                //         data: randomRevenue[i] ?? randomRevenue[0],
-                //         backgroundColor: COLORS[i],
-                //         borderColor: COLORS[i],
-                //         borderWidth: 1,
-                //     })) as any,
-                // }));
-            },
-        }
-    );
-
     const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit], async () => {
         const res = await dashboardService.GetAnalyticSubUnit();
         return res.data.data;
@@ -181,7 +158,7 @@ const DashboardPage = () => {
                                     <Skeleton active paragraph={{ rows: 5 }} />
                                 </State.Loading>
                                 <State.Error state={state}>
-                                    <Alert message={(remainingBudgetQuery.error as any)?.message} />
+                                    <Alert message={(getSubHeader.error as any)?.message} />
                                 </State.Error>
                             </>
                         )}
@@ -206,7 +183,7 @@ const DashboardPage = () => {
                                     <Skeleton active paragraph={{ rows: 5 }} />
                                 </State.Loading>
                                 <State.Error state={state}>
-                                    <Alert message={(remainingBudgetQuery.error as any)?.message} />
+                                    <Alert message={(getSubHeader.error as any)?.message} />
                                 </State.Error>
                             </>
                         )}

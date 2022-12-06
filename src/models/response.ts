@@ -52,6 +52,10 @@ export interface GetHeaderSubUnitDashboard {
     }[];
 }
 
-export interface GetChartSubUnitDashboard {
+export interface GetChartSubUnitDashboard
+    extends Array<{
+        month: string;
+        total: number;
+    }> {
     _?: any;
 }

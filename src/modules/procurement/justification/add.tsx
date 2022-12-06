@@ -32,12 +32,12 @@ type Props = {
 
 const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    agenda_data_id: yup.number().required("Agenda Data wajib diisi"),
+    agenda_data_id: yup.number(),
     value: yup.string().required("Nilai justifikasi wajib diisi"),
     about_justification: yup.string().required("Perihal wajib diisi"),
     approval_position_id: yup.string().required("Approval posisi wajib diisi"),
     load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    sub_load_id: yup.string().required("Sub Load wajib diisi"),
+    sub_load_id: yup.string(),
     subunit_id: yup.string().required("Sub unit wajib diisi"),
     quartal_id: yup.number().required("Quartal wajib diisi"),
     note: yup.string().required("Catatan wajib diisi"),
@@ -148,7 +148,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     const subLoadQuery = useQuery(
         [procurementService.getSubLoad],
         async () => {
-            const req = await procurementService.GetSubLoad({ load_type_id: 1 });
+            const req = await procurementService.GetSubLoad({ load_type_id: loadTypeId as any });
             const subLoad = req.data.data?.map(
                 (el) =>
                     ({
@@ -181,7 +181,8 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
-            sub_load_id: data.sub_load_id ?? null,
+            sub_load_id: data.sub_load_id || null,
+            agenda_data_id: data.agenda_data_id || null,
             doc_justification: base64,
         };
         onSubmit(parseData, () => {
@@ -266,6 +267,20 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     }
                                 />
                             </Col>
+                            {isHaveSubLoad && (
+                                <Col span={12}>
+                                    <ControlledSelectInput
+                                        showSearch
+                                        name="sub_load_id"
+                                        label="Sub Beban"
+                                        placeholder="Sub Beban"
+                                        optionFilterProp="children"
+                                        control={control}
+                                        loading={subLoadQuery.isLoading}
+                                        options={subLoadQuery.data || []}
+                                    />
+                                </Col>
+                            )}
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
@@ -299,20 +314,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     options={agendaDataQuery.data || []}
                                 />
                             </Col>
-                            {isHaveSubLoad && (
-                                <Col span={12}>
-                                    <ControlledSelectInput
-                                        showSearch
-                                        name="sub_load_id"
-                                        label="Sub Beban"
-                                        placeholder="Sub Beban"
-                                        optionFilterProp="children"
-                                        control={control}
-                                        loading={subLoadQuery.isLoading}
-                                        options={subLoadQuery.data || []}
-                                    />
-                                </Col>
-                            )}
+
                             <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}

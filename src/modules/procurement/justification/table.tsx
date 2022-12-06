@@ -26,7 +26,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
-            content: `Kunci anggaran dengan id ${data.id}?`,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran dengan id ${data.id}?`,
             onOk() {
                 return new Promise((resolve, reject) => {
                     onClickLockBudget(data, () => {
@@ -127,7 +127,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
             },
         },
         {
-            width: "200px",
+            width: "250px",
             title: "Action",
             key: "action",
             fixed: "right",
@@ -136,7 +136,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    <Button type={record?.lock_budget === 1 ? "primary" : "text"} onClick={() => onClickLockBudgetHandler(record)}>
+                    <Button type={record?.lock_budget !== 1 ? "primary" : "text"} onClick={() => onClickLockBudgetHandler(record)}>
                         {record?.lock_budget === 1 ? "UnLocked Budget" : "Lock Budget"}
                     </Button>
                 </Space>

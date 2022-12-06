@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, List, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -62,9 +62,19 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Nama Sub Beban",
-            dataIndex: "sub_load_name", // [IMPORTANT] property not sure
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            title: "Sub Beban",
+            dataIndex: "list_sub_load",
+            render: (text, record) => {
+                if (record.list_sub_load?.length === 0) return "-";
+                return (
+                    <List
+                        size="small"
+                        bordered
+                        dataSource={record.list_sub_load}
+                        renderItem={(item) => <List.Item>{item.sub_load_name}</List.Item>}
+                    />
+                );
+            },
         },
         {
             title: "Action",

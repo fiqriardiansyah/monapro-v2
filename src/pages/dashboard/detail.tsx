@@ -1,5 +1,5 @@
 /* eslint-disable react/no-array-index-key */
-import { Button, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
+import { Button, Divider, message, Progress, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -14,8 +14,8 @@ import ProgressCustome from "modules/dashboard/component/progress-custome";
 import { IoMdArrowBack } from "react-icons/io";
 import { DASHBOARD_PATH } from "utils/routes";
 import AgendaDataTable from "modules/agenda/data/table";
-import { BasePaginationResponse } from "models";
-import { useQuery } from "react-query";
+import { BasePaginationResponse, RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
+import { useMutation, useQuery } from "react-query";
 import JustificationTable from "modules/procurement/justification/table";
 import dashboardSubUnitService from "services/api-endpoints/dashboard/subunit-detail";
 import State from "components/common/state";
@@ -24,8 +24,8 @@ import JustificationSubUnitTable from "modules/dashboard/index/justification-tab
 import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
 import Utils from "utils";
 import { randomRevenue } from "modules/dashboard/data";
-
-// const color = COLORS[Math.round(Math.random() * (COLORS.length - 1))] || COLORS[0];
+import RecapDataTable from "modules/recap-data/table";
+import recapDataService from "services/api-endpoints/recap-data";
 
 export const chartDataDefault = {
     labels: [],
@@ -40,33 +40,45 @@ const DashboardDetail = () => {
         Chart.register(...registerables);
     }
 
-    const [qtl, setQtl] = useState(1);
-
     const [chartData, setChartData] = useState(chartDataDefault);
 
     const { id } = useParams();
     const [searchParams] = useSearchParams();
-    const pageAgenda = searchParams.get("page_agenda") || 1;
-    const pageJustification = searchParams.get("page_justification") || 1;
+    const page = searchParams.get("page") || 1;
 
     const getHeaderSubUnit = useQuery(
-        [dashboardSubUnitService.getHeaderSubunit, id, qtl],
+        [dashboardSubUnitService.getHeaderSubunit, id],
         async () => {
             const res = await dashboardSubUnitService.GetHeaderSubunit({ id: id as any });
             return res.data.data;
         },
         {
             enabled: !!id,
+        }
+    );
+
+    const getRecapData = useQuery([dashboardSubUnitService.getRecapData, page, id], async () => {
+        const req = await dashboardSubUnitService.GetRecapData({ subunitId: id as any, page });
+        return req.data.data;
+    });
+
+    useQuery(
+        [dashboardSubUnitService.getChartSubunit, id],
+        async () => {
+            const req = await dashboardSubUnitService.GetChartSubunit({ id: id as any });
+            return req.data.data;
+        },
+        {
+            enabled: !!getHeaderSubUnit.data,
             onSuccess: (data) => {
                 setChartData((prev) => ({
                     ...prev,
-                    labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+                    labels: data.map((el) => el.month) as any,
                     datasets: [
                         {
-                            label: data.subunit_name,
-                            data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+                            label: getHeaderSubUnit.data?.subunit_name,
+                            data: data.map((el) => el.total),
                             backgroundColor: [COLORS[Utils.getRandomIntRange(0, COLORS.length - 1)]],
-                            borderColor: [COLORS[Utils.getRandomIntRange(0, COLORS.length - 1)]],
                             borderWidth: 1,
                         },
                     ] as any,
@@ -75,15 +87,52 @@ const DashboardDetail = () => {
         }
     );
 
-    const getAgendaSubUnit = useQuery([dashboardSubUnitService.getAgendaSubunit, pageAgenda], async () => {
-        const res = await dashboardSubUnitService.GetAgendaSubUnit({ id: id as any, page: pageAgenda });
-        return res.data.data;
-    });
+    const lockBudgetMutation = useMutation(
+        async (data: RecapLockBudgetData) => {
+            if (!data.justification_id) {
+                throw new Error("Justification id not found!");
+            }
+            await recapDataService.SetLockBudget(data);
+        },
+        {
+            onSuccess: () => {
+                getRecapData.refetch();
+                message.success("Budget Locked!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
 
-    const getJustificationSubUnit = useQuery([dashboardSubUnitService.getJustificationSubunit, pageJustification], async () => {
-        const res = await dashboardSubUnitService.GetJustificationSubunit({ id: id as any, page: pageJustification });
-        return res.data.data;
-    });
+    const paidMutation = useMutation(
+        async (data: RecapIsPaidData) => {
+            if (!data.finance_id) {
+                throw new Error("Finance id not found!");
+            }
+            await recapDataService.SetIsPaid(data);
+        },
+        {
+            onSuccess: () => {
+                getRecapData.refetch();
+                message.success("Set Bayar!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
+
+    const onClickLockBudget = async (data: RecapData, callback: () => void) => {
+        await lockBudgetMutation.mutateAsync({ justification_id: data.justification_id, lock_budget: 1 }).then(callback).catch(callback);
+    };
+
+    const onClickPaid = async (data: RecapData, callback: () => void) => {
+        await paidMutation
+            .mutateAsync({ finance_id: data.finance_id as any, is_paid: 1 })
+            .then(callback)
+            .catch(callback);
+    };
 
     return (
         <div className="min-h-screen px-10">
@@ -96,11 +145,6 @@ const DashboardDetail = () => {
                     </Link>
                 )}
                 title={getHeaderSubUnit.data?.subunit_name || "Getting data..."}
-                action={
-                    <Space>
-                        <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
-                    </Space>
-                }
             />
             <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
@@ -178,6 +222,7 @@ const DashboardDetail = () => {
                 </div>
             </div>
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data rekapan</p>
+            <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getRecapData} />
         </div>
     );
 };

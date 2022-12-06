@@ -40,7 +40,7 @@ const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
     about_justification: yup.string().required("Perihal wajib diisi"),
     approval_position_id: yup.string().required("Approval posisi wajib diisi"),
     load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    sub_load_id: yup.number().required("Sub Load wajib diisi"),
+    sub_load_id: yup.string(),
     subunit_id: yup.string().required("Sub unit wajib diisi"),
     quartal_id: yup.number().required("Quartal wajib diisi"),
     note: yup.string().required("Catatan wajib diisi"),
@@ -207,7 +207,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
             doc_justification: base64 || getValues()?.doc_justification || null,
-            sub_load_id: data.sub_load_id ?? null,
+            sub_load_id: data.sub_load_id || null,
         };
         onSubmit(
             {
@@ -311,6 +311,20 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     }
                                 />
                             </Col>
+                            {isHaveSubLoad && (
+                                <Col span={12}>
+                                    <ControlledSelectInput
+                                        showSearch
+                                        name="sub_load_id"
+                                        label="Sub Beban"
+                                        placeholder="Sub Beban"
+                                        optionFilterProp="children"
+                                        control={control}
+                                        loading={subLoadQuery.isLoading}
+                                        options={subLoadQuery.data || []}
+                                    />
+                                </Col>
+                            )}
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
@@ -344,20 +358,6 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     options={agendaDataQuery.data || []}
                                 />
                             </Col>
-                            {isHaveSubLoad && (
-                                <Col span={12}>
-                                    <ControlledSelectInput
-                                        showSearch
-                                        name="sub_load_id"
-                                        label="Sub Beban"
-                                        placeholder="Sub Beban"
-                                        optionFilterProp="children"
-                                        control={control}
-                                        loading={subLoadQuery.isLoading}
-                                        options={subLoadQuery.data || []}
-                                    />
-                                </Col>
-                            )}
                             <Col span={12}>
                                 {docWatch ? (
                                     <div className="w-full">

@@ -1,4 +1,5 @@
 import { AxiosRequestConfig } from "axios";
+import { FDataLoadType } from "modules/masterdata/load-type/models";
 import {
     AgendaData,
     AgendaDisposition,
@@ -81,7 +82,7 @@ export interface LoadTypeGetAllParam {
     page: string | number;
 }
 
-export interface LoadTypeCreateData extends Omit<LoadType, "id"> {
+export interface LoadTypeCreateData extends FDataLoadType {
     _?: any;
 }
 
@@ -288,6 +289,11 @@ export interface GetJustificationSubUnitPathParam {
     page: number | string;
 }
 
+export interface GetRecapDataPathParam {
+    subunitId: string | number;
+    page: number | string;
+}
+
 // PROFILE
 export interface GetRoleProfileParam {
     page: string | number;
@@ -309,4 +315,14 @@ export interface QuartalParam {
 
 export interface GetSubLoadParam {
     load_type_id: number;
+}
+
+export interface RecapLockBudgetData {
+    justification_id: number;
+    lock_budget: number;
+}
+
+export interface RecapIsPaidData {
+    finance_id: number;
+    is_paid: number;
 }

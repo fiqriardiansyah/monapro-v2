@@ -3,7 +3,7 @@ import Header from "components/common/header";
 import { LoadType } from "models";
 import AddLoadType from "modules/masterdata/load-type/add";
 import EditLoadType from "modules/masterdata/load-type/edit";
-import { TDataLoadType } from "modules/masterdata/load-type/models";
+import { FDataLoadType, FDataLoadTypeId, TDataLoadType } from "modules/masterdata/load-type/models";
 import LoadTypeTable from "modules/masterdata/load-type/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -49,7 +49,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
         }
     );
     const createMutation = useMutation(
-        async ({ data, callback }: { data: LoadType; callback: () => void }) => {
+        async ({ data, callback }: { data: FDataLoadType; callback: () => void }) => {
             await loadTypeService.Create<LoadType>(data);
             callback();
         },
@@ -65,8 +65,9 @@ const LoadTypePage = <T extends TDataLoadType>() => {
         }
     );
     const editMutation = useMutation(
-        async ({ data, callback }: { data: LoadType; callback: () => void }) => {
-            await loadTypeService.Edit<LoadType>(data);
+        async ({ data, callback }: { data: FDataLoadTypeId; callback: () => void }) => {
+            console.log(data);
+            // await loadTypeService.Edit<LoadType>(data);
             callback();
         },
         {
@@ -100,7 +101,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
             editTriggerRef.current.click();
         }
     };
-    const addHandler = (data: LoadType, callback: () => void) => {
+    const addHandler = (data: FDataLoadType, callback: () => void) => {
         createMutation.mutate({
             data,
             callback: () => {
@@ -108,7 +109,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
             },
         });
     };
-    const editHandler = (data: LoadType, callback: () => void) => {
+    const editHandler = (data: FDataLoadTypeId, callback: () => void) => {
         editMutation.mutate({
             data,
             callback: () => {

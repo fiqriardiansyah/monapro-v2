@@ -14,14 +14,52 @@ import { TDataRecapData } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    onClickLockBudget: (data: T, callback: () => void) => void;
+    onClickPaid: (data: T, callback: () => void) => void;
 };
 
-// [IMPORTANT] kolom table belum bener
-
-const RecapDataTable = <T extends TDataRecapData>({ fetcher }: Props<T>) => {
+const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, onClickPaid }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
+
+    const onClickLockBudgetHandler = (data: T) => {
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran dengan id justifikasi ${data.justification_id}?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickLockBudget(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
+
+    const onClickPaidHandler = (data: T) => {
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `Set Bayar dengan id justifikasi ${data.justification_id}?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickPaid(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -41,9 +79,19 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher }: Props<T>) => {
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
+            title: "Justifikasi ID",
+            dataIndex: "justification_id",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Finance ID",
+            dataIndex: "finance_id",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
             title: "No Agenda",
             dataIndex: "no_agenda",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
             title: "No Justifikasi",
@@ -53,37 +101,64 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher }: Props<T>) => {
         {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
-            title: "Nilai Justifikasi",
-            dataIndex: "value_justification",
-            render: (text) => <p className="capitalize m-0">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+            title: "Nilai",
+            dataIndex: "value",
+            render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
         {
             title: "Sub Unit",
-            dataIndex: "sub_unit",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "subunit_name",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
-            title: "Kontrak/SPK/NOPES",
-            dataIndex: "contract",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            title: "No Kontrak",
+            dataIndex: "no_contract",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
             title: "Berita Acara",
-            dataIndex: "news",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            dataIndex: "",
+            width: "500px",
+            render: (text, record) => (
+                <div className="flex gap-4 justify-between">
+                    <div className="">
+                        <p className="capitalize m-0">
+                            <span className="text-gray-400 text-xs">No BAP:</span> {record.no_bap || "-"}
+                        </p>
+                        {record.file_bap ? <ButtonDownload url={record.file_bap} name={`${record.no_bap}-file-bap`} /> : "No File"}
+                    </div>
+                    <div className="">
+                        <p className="capitalize m-0">
+                            <span className="text-gray-400 text-xs">No BAPP:</span> {record.no_bapp || "-"}
+                        </p>
+                        {record.file_bapp ? <ButtonDownload url={record.file_bapp} name={`${record.no_bapp}-file-bapp`} /> : "No File"}
+                    </div>
+                    <div className="">
+                        <p className="capitalize m-0">
+                            <span className="text-gray-400 text-xs">No BAR:</span> {record.no_bar || "-"}
+                        </p>
+                        {record.file_bar ? <ButtonDownload url={record.file_bar} name={`${record.no_bar}-file-bar`} /> : "No File"}
+                    </div>
+                </div>
+            ),
         },
+
         {
-            width: "200px",
+            width: "270px",
             title: "Action",
             key: "action",
             fixed: "right",
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
-                    <Button type="text">Lock</Button>
-                    <Button type="text">Bayar</Button>
+                    <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "text" : "primary"}>
+                        {record?.lock_budget === 1 ? "UnLocked Budget" : "Lock Budget"}
+                    </Button>
+                    <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "text" : "primary"}>
+                        Bayar
+                    </Button>
                 </Space>
             ),
         },

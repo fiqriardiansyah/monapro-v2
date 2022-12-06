@@ -82,7 +82,7 @@ class ProcurementService extends BaseService {
     GetSubLoad<T extends SubLoadProcurement[]>(param: GetSubLoadParam) {
         return this.ProxyRequest<T>(async () => {
             const req = await ApiMethod.get<T>({
-                url: this.getNoAgenda,
+                url: this.getSubLoad,
                 config: {
                     params: {
                         ...param,

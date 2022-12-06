@@ -95,7 +95,7 @@ const JustificationPage = <T extends TDataJustification>() => {
         {
             onSuccess: () => {
                 getList.refetch();
-                message.success("Budget Locked!");
+                message.success("Budget Lock Update!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -105,7 +105,7 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     // crud handler
     const onClickLockBudget = async (data: T, callback: () => void) => {
-        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: data.lock_budget === 1 ? 0 : 1 }); // [IMPORTANT] lock_budget need check
+        await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: data.lock_budget === 1 ? 0 : 1 });
         callback();
     };
     const onClickEdit = (data: T) => {

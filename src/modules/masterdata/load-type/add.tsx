@@ -7,6 +7,8 @@ import * as yup from "yup";
 // components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
 import { LoadType } from "models";
+import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
+import { FDataLoadType } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -15,14 +17,15 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: LoadType, callback: () => void) => void;
+    onSubmit: (data: FDataLoadType, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Omit<LoadType, "id">> = yup.object().shape({
+const schema: yup.SchemaOf<FDataLoadType> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
-    sub_load_name: yup.string().required("Sub Jenis beban wajib diisi"),
+    sub_load: yup.number(),
+    sub_load_model: yup.array(),
 });
 
 const AddLoadType = ({ onSubmit, loading, children }: Props) => {
@@ -32,7 +35,7 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
-    } = useForm<LoadType>({
+    } = useForm<FDataLoadType>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -47,9 +50,16 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
-            closeModal();
-        });
+        onSubmit(
+            {
+                ...data,
+                sub_load_model: data.sub_load_model?.map((el: any) => ({ sub_load_name: el } as any)) || [],
+                sub_load: data.sub_load_model?.length ? 1 : null,
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -73,12 +83,13 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="load_name" label="Nama Beban" placeholder="Nama Beban" />
-                        <ControlledInputText
+                        <ControlledSelectInput
+                            mode="tags"
+                            name="sub_load_model"
+                            label="Sub Beban"
+                            placeholder="Sub Beban"
                             control={control}
-                            labelCol={{ xs: 12 }}
-                            name="sub_load_name"
-                            label="Nama Sub Beban"
-                            placeholder="Nama Sub Beban"
+                            options={[]}
                         />
 
                         <Row justify="start">

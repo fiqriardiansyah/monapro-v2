@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 export default {};
 
 export interface AuthData {
@@ -46,7 +47,7 @@ export interface Role {
 export interface LoadType {
     id: number | string;
     load_name: string;
-    sub_load_name?: string; // [IMPORTANT] property not sure
+    list_sub_load?: SubLoadProcurement[];
 }
 
 export interface ApprovalPosition {
@@ -179,14 +180,22 @@ export interface Finance {
 }
 
 export interface RecapData {
-    id: string | number;
-    no_agenda: string;
+    justification_id: number;
+    finance_id: number | null;
+    no_agenda: number | null;
     no_justification: string;
     about_justification: string;
-    value_justification: string;
-    sub_unit: string;
-    contract: string;
-    news: string;
+    value: number;
+    subunit_name: string;
+    no_contract: string | null;
+    no_bap: string | null;
+    file_bap: string | null;
+    no_bar: string | null;
+    file_bar: string | null;
+    no_bapp: string | null;
+    file_bapp: string | null;
+    lock_budget: number;
+    is_paid: number;
 }
 
 export interface SubUnitProcurement {
@@ -211,7 +220,7 @@ export interface JustificationProcurement {
 }
 
 export interface SubLoadProcurement {
-    sub_load_id: number;
+    sub_load_id?: number;
     sub_load_name: string;
 }
 

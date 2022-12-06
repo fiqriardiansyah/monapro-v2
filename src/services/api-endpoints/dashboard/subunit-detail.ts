@@ -9,9 +9,7 @@ class DashboardSubUnitService extends BaseService {
 
     getChartSubunit = "/dashboard/get-chart-subunit";
 
-    getAgendaSubunit = "/dashboard/get-agenda-subunit";
-
-    getJustificationSubunit = "/dashboard/get-justification-subunit";
+    getRecapData = "/dashboard/get-recap-data";
 
     GetHeaderSubunit<T = Models.GetHeaderSubUnitDashboard>({ id }: Models.GetHeaderSubUnitPath) {
         return this.ProxyRequest<T>(async () => {
@@ -33,25 +31,10 @@ class DashboardSubUnitService extends BaseService {
         });
     }
 
-    GetAgendaSubUnit<T = Models.AgendaData>({ id, page }: Models.GetAgendaSubUnitPathParam) {
+    GetRecapData<T = Models.RecapData>({ subunitId, page }: Models.GetRecapDataPathParam) {
         return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
-                url: `${this.getAgendaSubunit}/${id}`,
-                config: {
-                    params: {
-                        page,
-                    },
-                },
-            });
-            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
-            return req;
-        });
-    }
-
-    GetJustificationSubunit<T = Models.Justification>({ id, page }: Models.GetJustificationSubUnitPathParam) {
-        return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
-            const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
-                url: `${this.getJustificationSubunit}/${id}`,
+                url: `${this.getRecapData}/${subunitId}`,
                 config: {
                     params: {
                         page,
