@@ -1,6 +1,7 @@
 export const PROFILE_PATH = "/profile";
 export const RECAP_PATH = "/recap";
 export const SIGN_IN_PATH = "/signin";
+export const SOP_PATH = "/sop";
 export const DASHBOARD_PATH = "/dashboard";
 export const MASTER_DATA_SUB_UNIT_PATH = "/masterdata/sub-unit";
 export const MASTER_DATA_ROLE_MANAGE_PATH = "/masterdata/role-management";

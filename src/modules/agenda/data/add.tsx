@@ -32,15 +32,14 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
-    date: yup.string().required("Tanggal wajib diisi"),
+    date: yup.string(),
     endorse: yup.number(),
     letter_no: yup.string(),
-    letter_date: yup.string().required("Tangal Surat wajib diisi"),
-    sender: yup.string().required("Pengirim wajib diisi"),
-    about: yup.string().required("Perihal wajib diisi"),
-    subunit_id: yup.string().required("Sub unit wajib diisi"),
-    follow_up: yup.string().required("Tindak lanjut wajib diisi"),
-    decision: yup.string().required("Keputusan wajib diisi"),
+    letter_date: yup.string(),
+    sender: yup.string(),
+    about: yup.string(),
+    subunit_id: yup.string(),
+    decision: yup.string(),
     event_date: yup.string(),
     estimation_paydate: yup.string(),
     document: yup.string(),
@@ -158,18 +157,6 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                     control={control}
                                     loading={subUnitQuery.isLoading}
                                     options={subUnitQuery.data || []}
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="follow_up"
-                                    label="Tindak Lanjut"
-                                    placeholder="Tindak Lanjut"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={false}
-                                    options={FOLLOW_UP}
                                 />
                             </Col>
                             <Col span={12}>

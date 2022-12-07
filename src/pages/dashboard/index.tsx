@@ -170,14 +170,16 @@ const DashboardPage = () => {
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    {getSubHeader.data?.list_activity?.map((el, i: number) => {
-                                        return (
-                                            <div className="w-full flex items-center justify-between mb-2">
-                                                <p className="m-0 text-gray-400">{el.load_name}</p>
-                                                <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
-                                            </div>
-                                        );
-                                    })}
+                                    <div className="max-h-[300px] overflow-y-scroll">
+                                        {getSubHeader.data?.list_activity?.map((el, i: number) => {
+                                            return (
+                                                <div className="w-full flex items-center justify-between mb-2">
+                                                    <p className="m-0 text-gray-400 text-xs">{el.load_name}</p>
+                                                    <p className="m-0 text-gray-600 font-medium text-xs">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
                                 </State.Data>
                                 <State.Loading state={state}>
                                     <Skeleton active paragraph={{ rows: 5 }} />

@@ -19,6 +19,7 @@ import {
     PROFILE_PATH,
     RECAP_PATH,
     SIGN_IN_PATH,
+    SOP_PATH,
 } from "utils/routes";
 
 // pages
@@ -38,6 +39,7 @@ import DashboardDetail from "pages/dashboard/detail";
 import { UserContext } from "context/user";
 import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
+import SopPage from "pages/sop";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -53,6 +55,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<DashboardPage />} />
                         <Route path={PROFILE_PATH} element={<ProfilePage />} />
+                        <Route path={SOP_PATH} element={<SopPage />} />
                         <Route path={`${DASHBOARD_PATH}/:id`} element={<DashboardDetail />} />
                         <Route path={MASTER_DATA_SUB_UNIT_PATH} element={<SubUnitPage />} />
                         <Route path={MASTER_DATA_ROLE_MANAGE_PATH} element={<RoleManagementPage />} />

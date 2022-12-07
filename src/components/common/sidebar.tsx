@@ -11,6 +11,7 @@ import { IoDocumentAttachOutline } from "react-icons/io5";
 import { GrNotes } from "react-icons/gr";
 import { CgNotes } from "react-icons/cg";
 import { GiTakeMyMoney } from "react-icons/gi";
+import { VscServerProcess } from "react-icons/vsc";
 
 import MonaproImage from "assets/svgs/monapro.svg";
 import MonaproIcon from "assets/svgs/monapro-icon.svg";
@@ -32,6 +33,7 @@ import {
     PROCUREMENT_NEGOTIATION_PATH,
     PROCUREMENT_NEWS_PATH,
     RECAP_PATH,
+    SOP_PATH,
 } from "utils/routes";
 
 type MenuItem = Required<MenuProps>["items"][number];
@@ -78,6 +80,7 @@ function Sidebar({ collapse }: Props) {
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
         getItem("Data Rekapan", RECAP_PATH, <BsClipboardData />),
+        getItem("Penggunaan SOP", SOP_PATH, <VscServerProcess />),
     ];
 
     return (

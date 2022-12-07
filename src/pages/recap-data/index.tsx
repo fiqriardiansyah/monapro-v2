@@ -1,6 +1,7 @@
 import { Alert, message } from "antd";
 import Header from "components/common/header";
 import { RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
+import Filter from "modules/recap-data/filter";
 import RecapDataTable from "modules/recap-data/table";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
@@ -74,6 +75,7 @@ const RecapDataPage = () => {
         <div className="min-h-screen px-10">
             <Header title="Data Rekapan" />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
+            <Filter />
             <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getList} />
         </div>
     );

@@ -99,6 +99,11 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
+            title: "Tanggal Justifikasi",
+            dataIndex: "justification_date",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
@@ -111,6 +116,11 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
         {
             title: "Sub Unit",
             dataIndex: "subunit_name",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Jenis Beban",
+            dataIndex: "load_type",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
@@ -154,7 +164,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
                     <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "text" : "primary"}>
-                        {record?.lock_budget === 1 ? "UnLocked Budget" : "Lock Budget"}
+                        {record?.lock_budget === 1 ? "UnLocked" : "Lock"}
                     </Button>
                     <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "text" : "primary"}>
                         Bayar
@@ -166,7 +176,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
 
     return (
         <Table
-            scroll={{ x: 1500 }}
+            scroll={{ x: 2000 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

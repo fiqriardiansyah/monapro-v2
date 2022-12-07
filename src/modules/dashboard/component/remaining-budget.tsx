@@ -23,7 +23,7 @@ const RemainingBudget = ({ data }: Props) => {
         <div className="p-3 bg-white rounded-md flex flex-col justify-center relative">
             <p className="m-0 font-medium text-gray-400 absolute top-4 left-4">{data.title}</p>
             <div className="flex items-center justify-center my-2 mt-4">
-                <p style={{ color: color?.color }} className="m-0 text-xl xl:text-3xl 2xl:text-5xl font-bold">
+                <p style={{ color: color?.color }} className="m-0 text-xl xl:text-2xl 2xl:text-3xl font-bold">
                     {data.percent}%
                 </p>
                 <div className="h-full bg-gray-300 mx-3" style={{ width: "1px" }} />
