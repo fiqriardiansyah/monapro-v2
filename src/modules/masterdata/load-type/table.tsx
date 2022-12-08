@@ -62,23 +62,74 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Sub Beban",
-            dataIndex: "list_sub_load",
-            render: (text, record) => {
-                if (record.list_sub_load?.length === 0) return "-";
-                return (
-                    <List
-                        size="small"
-                        bordered
-                        dataSource={record.list_sub_load}
-                        renderItem={(item) => <List.Item>{item.sub_load_name}</List.Item>}
-                    />
-                );
-            },
+            title: "Januari",
+            dataIndex: "january",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Februari",
+            dataIndex: "february",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Maret",
+            dataIndex: "maret",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "April",
+            dataIndex: "april",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Mei",
+            dataIndex: "mei",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Juni",
+            dataIndex: "juny",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "July",
+            dataIndex: "july",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Agustus",
+            dataIndex: "august",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "September",
+            dataIndex: "september",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Oktober",
+            dataIndex: "october",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "November",
+            dataIndex: "november",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Desember",
+            dataIndex: "desember",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Tahun",
+            dataIndex: "year",
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
             title: "Action",
             key: "action",
+            width: "200px",
             fixed: "right",
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
@@ -95,6 +146,7 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
 
     return (
         <Table
+            scroll={{ x: 1500 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

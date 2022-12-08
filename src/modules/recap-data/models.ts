@@ -10,5 +10,7 @@ export interface FilterRecapData {
     sub_unit: string;
     quartal: string;
     date: string;
+    year: string;
     load_type: string;
+    month: string;
 }

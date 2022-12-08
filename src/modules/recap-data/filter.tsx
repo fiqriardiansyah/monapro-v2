@@ -6,7 +6,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import React from "react";
-import { QUARTAL } from "utils/constant";
+import { QUARTAL, QUARTAL_MONTH } from "utils/constant";
+import { FiDownload } from "react-icons/fi";
 import { FilterRecapData } from "./models";
 
 const schema: yup.SchemaOf<Partial<FilterRecapData>> = yup.object().shape({
@@ -14,14 +15,18 @@ const schema: yup.SchemaOf<Partial<FilterRecapData>> = yup.object().shape({
     quartal: yup.string(),
     load_type: yup.string(),
     date: yup.string(),
+    year: yup.string(),
+    month: yup.string(),
 });
 
 const Filter = () => {
     const [form] = Form.useForm();
-    const { handleSubmit, control } = useForm<FilterRecapData>({
+    const { handleSubmit, control, watch } = useForm<FilterRecapData>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const watchQuartal = watch("quartal");
 
     const onSubmitHandler = handleSubmit((data) => {
         console.log(data);
@@ -38,19 +43,32 @@ const Filter = () => {
                 onFinish={onSubmitHandler}
                 layout="horizontal"
             >
-                <Space direction="vertical" className="w-full">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="">
-                            <ControlledSelectInput
-                                allowClear
-                                showSearch
-                                name="sub_unit"
-                                label=""
-                                placeholder="Sub Unit"
-                                optionFilterProp="children"
-                                control={control}
-                                options={[{ label: "All", value: 0 }]}
-                            />
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="">
+                        <ControlledSelectInput
+                            showSearch
+                            allowClear
+                            name="load_type"
+                            label=""
+                            placeholder="Jenis Beban"
+                            optionFilterProp="children"
+                            control={control}
+                            options={[{ label: "All", value: 0 }]}
+                        />
+                        <ControlledSelectInput
+                            allowClear
+                            showSearch
+                            name="sub_unit"
+                            label=""
+                            placeholder="Sub Unit"
+                            optionFilterProp="children"
+                            control={control}
+                            options={[{ label: "All", value: 0 }]}
+                        />
+                    </div>
+                    <div className="">
+                        <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="year" picker="year" label="" />
+                        <div className="flex gap-4">
                             <ControlledSelectInput
                                 allowClear
                                 showSearch
@@ -61,42 +79,38 @@ const Filter = () => {
                                 control={control}
                                 options={[{ label: "All", value: 0 }, ...QUARTAL]}
                             />
-                            <ControlledInputDate allowClear control={control} name="date" label="" />
                             <ControlledSelectInput
-                                showSearch
+                                disabled={!watchQuartal || watchQuartal === "0"}
                                 allowClear
-                                name="load_type"
+                                showSearch
+                                name="month"
                                 label=""
-                                placeholder="Jenis Beban"
+                                placeholder="Bulan"
                                 optionFilterProp="children"
                                 control={control}
-                                options={[{ label: "All", value: 0 }]}
+                                options={
+                                    QUARTAL_MONTH.find((el) => el.quartal === Number(watchQuartal || ""))?.month.map((m, i) => ({
+                                        label: m,
+                                        value: (i + 1) * Number(watchQuartal),
+                                    })) || []
+                                }
                             />
                         </div>
-                        <div className="">
-                            <Card>
-                                <div className="w-full flex items-center justify-between">
-                                    <p className="text-gray-400 font-semibold">total budget plan</p>
-                                    <p className="text-gray-600 font-semibold">Rp.100.000.000</p>
-                                </div>
-                                <div className="w-full flex items-center justify-between mt-4">
-                                    <p className="text-gray-400 font-semibold">total pemakaian</p>
-                                    <p className="text-gray-600 font-semibold">Rp.10.000.000</p>
-                                </div>
-                            </Card>
-                            <div className="flex items-center justify-center mt-4">
-                                <Space>
-                                    <Button type="primary" className="BTN-DELETE" htmlType="submit">
-                                        Cari
-                                    </Button>
-                                    <Button type="text" htmlType="button">
-                                        Clear Filter
-                                    </Button>
-                                </Space>
-                            </div>
-                        </div>
                     </div>
-                </Space>
+                </div>
+                <div className="flex items-center justify-between mt-4">
+                    <Button className="!flex !items-center" icon={<FiDownload className="mr-2" />}>
+                        Download
+                    </Button>
+                    <Space>
+                        <Button type="primary" className="BTN-DELETE" htmlType="submit">
+                            Cari
+                        </Button>
+                        <Button type="text" htmlType="button">
+                            Clear Filter
+                        </Button>
+                    </Space>
+                </div>
             </Form>
         </div>
     );

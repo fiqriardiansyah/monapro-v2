@@ -8,6 +8,10 @@ import * as yup from "yup";
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
 import { LoadType } from "models";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
+import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
+import { QUARTAL_MONTH } from "utils/constant";
+import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
+import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import { FDataLoadType } from "./models";
 
 type ChildrenProps = {
@@ -22,13 +26,27 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<FDataLoadType> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
-    sub_load: yup.number(),
-    sub_load_model: yup.array(),
+    year: yup.string(),
+    januari: yup.string(),
+    februari: yup.string(),
+    maret: yup.string(),
+    april: yup.string(),
+    mei: yup.string(),
+    juni: yup.string(),
+    juli: yup.string(),
+    agustus: yup.string(),
+    september: yup.string(),
+    oktober: yup.string(),
+    november: yup.string(),
+    desember: yup.string(),
+    _: yup.string(),
 });
 
 const AddLoadType = ({ onSubmit, loading, children }: Props) => {
+    const [quartalVisible, setQuartalVisible] = useState(1);
+
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
@@ -50,16 +68,10 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(
-            {
-                ...data,
-                sub_load_model: data.sub_load_model?.map((el: any) => ({ sub_load_name: el } as any)) || [],
-                sub_load: data.sub_load_model?.length ? 1 : null,
-            },
-            () => {
-                closeModal();
-            }
-        );
+        // onSubmit(data, () => {
+        //     closeModal();
+        // });
+        const month = QUARTAL_MONTH.find((el) => el.quartal === quartalVisible);
     });
 
     const childrenData: ChildrenProps = {
@@ -68,9 +80,17 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
         closeModal,
     };
 
+    const addMoreQuartal = () => {
+        setQuartalVisible((prev) => prev + 1);
+    };
+
+    const removeQuartal = () => {
+        setQuartalVisible((prev) => prev - 1);
+    };
+
     return (
         <>
-            <Modal confirmLoading={loading} title="Tambah jenis beban" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={900} confirmLoading={loading} title="Tambah jenis beban" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -82,17 +102,37 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                     layout="vertical"
                 >
                     <Space direction="vertical" className="w-full">
-                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="load_name" label="Nama Beban" placeholder="Nama Beban" />
-                        <ControlledSelectInput
-                            mode="tags"
-                            name="sub_load_model"
-                            label="Sub Beban"
-                            placeholder="Sub Beban"
-                            control={control}
-                            options={[]}
-                        />
+                        <div className="w-full flex gap-4">
+                            <ControlledInputText
+                                control={control}
+                                labelCol={{ xs: 12 }}
+                                name="load_name"
+                                label="Nama Beban"
+                                placeholder="Nama Beban"
+                            />
+                            <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="year" picker="year" label="Tahun Anggaran" />
+                        </div>
+                        {QUARTAL_MONTH?.map((el) => {
+                            if (quartalVisible >= el.quartal) {
+                                return (
+                                    <div className="w-full flex gap-4 items-center">
+                                        <p className="capitalize w-[300px] ">quartal: {el.quartal}</p>
+                                        {el.month?.map((month) => (
+                                            <ControlledInputNumber
+                                                control={control}
+                                                labelCol={{ xs: 12 }}
+                                                name={month.toLowerCase() as any}
+                                                label={month}
+                                                placeholder={month}
+                                            />
+                                        ))}
+                                    </div>
+                                );
+                            }
+                            return null;
+                        })}
 
-                        <Row justify="start">
+                        <div className="w-full flex items-center justify-between">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan
@@ -101,7 +141,29 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                                     Batalkan
                                 </Button>
                             </Space>
-                        </Row>
+                            <Space>
+                                {quartalVisible !== 1 && (
+                                    <Button
+                                        onClick={removeQuartal}
+                                        icon={<AiOutlineMinus className="mr-2" />}
+                                        className="!flex !items-center"
+                                        type="text"
+                                    >
+                                        Quartal
+                                    </Button>
+                                )}
+                                {quartalVisible !== 4 && (
+                                    <Button
+                                        onClick={addMoreQuartal}
+                                        icon={<AiOutlinePlus className="mr-2" />}
+                                        className="!flex !items-center"
+                                        type="primary"
+                                    >
+                                        Quartal
+                                    </Button>
+                                )}
+                            </Space>
+                        </div>
                     </Space>
                 </Form>
             </Modal>

@@ -126,7 +126,7 @@ const DashboardPage = () => {
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <Line data={chartData} />
                 </div>
-                <div className="p-3 bg-white rounded-md row-span-2">
+                {/* <div className="p-3 bg-white rounded-md row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Pemakaian Sub Unit</p>
                     <State data={getSubHeader.data} isLoading={getSubHeader.isLoading} isError={getSubHeader.isError}>
                         {(state) => (
@@ -163,14 +163,14 @@ const DashboardPage = () => {
                             </>
                         )}
                     </State>
-                </div>
-                <div className="p-3 bg-white rounded-md row-span-2">
+                </div> */}
+                <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Jenis Aktivitas</p>
                     <State data={getSubHeader.data} isLoading={getSubHeader.isLoading} isError={getSubHeader.isError}>
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    <div className="max-h-[300px] overflow-y-scroll">
+                                    <div className="max-h-[300px] overflow-y-auto">
                                         {getSubHeader.data?.list_activity?.map((el, i: number) => {
                                             return (
                                                 <div className="w-full flex items-center justify-between mb-2">

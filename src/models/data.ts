@@ -30,10 +30,6 @@ export interface SubUnitData {
     id: number | string;
     unit_name: string;
     pic_name: string;
-    budget_q1: number | string;
-    budget_q2: number | string;
-    budget_q3: number | string;
-    budget_q4: number | string;
 }
 
 export interface Role {
@@ -47,7 +43,19 @@ export interface Role {
 export interface LoadType {
     id: number | string;
     load_name: string;
-    list_sub_load?: SubLoadProcurement[];
+    year: string;
+    januari: string;
+    februari: string;
+    maret: string;
+    april: string;
+    mei: string;
+    juni: string;
+    juli: string;
+    agustus: string;
+    september: string;
+    oktober: string;
+    november: string;
+    desember: string;
 }
 
 export interface ApprovalPosition {

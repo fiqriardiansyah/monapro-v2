@@ -60,10 +60,6 @@ const DetailSubUnit = ({ children }: Props) => {
                         <Descriptions.Item label="ID">{detailMutation.data?.id}</Descriptions.Item>
                         <Descriptions.Item label="Nama PIC">{detailMutation.data?.pic_name}</Descriptions.Item>
                         <Descriptions.Item label="Nama Unit">{detailMutation.data?.unit_name}</Descriptions.Item>
-                        <Descriptions.Item label="Anggaran Q1">{detailMutation.data?.budget_q1}</Descriptions.Item>
-                        <Descriptions.Item label="Anggaran Q2">{detailMutation.data?.budget_q2}</Descriptions.Item>
-                        <Descriptions.Item label="Anggaran Q3">{detailMutation.data?.budget_q3}</Descriptions.Item>
-                        <Descriptions.Item label="Anggaran Q4">{detailMutation.data?.budget_q4}</Descriptions.Item>
                     </Descriptions>
                 )}
                 {detailMutation.error ? (

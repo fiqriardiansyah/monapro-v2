@@ -22,10 +22,6 @@ type Props = {
 const schema: yup.SchemaOf<Omit<SubUnitData, "id">> = yup.object().shape({
     pic_name: yup.string().required("Nama PIC wajib diisi"),
     unit_name: yup.string().required("Nama unit wajib diisi"),
-    budget_q1: yup.string().required("Anggaran Q1 wajib diisi"),
-    budget_q2: yup.string().required("Anggaran Q2 wajib diisi"),
-    budget_q3: yup.string().required("Anggaran Q3 wajib diisi"),
-    budget_q4: yup.string().required("Anggaran Q4 wajib diisi"),
 });
 
 const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
@@ -77,36 +73,6 @@ const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="pic_name" label="Nama PIC" placeholder="Nama PIC" />
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="unit_name" label="Nama unit" placeholder="Nama unit" />
-                        <div className="grid grid-cols-2 gap-5">
-                            <ControlledInputNumber
-                                control={control}
-                                labelCol={{ xs: 12 }}
-                                name="budget_q1"
-                                label="Anggaran q1"
-                                placeholder="Anggaran q1"
-                            />
-                            <ControlledInputNumber
-                                control={control}
-                                labelCol={{ xs: 12 }}
-                                name="budget_q2"
-                                label="Anggaran q2"
-                                placeholder="Anggaran q2"
-                            />
-                            <ControlledInputNumber
-                                control={control}
-                                labelCol={{ xs: 12 }}
-                                name="budget_q3"
-                                label="Anggaran q3"
-                                placeholder="Anggaran q3"
-                            />
-                            <ControlledInputNumber
-                                control={control}
-                                labelCol={{ xs: 12 }}
-                                name="budget_q4"
-                                label="Anggaran q4"
-                                placeholder="Anggaran q4"
-                            />
-                        </div>
 
                         <Row justify="start">
                             <Space>
