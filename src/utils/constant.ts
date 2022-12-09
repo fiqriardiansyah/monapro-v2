@@ -52,6 +52,17 @@ export const DECISION = [
     },
 ];
 
+export const STATUS_AGENDA = [
+    {
+        value: 0,
+        label: "Attention",
+    },
+    {
+        value: 1,
+        label: "Normal",
+    },
+];
+
 export const ROLE = [
     {
         value: 1,
@@ -98,6 +109,27 @@ export const QUARTAL_MONTH = [
     {
         quartal: 4,
         month: ["Oktober", "November", "Desember"],
+    },
+];
+
+export const MONTH_SHORT = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "agu", "sep", "oct", "nov", "dec"];
+
+export const QUARTAL_MONTH_SHORT = [
+    {
+        quartal: 1,
+        month: ["jan", "feb", "mar"],
+    },
+    {
+        quartal: 2,
+        month: ["apr", "may", "jun"],
+    },
+    {
+        quartal: 3,
+        month: ["jul", "agu", "sep"],
+    },
+    {
+        quartal: 4,
+        month: ["oct", "nov", "dec"],
     },
 ];
 

@@ -7,7 +7,7 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
+import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { TDataAgenda } from "./models";
@@ -15,32 +15,12 @@ import { TDataAgenda } from "./models";
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    // onClickLockBudget: (data: T, callback: () => void) => void; [IMPORTANT] not used
 };
 
 const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
-
-    // const onClickLockBudgetHandler = (data: T) => {
-    //     Modal.confirm({
-    //         title: "Lock",
-    //         icon: <ImWarning className="text-red-400" />,
-    //         content: `Kunci anggaran dengan id ${data.id}?`,
-    //         onOk() {
-    //             return new Promise((resolve, reject) => {
-    //                 onClickLockBudget(data, () => {
-    //                     resolve(true);
-    //                 });
-    //             });
-    //         },
-    //         onCancel() {},
-    //         okButtonProps: {
-    //             danger: true,
-    //         },
-    //     });
-    // }; // [IMPORTANT] not used
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -77,7 +57,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
         {
             title: "Endorse",
             dataIndex: "endorse",
-            render: (text) => <p className="capitalize m-0">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
+            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
             title: "No Surat",
@@ -105,14 +85,14 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
-            title: "Tindak Lanjut",
-            dataIndex: "follow_up",
-            render: (text) => <p className="capitalize m-0">{FOLLOW_UP.find((el) => el.value === text)?.label}</p>,
-        },
-        {
             title: "Keputusan",
             dataIndex: "decision",
             render: (text) => <p className="capitalize m-0">{DECISION.find((el) => el.value === text)?.label}</p>,
+        },
+        {
+            title: "Status",
+            dataIndex: "status",
+            render: (text) => <p className="capitalize m-0">{STATUS_AGENDA.find((el) => el.value === text)?.label || "-"}</p>,
         },
         {
             title: "Dokumen",
@@ -125,11 +105,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
-        },
-        {
-            title: "Perkiraan bayar",
-            dataIndex: "payment_estimation_date",
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {

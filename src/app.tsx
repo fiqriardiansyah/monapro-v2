@@ -10,6 +10,7 @@ import {
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
     MASTER_DATA_ROLE_MANAGE_PATH,
+    MASTER_DATA_SOP_PATH,
     MASTER_DATA_SUB_UNIT_PATH,
     PROCUREMENT_CONTRACT_PATH,
     PROCUREMENT_FINANCE_PATH,
@@ -39,7 +40,7 @@ import DashboardDetail from "pages/dashboard/detail";
 import { UserContext } from "context/user";
 import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
-import SopPage from "pages/sop";
+import SopPage from "pages/masterdata/sop";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -55,12 +56,12 @@ function App() {
                     <Routes>
                         <Route path="/" element={<DashboardPage />} />
                         <Route path={PROFILE_PATH} element={<ProfilePage />} />
-                        <Route path={SOP_PATH} element={<SopPage />} />
                         <Route path={`${DASHBOARD_PATH}/:id`} element={<DashboardDetail />} />
                         <Route path={MASTER_DATA_SUB_UNIT_PATH} element={<SubUnitPage />} />
                         <Route path={MASTER_DATA_ROLE_MANAGE_PATH} element={<RoleManagementPage />} />
                         <Route path={MASTER_DATA_LOAD_TYPE_PATH} element={<LoadTypePage />} />
                         <Route path={MASTER_DATA_APPROVAL_POSITION_PATH} element={<ApprovalPositionPage />} />
+                        <Route path={MASTER_DATA_SOP_PATH} element={<SopPage />} />
                         <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
                         <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
                         {/* <Route path={AGENDA_FINANCE_PATH} element={<AgendaFinancePage />} /> */}

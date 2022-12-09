@@ -163,10 +163,10 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             fixed: "right",
             render: (_, record) => (
                 <Space size="middle" direction="horizontal">
-                    <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "text" : "primary"}>
+                    <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "default" : "primary"}>
                         {record?.lock_budget === 1 ? "UnLocked" : "Lock"}
                     </Button>
-                    <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "text" : "primary"}>
+                    <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
                         Bayar
                     </Button>
                 </Space>

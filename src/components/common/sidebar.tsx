@@ -26,6 +26,7 @@ import {
     MASTER_DATA_APPROVAL_POSITION_PATH,
     MASTER_DATA_LOAD_TYPE_PATH,
     MASTER_DATA_ROLE_MANAGE_PATH,
+    MASTER_DATA_SOP_PATH,
     MASTER_DATA_SUB_UNIT_PATH,
     PROCUREMENT_CONTRACT_PATH,
     PROCUREMENT_FINANCE_PATH,
@@ -66,6 +67,7 @@ function Sidebar({ collapse }: Props) {
             getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
             getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />),
             getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />),
+            getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
         ]),
         getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
             getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
@@ -80,7 +82,6 @@ function Sidebar({ collapse }: Props) {
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
         getItem("Data Rekapan", RECAP_PATH, <BsClipboardData />),
-        getItem("Penggunaan SOP", SOP_PATH, <VscServerProcess />),
     ];
 
     return (

@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -12,7 +12,7 @@ import ControlledSelectInput from "components/form/controlled-inputs/controlled-
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
-import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
+import { DECISION, FOLLOW_UP, FORMAT_DATE, STATUS_AGENDA } from "utils/constant";
 import agendaService from "services/api-endpoints/agenda";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import moment from "moment";
@@ -35,7 +35,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
     date: yup.string(),
-    endorse: yup.number(),
+    endorse: yup.string(),
     letter_no: yup.string(),
     letter_date: yup.string(),
     sender: yup.string(),
@@ -45,6 +45,7 @@ const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
     event_date: yup.string(),
     estimation_paydate: yup.string(),
     document: yup.string(),
+    status: yup.number(),
     _: yup.string(),
 });
 
@@ -98,7 +99,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
             onSuccess: (data) => {
                 form.setFieldsValue({
                     date: data.date ? moment(data?.date) : moment(),
-                    endorse: data?.endorse || 0,
+                    endorse: data?.endorse || "",
                     letter_no: data?.letter_no || "",
                     letter_date: data?.letter_date ? moment(data?.letter_date) : moment(),
                     sender: data?.sender || "",
@@ -106,11 +107,11 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     subunit_id: data?.subunit_id || "",
                     decision: data?.decision || "",
                     event_date: data?.event_date ? moment(data?.event_date) : moment(),
-                    estimation_paydate: data?.estimation_paydate ? moment(data?.estimation_paydate) : moment(),
                     document: data?.document || "",
+                    status: data?.status,
                 });
                 setValue("date", data?.date ? (moment(data?.date) as any) : moment());
-                setValue("endorse", data?.endorse || 0);
+                setValue("endorse", data?.endorse || "");
                 setValue("letter_no", data?.letter_no || "");
                 setValue("letter_date", data?.letter_date ? (moment(data?.letter_date) as any) : moment());
                 setValue("sender", data?.sender || "");
@@ -118,8 +119,8 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                 setValue("subunit_id", data?.subunit_id || "");
                 setValue("decision", data?.decision || "");
                 setValue("event_date", data?.event_date ? (moment(data?.event_date) as any) : moment());
-                setValue("estimation_paydate", data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment());
                 setValue("document", data?.document || "");
+                setValue("status", data?.status);
             },
         }
     );
@@ -148,7 +149,6 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
             date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
             letter_date: data.letter_date ? moment(data.letter_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
-            estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
             document: base64 || getValues()?.document || null,
         };
         onSubmit(
@@ -207,7 +207,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="endorse" label="Endorse" placeholder="Endorse" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="endorse" label="Endorse" placeholder="Endorse" />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="letter_no" label="No Surat" placeholder="Nomor" />
@@ -246,10 +246,19 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="status"
+                                    label="Status"
+                                    placeholder="Status"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    loading={false}
+                                    options={STATUS_AGENDA}
+                                />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
                             </Col>
                             <Col span={12}>
                                 {docWatch ? (

@@ -241,13 +241,13 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="approval_position_id"
-                                    label="Approval posisi"
-                                    placeholder="Approval posisi"
+                                    name="agenda_data_id"
+                                    label="No Agenda"
+                                    placeholder="No Agenda"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={approvalQuery.isLoading}
-                                    options={approvalQuery.data || []}
+                                    loading={agendaDataQuery.isLoading}
+                                    options={agendaDataQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -294,37 +294,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="agenda_data_id"
-                                    label="No Agenda"
-                                    placeholder="No Agenda"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={agendaDataQuery.isLoading}
-                                    options={agendaDataQuery.data || []}
-                                />
-                            </Col>
-
-                            <Col span={12}>
-                                <InputFile
-                                    handleChange={onFileChangeHandler}
-                                    label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
-                                    multiple={false}
-                                    name="doc_justification"
-                                />
-                            </Col>
-                            <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
                                     name="quartal_id"
@@ -335,6 +304,36 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     // loading={approvalQuery.isLoading}
                                     options={QUARTAL}
                                 />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="approval_position_id"
+                                    label="Approval posisi"
+                                    placeholder="Approval posisi"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    loading={approvalQuery.isLoading}
+                                    options={approvalQuery.data || []}
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <InputFile
+                                    handleChange={onFileChangeHandler}
+                                    label="file document"
+                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    multiple={false}
+                                    name="doc_justification"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
                             </Col>
                         </Row>
 

@@ -5,6 +5,10 @@ export interface TDataAgenda extends BaseTableData, AgendaData {
 }
 
 export interface FDataAgenda
-    extends Omit<AgendaData, "id" | "no_agenda_secretariat" | "no_agenda_disposition" | "subunit_name" | "lock_budget" | "follow_up"> {
+    extends Omit<
+        AgendaData,
+        "id" | "no_agenda_secretariat" | "no_agenda_disposition" | "subunit_name" | "lock_budget" | "follow_up" | "estimation_paydate"
+    > {
+    status: number | string;
     _?: any;
 }

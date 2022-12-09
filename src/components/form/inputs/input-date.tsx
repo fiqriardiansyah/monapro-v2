@@ -1,4 +1,5 @@
 import { ColProps, DatePicker, DatePickerProps, Form } from "antd";
+import moment from "moment";
 import React, { forwardRef } from "react";
 
 type Props = DatePickerProps & {
@@ -18,7 +19,7 @@ const InputDate: React.FC<Props> = forwardRef(({ error, label, name, value, labe
             initialValue={undefined}
             className="!w-full"
         >
-            <DatePicker {...rest} style={{ width: "100%" }} value={value} defaultValue={undefined} onChange={onChange} onBlur={onBlur} />
+            <DatePicker {...rest} style={{ width: "100%" }} value={value || undefined} onChange={onChange} onBlur={onBlur} />
         </Form.Item>
     );
 });

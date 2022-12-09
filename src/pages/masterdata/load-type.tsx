@@ -66,8 +66,7 @@ const LoadTypePage = <T extends TDataLoadType>() => {
     );
     const editMutation = useMutation(
         async ({ data, callback }: { data: FDataLoadTypeId; callback: () => void }) => {
-            console.log(data);
-            // await loadTypeService.Edit<LoadType>(data);
+            await loadTypeService.Edit<LoadType>(data);
             callback();
         },
         {

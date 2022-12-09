@@ -9,9 +9,10 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { LoadType } from "models";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
-import { QUARTAL_MONTH } from "utils/constant";
+import { MONTH_SHORT, QUARTAL_MONTH, QUARTAL_MONTH_SHORT } from "utils/constant";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import moment from "moment";
 import { FDataLoadType } from "./models";
 
 type ChildrenProps = {
@@ -29,18 +30,18 @@ type Props = {
 const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
     year: yup.string(),
-    januari: yup.string(),
-    februari: yup.string(),
-    maret: yup.string(),
-    april: yup.string(),
-    mei: yup.string(),
-    juni: yup.string(),
-    juli: yup.string(),
-    agustus: yup.string(),
-    september: yup.string(),
-    oktober: yup.string(),
-    november: yup.string(),
-    desember: yup.string(),
+    jan: yup.string(),
+    feb: yup.string(),
+    mar: yup.string(),
+    apr: yup.string(),
+    may: yup.string(),
+    jun: yup.string(),
+    jul: yup.string(),
+    agu: yup.string(),
+    sep: yup.string(),
+    oct: yup.string(),
+    nov: yup.string(),
+    dec: yup.string(),
     _: yup.string(),
 });
 
@@ -68,10 +69,42 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        // onSubmit(data, () => {
-        //     closeModal();
-        // });
-        const month = QUARTAL_MONTH.find((el) => el.quartal === quartalVisible);
+        const activeMonth = QUARTAL_MONTH_SHORT.filter((q) => q.quartal <= quartalVisible)
+            .map((q) => q.month)
+            .reduce((a, b) => a.concat(b), []);
+        const deleteNoActiveMonth = Object.keys({ ...data })
+            .map((k) => {
+                const key = k as keyof FDataLoadType;
+                if (!MONTH_SHORT.includes(key) && !activeMonth.includes(key)) return key;
+                if (MONTH_SHORT.includes(key) && !activeMonth.includes(key)) {
+                    return null;
+                }
+                return key;
+            })
+            .filter((el) => el);
+        const parseData = { ...data };
+        Object.keys(parseData).forEach((k) => {
+            const key = k as keyof FDataLoadType;
+            if (!deleteNoActiveMonth.includes(key)) {
+                delete parseData[key];
+            }
+        });
+        MONTH_SHORT.forEach((m) => {
+            const month = m as keyof FDataLoadType;
+            if (!(month in parseData)) {
+                parseData[month] = 0;
+            }
+        });
+
+        onSubmit(
+            {
+                ...parseData,
+                year: moment(parseData.year).format("yyyy"),
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -112,7 +145,7 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                             />
                             <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="year" picker="year" label="Tahun Anggaran" />
                         </div>
-                        {QUARTAL_MONTH?.map((el) => {
+                        {QUARTAL_MONTH_SHORT?.map((el) => {
                             if (quartalVisible >= el.quartal) {
                                 return (
                                     <div className="w-full flex gap-4 items-center">
@@ -122,7 +155,7 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                                                 control={control}
                                                 labelCol={{ xs: 12 }}
                                                 name={month.toLowerCase() as any}
-                                                label={month}
+                                                label={month.toUpperCase()}
                                                 placeholder={month}
                                             />
                                         ))}

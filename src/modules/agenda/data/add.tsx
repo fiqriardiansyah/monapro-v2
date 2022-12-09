@@ -11,7 +11,7 @@ import ControlledInputDate from "components/form/controlled-inputs/controlled-in
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { DECISION, FOLLOW_UP, FORMAT_DATE } from "utils/constant";
+import { DECISION, FOLLOW_UP, FORMAT_DATE, STATUS_AGENDA } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import moment from "moment";
@@ -32,17 +32,17 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
-    date: yup.string(),
-    endorse: yup.number(),
+    date: yup.string().nullable(),
+    endorse: yup.string(),
     letter_no: yup.string(),
-    letter_date: yup.string(),
+    letter_date: yup.string().nullable(),
     sender: yup.string(),
     about: yup.string(),
     subunit_id: yup.string(),
     decision: yup.string(),
-    event_date: yup.string(),
-    estimation_paydate: yup.string(),
+    event_date: yup.string().nullable(),
     document: yup.string(),
+    status: yup.string(),
     _: yup.string(),
 });
 
@@ -94,7 +94,6 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
             date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
             letter_date: data.letter_date ? moment(data.letter_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
-            estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
             document: base64,
         };
 
@@ -133,7 +132,7 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="endorse" label="Endorse" placeholder="Endorse" />
+                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="endorse" label="Endorse" placeholder="Endorse" />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="letter_no" label="No Surat" placeholder="Nomor" />
@@ -172,10 +171,19 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="status"
+                                    label="Status"
+                                    placeholder="Status"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    loading={false}
+                                    options={STATUS_AGENDA}
+                                />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
                             </Col>
                             <Col span={12}>
                                 <InputFile

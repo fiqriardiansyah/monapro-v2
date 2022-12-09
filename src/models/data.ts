@@ -44,18 +44,18 @@ export interface LoadType {
     id: number | string;
     load_name: string;
     year: string;
-    januari: string;
-    februari: string;
-    maret: string;
-    april: string;
-    mei: string;
-    juni: string;
-    juli: string;
-    agustus: string;
-    september: string;
-    oktober: string;
-    november: string;
-    desember: string;
+    jan: string;
+    feb: string;
+    mar: string;
+    apr: string;
+    may: string;
+    jun: string;
+    jul: string;
+    agu: string;
+    sep: string;
+    oct: string;
+    nov: string;
+    dec: string;
 }
 
 export interface ApprovalPosition {
@@ -68,10 +68,10 @@ export interface AgendaData {
     id: string | number;
     no_agenda_secretariat: string;
     no_agenda_disposition: string;
-    date: string;
-    endorse: number;
+    date: string | null;
+    endorse: string;
     letter_no: string;
-    letter_date: string;
+    letter_date: string | null;
     sender: string;
     about: string;
     subunit_id: string;
@@ -79,8 +79,9 @@ export interface AgendaData {
     follow_up: string;
     decision: string;
     document: any;
-    event_date: string;
-    estimation_paydate: string;
+    event_date: string | null;
+    estimation_paydate: string | null;
+    status: number | string;
     lock_budget?: number;
 }
 

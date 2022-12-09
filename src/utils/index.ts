@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
@@ -150,5 +151,14 @@ export default class Utils {
         min = Math.ceil(min);
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    static cleanObject = (obj: any) => {
+        for (const propName in obj) {
+            if (obj[propName] === null || obj[propName] === undefined || !obj[propName]) {
+                delete obj[propName];
+            }
+        }
+        return obj
     }
 }

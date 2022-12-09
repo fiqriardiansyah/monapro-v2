@@ -7,6 +7,7 @@ export const MASTER_DATA_SUB_UNIT_PATH = "/masterdata/sub-unit";
 export const MASTER_DATA_ROLE_MANAGE_PATH = "/masterdata/role-management";
 export const MASTER_DATA_LOAD_TYPE_PATH = "/masterdata/load-type";
 export const MASTER_DATA_APPROVAL_POSITION_PATH = "/masterdata/approval-position";
+export const MASTER_DATA_SOP_PATH = "/masterdata/sop";
 export const AGENDA_DATA_PATH = "/agenda/data";
 export const AGENDA_DISPOSITION_PATH = "/agenda/disposition";
 export const AGENDA_FINANCE_PATH = "/agenda/finance";

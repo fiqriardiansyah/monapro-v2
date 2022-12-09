@@ -11,7 +11,7 @@ const SopPage = () => {
     return (
         <div className="min-h-screen px-10">
             <Header search={false} />
-            <h1>Penggunaan Dashboard</h1>
+            <h1>Peraturan Internal</h1>
             <p>
                 Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repellat voluptas minus illum delectus tempore repellendus, saepe aut itaque
                 sequi natus dignissimos neque dolorum velit! Similique, architecto temporibus? At, minima iste?

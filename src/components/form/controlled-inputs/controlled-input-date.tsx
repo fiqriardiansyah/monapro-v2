@@ -21,7 +21,7 @@ const ControlledInputDate = <T extends FieldValues>({ label, control, name, labe
                     {...rest}
                     label={label}
                     labelCol={labelCol}
-                    value={(field.value as unknown as never) || rest.value}
+                    value={(field.value as unknown as never) || rest.value || ""}
                     error={error?.message}
                 />
             )}

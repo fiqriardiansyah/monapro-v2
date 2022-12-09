@@ -10,10 +10,11 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { LoadType } from "models";
 import { useMutation } from "react-query";
 import loadTypeService from "services/api-endpoints/masterdata/load-type";
-import { QUARTAL_MONTH } from "utils/constant";
+import { MONTH_SHORT, QUARTAL_MONTH, QUARTAL_MONTH_SHORT } from "utils/constant";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
+import moment from "moment";
 import { FDataLoadType, FDataLoadTypeId } from "./models";
 
 type ChildrenProps = {
@@ -32,23 +33,22 @@ type Props = {
 const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
     year: yup.string(),
-    januari: yup.string(),
-    februari: yup.string(),
-    maret: yup.string(),
-    april: yup.string(),
-    mei: yup.string(),
-    juni: yup.string(),
-    juli: yup.string(),
-    agustus: yup.string(),
-    september: yup.string(),
-    oktober: yup.string(),
-    november: yup.string(),
-    desember: yup.string(),
+    jan: yup.string(),
+    feb: yup.string(),
+    mar: yup.string(),
+    apr: yup.string(),
+    may: yup.string(),
+    jun: yup.string(),
+    jul: yup.string(),
+    agu: yup.string(),
+    sep: yup.string(),
+    oct: yup.string(),
+    nov: yup.string(),
+    dec: yup.string(),
     _: yup.string(),
 });
 
 const EditLoadType = ({ onSubmit, loading, children }: Props) => {
-    const [quartalVisible, setQuartalVisible] = useState(1);
     const [prevData, setPrevData] = useState<LoadType | null>(null);
 
     const [form] = Form.useForm();
@@ -72,8 +72,34 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
             onSuccess: (data) => {
                 form.setFieldsValue({
                     load_name: data?.load_name || "",
+                    year: data?.year ? (moment(data?.year) as any) : moment(),
+                    jan: data?.jan || "",
+                    feb: data?.feb || "",
+                    mar: data?.mar || "",
+                    apr: data?.apr || "",
+                    may: data?.may || "",
+                    jun: data?.jun || "",
+                    jul: data?.jul || "",
+                    agu: data?.agu || "",
+                    sep: data?.sep || "",
+                    oct: data?.oct || "",
+                    nov: data?.nov || "",
+                    dec: data?.dec.toString() || "",
                 });
                 setValue("load_name", data?.load_name || "");
+                setValue("year", data?.year ? (moment(data?.year) as any) : moment());
+                setValue("jan", data?.jan || "");
+                setValue("feb", data?.feb || "");
+                setValue("mar", data?.mar || "");
+                setValue("apr", data?.apr || "");
+                setValue("may", data?.may || "");
+                setValue("jun", data?.jun || "");
+                setValue("jul", data?.jul || "");
+                setValue("agu", data?.agu || "");
+                setValue("sep", data?.sep || "");
+                setValue("oct", data?.oct || "");
+                setValue("nov", data?.nov || "");
+                setValue("dec", data?.dec || "");
             },
         }
     );
@@ -97,16 +123,17 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        // onSubmit(
-        //     {
-        //         ...data,
-        //         id: prevData?.id as any,
-        //     },
-        //     () => {
-        //         closeModal();
-        //     }
-        // );
-        const month = QUARTAL_MONTH.find((el) => el.quartal === quartalVisible);
+        onSubmit(
+            {
+                ...data,
+                id: prevData?.id as any,
+                year: moment(data.year).format("yyyy"),
+                budget_id: 1,
+            },
+            () => {
+                closeModal();
+            }
+        );
     });
 
     const childrenData: ChildrenProps = {
@@ -114,14 +141,6 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
         openModal,
         closeModal,
         openModalWithData,
-    };
-
-    const addMoreQuartal = () => {
-        setQuartalVisible((prev) => prev + 1);
-    };
-
-    const removeQuartal = () => {
-        setQuartalVisible((prev) => prev - 1);
     };
 
     return (
@@ -155,25 +174,20 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                             />
                             <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="year" picker="year" label="Tahun Anggaran" />
                         </div>
-                        {QUARTAL_MONTH?.map((el) => {
-                            if (quartalVisible >= el.quartal) {
-                                return (
-                                    <div className="w-full flex gap-4 items-center">
-                                        <p className="capitalize w-[300px] ">quartal: {el.quartal}</p>
-                                        {el.month?.map((month) => (
-                                            <ControlledInputNumber
-                                                control={control}
-                                                labelCol={{ xs: 12 }}
-                                                name={month.toLowerCase() as any}
-                                                label={month}
-                                                placeholder={month}
-                                            />
-                                        ))}
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })}
+                        {QUARTAL_MONTH_SHORT?.map((el) => (
+                            <div className="w-full flex gap-4 items-center">
+                                <p className="capitalize w-[300px] ">quartal: {el.quartal}</p>
+                                {el.month?.map((month) => (
+                                    <ControlledInputNumber
+                                        control={control}
+                                        labelCol={{ xs: 12 }}
+                                        name={month.toLowerCase() as any}
+                                        label={month}
+                                        placeholder={month}
+                                    />
+                                ))}
+                            </div>
+                        ))}
 
                         <div className="w-full flex items-center justify-between">
                             <Space>
@@ -183,28 +197,6 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                                 <Button type="primary" danger onClick={closeModal}>
                                     Batalkan
                                 </Button>
-                            </Space>
-                            <Space>
-                                {quartalVisible !== 1 && (
-                                    <Button
-                                        onClick={removeQuartal}
-                                        icon={<AiOutlineMinus className="mr-2" />}
-                                        className="!flex !items-center"
-                                        type="text"
-                                    >
-                                        Quartal
-                                    </Button>
-                                )}
-                                {quartalVisible !== 4 && (
-                                    <Button
-                                        onClick={addMoreQuartal}
-                                        icon={<AiOutlinePlus className="mr-2" />}
-                                        className="!flex !items-center"
-                                        type="primary"
-                                    >
-                                        Quartal
-                                    </Button>
-                                )}
                             </Space>
                         </div>
                     </Space>
