@@ -9,8 +9,6 @@ class DashboardService extends BaseService {
 
     getSubHeader = "/dashboard/get-sub-header";
 
-    getRemainingBudget = "/dashboard/get-remaining-budget";
-
     getAnalyticSubUnit = "/dashboard/get-analytic-subunit";
 
     GetAllHeader<T = Models.GetHeaderDashboard>(params: Models.QuartalParam) {
@@ -40,12 +38,6 @@ class DashboardService extends BaseService {
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;
-        });
-    }
-
-    GetRemainingBudget<T = Models.RemainingBudget[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
-        return ApiMethod.get<T>({
-            url: this.getRemainingBudget,
         });
     }
 

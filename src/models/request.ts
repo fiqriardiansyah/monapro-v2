@@ -311,12 +311,14 @@ export interface SearchParam {
 
 export interface QuartalParam {
     quartal_id: number;
+    year: number;
 }
 
 export interface GetSubLoadParam {
     load_type_id: number;
 }
 
+//  DATA RECAP
 export interface RecapLockBudgetData {
     justification_id: number;
     lock_budget: number;
@@ -325,4 +327,13 @@ export interface RecapLockBudgetData {
 export interface RecapIsPaidData {
     finance_id: number;
     is_paid: number;
+}
+
+export interface RecapFilterParam {
+    load_type_id: number | string;
+    subunit_id: number | string;
+    year: number | string;
+    quartal_id: number | string;
+    month: number | string;
+    page: number | string;
 }

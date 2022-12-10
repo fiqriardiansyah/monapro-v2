@@ -33,19 +33,18 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<FDataJustification> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    agenda_data_id: yup.number().required("Agenda Data wajib diisi"),
-    value: yup.string().required("Nilai justifikasi wajib diisi"),
-    about_justification: yup.string().required("Perihal wajib diisi"),
-    approval_position_id: yup.string().required("Approval posisi wajib diisi"),
-    load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    sub_load_id: yup.string(),
-    subunit_id: yup.string().required("Sub unit wajib diisi"),
+    agenda_data_id: yup.string(),
+    value: yup.string(),
+    about_justification: yup.string(),
+    approval_position_id: yup.string().required("Approval posisi wajib diisi"), // wajib
+    load_type_id: yup.string().required("Jenis beban wajib diisi"), // wajib
+    subunit_id: yup.string().required("Sub unit wajib diisi"), // wajib
     quartal_id: yup.number().required("Quartal wajib diisi"),
-    note: yup.string().required("Catatan wajib diisi"),
-    event_date: yup.string().required("Pelaksanaan acara wajib diisi"),
-    estimation_paydate: yup.string().required("Perkiraan pembayaran wajib diisi"),
+    note: yup.string(),
+    event_date: yup.string().required("Tanggal wajib diisi"),
+    estimation_paydate: yup.string().required("Tanggal wajib diisi"),
     doc_justification: yup.string(),
 });
 
@@ -56,20 +55,12 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const {
-        handleSubmit,
-        control,
-        formState: { isValid },
-        setValue,
-        getValues,
-        watch,
-    } = useForm<FDataJustification>({
+    const { handleSubmit, control, setValue, getValues, watch } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
     const docWatch = watch("doc_justification");
-    const loadTypeId = watch("load_type_id");
 
     const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
         const req = await procurementService.GetSubUnit();
@@ -140,7 +131,6 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                     estimation_paydate: data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment(),
                     doc_justification: data?.doc_justification || "",
                     quartal_id: data?.quartal_id || "",
-                    sub_load_id: data?.sub_load_id || "",
                 });
                 setValue("justification_date", data?.justification_date ? (moment(data?.justification_date) as any) : moment());
                 setValue("agenda_data_id", data?.agenda_data_id || "");
@@ -154,30 +144,6 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                 setValue("estimation_paydate", data?.estimation_paydate ? (moment(data?.estimation_paydate) as any) : moment());
                 setValue("doc_justification", data?.doc_justification || "");
                 setValue("quartal_id", data?.quartal_id || "");
-                setValue("sub_load_id", data?.sub_load_id || "");
-            },
-        }
-    );
-
-    const isHaveSubLoad = loadTypeQuery.data?.find((el) => el.load_type_id === loadTypeId)?.sub_load === 1;
-
-    const subLoadQuery = useQuery(
-        [procurementService.getSubLoad],
-        async () => {
-            const req = await procurementService.GetSubLoad({ load_type_id: 1 });
-            const subLoad = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.sub_load_name,
-                        value: el.sub_load_id,
-                    } as SelectOption)
-            );
-            return subLoad;
-        },
-        {
-            enabled: isHaveSubLoad,
-            onError: (error: any) => {
-                notification.error({ message: procurementService.getSubUnit, description: error?.message });
             },
         }
     );
@@ -207,7 +173,6 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
             doc_justification: base64 || getValues()?.doc_justification || null,
-            sub_load_id: data.sub_load_id || null,
         };
         onSubmit(
             {
@@ -285,15 +250,16 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="approval_position_id"
-                                    label="Approval posisi"
-                                    placeholder="Approval posisi"
+                                    name="agenda_data_id"
+                                    label="No Agenda"
+                                    placeholder="No Agenda"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={approvalQuery.isLoading}
-                                    options={approvalQuery.data || []}
+                                    loading={agendaDataQuery.isLoading}
+                                    options={agendaDataQuery.data || []}
                                 />
                             </Col>
+
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
@@ -311,20 +277,6 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     }
                                 />
                             </Col>
-                            {isHaveSubLoad && (
-                                <Col span={12}>
-                                    <ControlledSelectInput
-                                        showSearch
-                                        name="sub_load_id"
-                                        label="Sub Beban"
-                                        placeholder="Sub Beban"
-                                        optionFilterProp="children"
-                                        control={control}
-                                        loading={subLoadQuery.isLoading}
-                                        options={subLoadQuery.data || []}
-                                    />
-                                </Col>
-                            )}
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
@@ -338,8 +290,18 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="quartal_id"
+                                    label="Quartal"
+                                    placeholder="Quartal"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    // loading={approvalQuery.isLoading}
+                                    options={QUARTAL}
+                                />
                             </Col>
+
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
                             </Col>
@@ -349,13 +311,13 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
-                                    name="agenda_data_id"
-                                    label="No Agenda"
-                                    placeholder="No Agenda"
+                                    name="approval_position_id"
+                                    label="Approval posisi"
+                                    placeholder="Approval posisi"
                                     optionFilterProp="children"
                                     control={control}
-                                    loading={agendaDataQuery.isLoading}
-                                    options={agendaDataQuery.data || []}
+                                    loading={approvalQuery.isLoading}
+                                    options={approvalQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>
@@ -375,16 +337,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 )}
                             </Col>
                             <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="quartal_id"
-                                    label="Quartal"
-                                    placeholder="Quartal"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    // loading={approvalQuery.isLoading}
-                                    options={QUARTAL}
-                                />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
                             </Col>
                         </Row>
 

@@ -7,10 +7,9 @@ export interface TDataRecapData extends RecapData {
 }
 
 export interface FilterRecapData {
-    sub_unit: string;
-    quartal: string;
-    date: string;
+    load_type_id: string;
+    subunit_id: string;
     year: string;
-    load_type: string;
-    month: string;
+    quartal_id: string;
+    month: string | null;
 }

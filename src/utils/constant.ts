@@ -54,11 +54,11 @@ export const DECISION = [
 
 export const STATUS_AGENDA = [
     {
-        value: 0,
+        value: 1,
         label: "Attention",
     },
     {
-        value: 1,
+        value: 2,
         label: "Normal",
     },
 ];
@@ -112,7 +112,7 @@ export const QUARTAL_MONTH = [
     },
 ];
 
-export const MONTH_SHORT = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "agu", "sep", "oct", "nov", "dec"];
+export const MONTH_SHORT = ["jan", "feb", "mar", "apr", "may", "jun", "jul", "agu", "sep", "oct", "nov", "des"];
 
 export const QUARTAL_MONTH_SHORT = [
     {
@@ -129,7 +129,7 @@ export const QUARTAL_MONTH_SHORT = [
     },
     {
         quartal: 4,
-        month: ["oct", "nov", "dec"],
+        month: ["oct", "nov", "des"],
     },
 ];
 

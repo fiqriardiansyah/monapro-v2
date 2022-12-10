@@ -31,11 +31,11 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FDataFinance>> = yup.object().shape({
-    justification_id: yup.string(),
+    justification_id: yup.string().required("Justifikasi wajib diisi"),
     invoice_file: yup.string(),
-    tel21_date: yup.string(),
-    spb_date: yup.string(),
-    payment_date: yup.string(),
+    tel21_date: yup.string().required("Tanggal TEL21 wajib diisi"),
+    spb_date: yup.string().required("Tanggal SPB wajib diisi"),
+    payment_date: yup.string().required("Tanggal pembayaran wajib diisi"),
     value_payment: yup.string(),
     note: yup.string(),
     attachment_file: yup.string(),

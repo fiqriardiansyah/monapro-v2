@@ -27,7 +27,7 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<Omit<FDataLoadType, "budget_id">>> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
     year: yup.string(),
     jan: yup.string(),
@@ -41,7 +41,7 @@ const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
     sep: yup.string(),
     oct: yup.string(),
     nov: yup.string(),
-    dec: yup.string(),
+    des: yup.string(),
     _: yup.string(),
 });
 

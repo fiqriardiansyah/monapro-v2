@@ -10,5 +10,5 @@ export interface FDataLoadType extends Omit<LoadType, "id"> {
 
 export interface FDataLoadTypeId extends FDataLoadType {
     id: number | string;
-    budget_id: number | string;
+    budget_id?: number | string;
 }

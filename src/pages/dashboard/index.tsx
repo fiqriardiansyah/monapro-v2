@@ -1,5 +1,6 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
-import { Alert, Button, Card, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
+import { Alert, Button, Card, DatePicker, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -19,6 +20,7 @@ import State from "components/common/state";
 import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
 import Utils from "utils";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
+import moment, { Moment } from "moment";
 
 export const dataRevenueDefault = {
     labels: [],
@@ -34,16 +36,17 @@ const DashboardPage = () => {
     }
 
     const [qtl, setQtl] = useState(1);
+    const [year, setYear] = useState<Moment | null>(null);
 
     const [chartData, setChartData] = useState(dataRevenueDefault);
 
-    const getAllHeader = useQuery([dashboardService.getAllHeader, qtl], async () => {
-        const res = await dashboardService.GetAllHeader({ quartal_id: qtl });
+    const getAllHeader = useQuery([dashboardService.getAllHeader, qtl, year], async () => {
+        const res = await dashboardService.GetAllHeader({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
-    const getSubHeader = useQuery([dashboardService.getSubHeader, qtl], async () => {
-        const res = await dashboardService.GetSubHeader({ quartal_id: qtl });
+    const getSubHeader = useQuery([dashboardService.getSubHeader, qtl, year], async () => {
+        const res = await dashboardService.GetSubHeader({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
@@ -52,20 +55,26 @@ const DashboardPage = () => {
         return res.data.data;
     });
 
-    useEffect(() => {
-        if (!getSubHeader.data) return;
-        setChartData((prev) => ({
-            ...prev,
-            labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
-            datasets: [...getSubHeader.data.list_subunit_usage].map((el, i) => ({
-                label: el.subunit_name,
-                data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
-                backgroundColor: COLORS[i],
-                borderColor: COLORS[i],
-                borderWidth: 1,
-            })) as any,
-        }));
-    }, [qtl, getSubHeader.data]);
+    // useEffect(() => {
+    //     if (!getSubHeader.data) return;
+    //     setChartData((prev) => ({
+    //         ...prev,
+    //         labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+    //         datasets: [...getSubHeader.data.list_subunit_usage].map((el, i) => ({
+    //             label: el.subunit_name,
+    //             data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+    //             backgroundColor: COLORS[i],
+    //             borderColor: COLORS[i],
+    //             borderWidth: 1,
+    //         })) as any,
+    //     }));
+    // }, [qtl, getSubHeader.data]);
+
+    const onChangeYear = (moment: Moment | null) => {
+        if (moment) {
+            setYear(moment);
+        }
+    };
 
     return (
         <div className="min-h-screen px-10">
@@ -73,6 +82,7 @@ const DashboardPage = () => {
                 title="Dashboard"
                 action={
                     <Space>
+                        <DatePicker value={year} onChange={onChangeYear} picker="year" />
                         <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
                     </Space>
                 }

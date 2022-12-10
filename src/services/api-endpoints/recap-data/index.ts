@@ -11,6 +11,8 @@ class RecapDataService extends BaseService {
 
     setIsPaid = "/data-recap/set-is-paid";
 
+    filter = "data-recap/filter";
+
     constructor() {
         super();
     }
@@ -46,6 +48,21 @@ class RecapDataService extends BaseService {
             const req = await ApiMethod.post<T>({
                 url: this.setIsPaid,
                 data,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    Filter<T = Models.RecapData>(param: Models.RecapFilterParam) {
+        return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
+                url: this.filter,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
             });
             if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
             return req;

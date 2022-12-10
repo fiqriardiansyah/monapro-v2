@@ -34,7 +34,7 @@ const schema: yup.SchemaOf<Partial<FDataContractSpNopes>> = yup.object().shape({
     justification_id: yup.string(),
     no_contract: yup.string(),
     about_manage: yup.string(),
-    date: yup.string(),
+    date: yup.string().required("Tanggal wajib diisi"),
     value: yup.string(),
     doc: yup.string(),
 });

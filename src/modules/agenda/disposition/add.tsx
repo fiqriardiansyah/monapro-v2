@@ -30,9 +30,9 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FDataAgendaDisposition>> = yup.object().shape({
-    agenda_data_id: yup.string(),
+    agenda_data_id: yup.string().required("Agenda Data wajib diisi"),
     disposition_doc: yup.string(),
-    disposition_date: yup.string(),
+    disposition_date: yup.string().required("Tanggal wajib diisi"),
     disposition_to: yup.string(),
     letter_no: yup.string(),
     note: yup.string(),

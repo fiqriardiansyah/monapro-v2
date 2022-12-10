@@ -200,25 +200,27 @@ const DashboardDetail = () => {
                 </div>
                 <div className="p-3 bg-white rounded-md h-full">
                     <p className="m-0 font-medium text-gray-400 mb-2">Sisa Pemakaian</p>
-                    <State data={getHeaderSubUnit.data} isLoading={getHeaderSubUnit.isLoading} isError={getHeaderSubUnit.isError}>
-                        {(state) => (
-                            <>
-                                <State.Data state={state}>
-                                    {getHeaderSubUnit.data?.list_activity?.map((el, i: number) => {
-                                        return (
-                                            <div className="w-full flex items-center justify-between mb-2">
-                                                <p className="m-0 text-gray-400">{el.load_name}</p>
-                                                <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
-                                            </div>
-                                        );
-                                    })}
-                                </State.Data>
-                                <State.Loading state={state}>
-                                    <Skeleton paragraph={{ rows: 4 }} active />
-                                </State.Loading>
-                            </>
-                        )}
-                    </State>
+                    <div className="w-full overflow-y-auto max-h-[350px]">
+                        <State data={getHeaderSubUnit.data} isLoading={getHeaderSubUnit.isLoading} isError={getHeaderSubUnit.isError}>
+                            {(state) => (
+                                <>
+                                    <State.Data state={state}>
+                                        {getHeaderSubUnit.data?.list_activity?.map((el, i: number) => {
+                                            return (
+                                                <div className="w-full flex items-center justify-between mb-2">
+                                                    <p className="m-0 text-gray-400">{el.load_name}</p>
+                                                    <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                                </div>
+                                            );
+                                        })}
+                                    </State.Data>
+                                    <State.Loading state={state}>
+                                        <Skeleton paragraph={{ rows: 4 }} active />
+                                    </State.Loading>
+                                </>
+                            )}
+                        </State>
+                    </div>
                 </div>
             </div>
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data rekapan</p>

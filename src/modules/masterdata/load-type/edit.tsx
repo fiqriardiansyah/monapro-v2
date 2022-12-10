@@ -30,7 +30,7 @@ type Props = {
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
+const schema: yup.SchemaOf<Partial<Omit<FDataLoadType, "budget_id">>> = yup.object().shape({
     load_name: yup.string().required("Jenis beban wajib diisi"),
     year: yup.string(),
     jan: yup.string(),
@@ -44,7 +44,7 @@ const schema: yup.SchemaOf<Partial<FDataLoadType>> = yup.object().shape({
     sep: yup.string(),
     oct: yup.string(),
     nov: yup.string(),
-    dec: yup.string(),
+    des: yup.string(),
     _: yup.string(),
 });
 
@@ -84,7 +84,7 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                     sep: data?.sep || "",
                     oct: data?.oct || "",
                     nov: data?.nov || "",
-                    dec: data?.dec.toString() || "",
+                    des: data?.des || "",
                 });
                 setValue("load_name", data?.load_name || "");
                 setValue("year", data?.year ? (moment(data?.year) as any) : moment());
@@ -99,7 +99,7 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                 setValue("sep", data?.sep || "");
                 setValue("oct", data?.oct || "");
                 setValue("nov", data?.nov || "");
-                setValue("dec", data?.dec || "");
+                setValue("des", data?.des || "");
             },
         }
     );
@@ -128,7 +128,7 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
                 ...data,
                 id: prevData?.id as any,
                 year: moment(data.year).format("yyyy"),
-                budget_id: 1,
+                budget_id: detailMutation.data?.budget_id as any,
             },
             () => {
                 closeModal();

@@ -32,15 +32,15 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
-    date: yup.string().nullable(),
+    date: yup.string().required("Tanggal wajib diisi!"),
     endorse: yup.string(),
     letter_no: yup.string(),
-    letter_date: yup.string().nullable(),
-    sender: yup.string(),
-    about: yup.string(),
-    subunit_id: yup.string(),
-    decision: yup.string(),
-    event_date: yup.string().nullable(),
+    letter_date: yup.string().required("Tanggal Surat wajib diisi!"),
+    sender: yup.string().required("Pengirim wajib diisi!"),
+    about: yup.string().required("Perihal wajib diisi!"),
+    subunit_id: yup.string().required("Sub Unit wajib diisi!"),
+    decision: yup.string().required("Keputusan wajib diisi!"),
+    event_date: yup.string().required("Tanggal Pelaksanaan acara wajib diisi!"),
     document: yup.string(),
     status: yup.string(),
     _: yup.string(),

@@ -27,11 +27,6 @@ export interface GetHeaderDashboard {
 }
 
 export interface GetSubHeaderDashboard {
-    list_subunit_usage: {
-        subunit_name: string;
-        subunit_usage: number;
-        budget: number;
-    }[];
     list_activity: {
         load_name: string;
         load_usage: number;

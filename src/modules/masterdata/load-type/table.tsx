@@ -15,63 +15,6 @@ type Props<T> = {
     onClickDetail: (data: T) => void;
 };
 
-const dummy: TDataLoadType[] = [
-    {
-        load_name: "Jenis beban 1",
-        year: "2022",
-        jan: "12000000",
-        feb: "12000000",
-        mar: "12030000",
-        apr: "13000000",
-        may: "12000000",
-        jun: "12450000",
-        jul: "12032000",
-        agu: "12130000",
-        sep: "13041300",
-        oct: "12120000",
-        nov: "12003000",
-        dec: "11000230",
-        id: 1,
-        key: 1,
-    },
-    {
-        load_name: "Jenis beban 1",
-        year: "2022",
-        jan: "12000000",
-        feb: "12000000",
-        mar: "12030000",
-        apr: "13000000",
-        may: "12000000",
-        jun: "12450000",
-        jul: "12032000",
-        agu: "12130000",
-        sep: "13041300",
-        oct: "12120000",
-        nov: "12003000",
-        dec: "11000230",
-        id: 2,
-        key: 2,
-    },
-    {
-        load_name: "Jenis beban 1",
-        year: "2023",
-        jan: "12000000",
-        feb: "12000000",
-        mar: "12030000",
-        apr: "13000000",
-        may: "12000000",
-        jun: "12450000",
-        jul: "12032000",
-        agu: "12130000",
-        sep: "13041300",
-        oct: "12120000",
-        nov: "12003000",
-        dec: "11000230",
-        id: 3,
-        key: 3,
-    },
-];
-
 const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
     const location = useLocation();
     const [params] = useSearchParams();
@@ -175,7 +118,7 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
         },
         {
             title: "Desember",
-            dataIndex: "dec",
+            dataIndex: "des",
             render: (text) => <p className="capitalize m-0 text-xs">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
         {
@@ -205,10 +148,9 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
         <Table
             scroll={{ x: 1500 }}
             size="small"
-            // loading={fetcher.isLoading}
+            loading={fetcher.isLoading}
             columns={columns}
-            // dataSource={fetcher.data?.list || []}
-            dataSource={dummy as any}
+            dataSource={fetcher.data?.list || []}
             className="w-full"
             pagination={{
                 current: fetcher.data?.current_page || 1,

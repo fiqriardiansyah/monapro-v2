@@ -43,6 +43,7 @@ export interface Role {
 export interface LoadType {
     id: number | string;
     load_name: string;
+    budget_id?: string | number;
     year: string;
     jan: string;
     feb: string;
@@ -55,7 +56,7 @@ export interface LoadType {
     sep: string;
     oct: string;
     nov: string;
-    dec: string;
+    des: string;
 }
 
 export interface ApprovalPosition {
@@ -133,8 +134,8 @@ export interface Justification {
     creator: string;
     note: string;
     doc_justification: any | null;
-    event_date: string | number;
-    estimation_paydate: string | number;
+    event_date: string | number | null;
+    estimation_paydate: string | number | null;
     lock_budget?: number;
 }
 
@@ -194,7 +195,9 @@ export interface RecapData {
     no_agenda: number | null;
     no_justification: string;
     about_justification: string;
+    estimation_paydate: string;
     value: number;
+    load_name: string;
     subunit_name: string;
     no_contract: string | null;
     no_bap: string | null;
@@ -215,7 +218,6 @@ export interface SubUnitProcurement {
 export interface LoadTypeProcurement {
     load_type_id: number;
     load_name: string;
-    sub_load: number;
 }
 
 export interface ApprovalPositionProcurement {

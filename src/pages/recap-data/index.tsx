@@ -11,13 +11,34 @@ import recapDataService from "services/api-endpoints/recap-data";
 const RecapDataPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
+    const year = searchParams.get("year") || 0;
+    const month = searchParams.get("month") || 0;
+    const quartalId = searchParams.get("quartal_id") || 0;
+    const loadTypeId = searchParams.get("load_type_id") || 0;
+    const subunitId = searchParams.get("subunit_id") || 0;
     const query = searchParams.get("query") || "";
 
+    const isFilter = year || month || quartalId || loadTypeId || subunitId;
+
     // crud fetcher
-    const getList = useQuery([recapDataService.getAll, page], async () => {
-        const req = await recapDataService.GetAll({ page });
-        return req.data.data;
-    });
+    const getListQuery = useQuery(
+        [isFilter ? recapDataService.filter : recapDataService.getAll, page, year, month, quartalId, loadTypeId, subunitId],
+        async () => {
+            if (isFilter) {
+                const req = await recapDataService.Filter({
+                    page,
+                    year,
+                    month,
+                    quartal_id: quartalId,
+                    load_type_id: loadTypeId,
+                    subunit_id: subunitId,
+                });
+                return req.data.data;
+            }
+            const req = await recapDataService.GetAll({ page });
+            return req.data.data;
+        }
+    );
 
     const lockBudgetMutation = useMutation(
         async (data: RecapLockBudgetData) => {
@@ -28,7 +49,7 @@ const RecapDataPage = () => {
         },
         {
             onSuccess: () => {
-                getList.refetch();
+                getListQuery.refetch();
                 message.success("Budget Locked!");
             },
             onError: (error: any) => {
@@ -46,7 +67,7 @@ const RecapDataPage = () => {
         },
         {
             onSuccess: () => {
-                getList.refetch();
+                getListQuery.refetch();
                 message.success("Set Bayar!");
             },
             onError: (error: any) => {
@@ -69,7 +90,7 @@ const RecapDataPage = () => {
             .catch(callback);
     };
 
-    const errors = [getList];
+    const errors = [getListQuery];
 
     return (
         <div className="min-h-screen px-10">
@@ -96,7 +117,7 @@ const RecapDataPage = () => {
             <div className="h-4" />
             <Filter />
             <div className="h-4" />
-            <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getList} />
+            <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getListQuery} />
         </div>
     );
 };
