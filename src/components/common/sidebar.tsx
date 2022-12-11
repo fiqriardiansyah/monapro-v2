@@ -69,11 +69,12 @@ function Sidebar({ collapse }: Props) {
             getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />),
             getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
         ]),
-        getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-            getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
-            getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />),
-            // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
-        ]),
+        getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
+        // getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
+        //     getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
+        //     // getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />), [IMPORTANT] not used
+        //     // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
+        // ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
             // getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used

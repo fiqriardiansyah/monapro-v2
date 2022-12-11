@@ -178,7 +178,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="payment_date" label="Tanggal Pembayaran" />
                             </Col>
-                            <Col span={12}>
+                            {/* <Col span={12}>
                                 <ControlledInputNumber
                                     control={control}
                                     labelCol={{ xs: 24 }}
@@ -186,7 +186,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                                     label="Nilai Pembayaran"
                                     placeholder="Nilai Pembayaran"
                                 />
-                            </Col>
+                            </Col> */}
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>

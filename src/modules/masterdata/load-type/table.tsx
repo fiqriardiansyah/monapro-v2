@@ -59,70 +59,84 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
         {
             title: "Nama Beban",
             dataIndex: "load_name",
+            width: "200px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Januari",
             dataIndex: "jan",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Februari",
             dataIndex: "feb",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Maret",
             dataIndex: "mar",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "April",
             dataIndex: "apr",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Mei",
             dataIndex: "may",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Juni",
             dataIndex: "jun",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "July",
             dataIndex: "jul",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Agustus",
             dataIndex: "agu",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "September",
             dataIndex: "sep",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Oktober",
             dataIndex: "oct",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "November",
             dataIndex: "nov",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Desember",
             dataIndex: "des",
+            width: "150px",
             render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Tahun",
+            width: "100px",
             dataIndex: "year",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
@@ -146,7 +160,7 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
 
     return (
         <Table
-            scroll={{ x: 1500 }}
+            scroll={{ x: 300 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

@@ -78,16 +78,16 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
-        {
-            title: "Justifikasi ID",
-            dataIndex: "justification_id",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Finance ID",
-            dataIndex: "finance_id",
-            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        },
+        // {
+        //     title: "Justifikasi ID",
+        //     dataIndex: "justification_id",
+        //     render: (text) => <p className="capitalize m-0">{text}</p>,
+        // },
+        // {
+        //     title: "Finance ID",
+        //     dataIndex: "finance_id",
+        //     render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        // },
         {
             title: "No Agenda",
             dataIndex: "no_agenda",

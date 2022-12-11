@@ -101,7 +101,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                     tel21_date: data?.tel21_date ? (moment(data?.tel21_date) as any) : moment(),
                     spb_date: data?.spb_date ? (moment(data?.spb_date) as any) : moment(),
                     payment_date: data?.payment_date ? (moment(data?.payment_date) as any) : moment(),
-                    value_payment: data?.value_payment || "",
+                    // value_payment: data?.value_payment || "",
                     note: data?.note || "",
                     attachment_file: data?.attachment_file || "",
                 });
@@ -110,7 +110,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                 setValue("tel21_date", data?.tel21_date ? (moment(data?.tel21_date) as any) : moment());
                 setValue("spb_date", data?.spb_date ? (moment(data?.spb_date) as any) : moment());
                 setValue("payment_date", data?.payment_date ? (moment(data?.payment_date) as any) : moment());
-                setValue("value_payment", data?.value_payment || "");
+                // setValue("value_payment", data?.value_payment || "");
                 setValue("note", data?.note || "");
                 setValue("attachment_file", data?.attachment_file || "");
             },
@@ -268,7 +268,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="payment_date" label="Tanggal Pembayaran" />
                             </Col>
-                            <Col span={12}>
+                            {/* <Col span={12}>
                                 <ControlledInputNumber
                                     control={control}
                                     labelCol={{ xs: 24 }}
@@ -276,7 +276,7 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                                     label="Nilai Pembayaran"
                                     placeholder="Nilai Pembayaran"
                                 />
-                            </Col>
+                            </Col> */}
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
