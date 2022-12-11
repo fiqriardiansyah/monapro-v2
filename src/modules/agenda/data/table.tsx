@@ -117,9 +117,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
                     <Button type="text" onClick={() => onClickEdit(record)}>
                         Edit
                     </Button>
-                    {/* <Button disabled={record?.lock_budget === 1} type="primary" onClick={() => onClickLockBudgetHandler(record)}>
-                        {record?.lock_budget === 1 ? "Locked" : "Lock budget"}
-                    </Button> [IMPORTANT] not used */}
                 </Space>
             ),
         },

@@ -25,9 +25,6 @@ import moment, { Moment } from "moment";
 export const dataRevenueDefault = {
     labels: [],
     datasets: [],
-    options: {
-        responsive: true,
-    },
 };
 
 const DashboardPage = () => {
@@ -50,30 +47,28 @@ const DashboardPage = () => {
         return res.data.data;
     });
 
-    const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit], async () => {
-        const res = await dashboardService.GetAnalyticSubUnit();
+    const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit, qtl, year], async () => {
+        const res = await dashboardService.GetAnalyticSubUnit({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
-    // useEffect(() => {
-    //     if (!getSubHeader.data) return;
-    //     setChartData((prev) => ({
-    //         ...prev,
-    //         labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
-    //         datasets: [...getSubHeader.data.list_subunit_usage].map((el, i) => ({
-    //             label: el.subunit_name,
-    //             data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
-    //             backgroundColor: COLORS[i],
-    //             borderColor: COLORS[i],
-    //             borderWidth: 1,
-    //         })) as any,
-    //     }));
-    // }, [qtl, getSubHeader.data]);
+    useEffect(() => {
+        if (!analyticSubUnit.data) return;
+        setChartData((prev) => ({
+            ...prev,
+            labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+            datasets: [...(analyticSubUnit.data || [])].map((el, i) => ({
+                label: el.subunit_name,
+                data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+                backgroundColor: COLORS[i],
+                borderColor: COLORS[i],
+                borderWidth: 1,
+            })) as any,
+        }));
+    }, [qtl, analyticSubUnit.data]);
 
     const onChangeYear = (moment: Moment | null) => {
-        if (moment) {
-            setYear(moment);
-        }
+        setYear(moment);
     };
 
     return (
@@ -82,7 +77,7 @@ const DashboardPage = () => {
                 title="Dashboard"
                 action={
                     <Space>
-                        <DatePicker value={year} onChange={onChangeYear} picker="year" />
+                        <DatePicker value={year} onChange={onChangeYear} allowClear picker="year" />
                         <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
                     </Space>
                 }
@@ -134,7 +129,8 @@ const DashboardPage = () => {
                     )}
                 </State>
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
-                    <Line data={chartData} />
+                    <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Sub unit per quartal</p>
+                    <Line data={chartData} options={{ plugins: { legend: { position: "bottom" } } }} />
                 </div>
                 {/* <div className="p-3 bg-white rounded-md row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Pemakaian Sub Unit</p>

@@ -1,5 +1,6 @@
-import { Alert, Card, Divider, message } from "antd";
+import { Alert, Card, Divider, message, Skeleton } from "antd";
 import Header from "components/common/header";
+import State from "components/common/state";
 import { RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
 import Filter from "modules/recap-data/filter";
 import RecapDataTable from "modules/recap-data/table";
@@ -96,24 +97,46 @@ const RecapDataPage = () => {
         <div className="min-h-screen px-10">
             <Header title="Data Rekapan" />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <Card>
-                <div className="w-full items-center flex">
-                    <div className="flex-1">
-                        <p className="m-0 capitalize text-gray-400 font-medium">total budget plan</p>
-                        <p className="m-0 text-gray-600 font-semibold">Rp.100.000.000</p>
-                    </div>
-                    <Divider orientation="center" type="vertical" />
-                    <div className="flex-1">
-                        <p className="m-0 capitalize text-gray-400 font-medium">total pemakaian</p>
-                        <p className="m-0 text-gray-600 font-semibold">Rp.100.000.000</p>
-                    </div>
-                    <Divider orientation="center" type="vertical" />
-                    <div className="flex-1">
-                        <p className="m-0 capitalize text-gray-400 font-medium">total bayar</p>
-                        <p className="m-0 text-gray-600 font-semibold">Rp.100.000.000</p>
-                    </div>
-                </div>
-            </Card>
+            {isFilter ? (
+                <Card>
+                    <State data={getListQuery.data} isLoading={getListQuery.isLoading} isError={getListQuery.isError}>
+                        {(state) => (
+                            <>
+                                <State.Data state={state}>
+                                    <div className="w-full items-center flex">
+                                        <div className="flex-1">
+                                            <p className="m-0 capitalize text-gray-400 font-medium">total budget plan</p>
+                                            <p className="m-0 text-gray-600 font-semibold">
+                                                {Number((getListQuery.data as any)?.total_budget_plan || "0").ToIndCurrency("Rp")}
+                                            </p>
+                                        </div>
+                                        <Divider orientation="center" type="vertical" />
+                                        <div className="flex-1">
+                                            <p className="m-0 capitalize text-gray-400 font-medium">total pemakaian</p>
+                                            <p className="m-0 text-gray-600 font-semibold">
+                                                {Number((getListQuery.data as any)?.total_usage || "0").ToIndCurrency("Rp")}
+                                            </p>
+                                        </div>
+                                        <Divider orientation="center" type="vertical" />
+                                        <div className="flex-1">
+                                            <p className="m-0 capitalize text-gray-400 font-medium">total belum bayar</p>
+                                            <p className="m-0 text-gray-600 font-semibold">
+                                                {Number((getListQuery.data as any)?.total_not_paid || "0").ToIndCurrency("Rp")}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </State.Data>
+                                <State.Loading state={state}>
+                                    <Skeleton paragraph={{ rows: 3 }} active />
+                                </State.Loading>
+                                <State.Error state={state}>
+                                    <Alert type="error" message={(getListQuery.error as any)?.message} />
+                                </State.Error>
+                            </>
+                        )}
+                    </State>
+                </Card>
+            ) : null}
             <div className="h-4" />
             <Filter />
             <div className="h-4" />

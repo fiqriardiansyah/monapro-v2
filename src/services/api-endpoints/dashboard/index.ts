@@ -41,9 +41,18 @@ class DashboardService extends BaseService {
         });
     }
 
-    GetAnalyticSubUnit<T = Models.AnalyticSubUnit[]>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
-        return ApiMethod.get<T>({
-            url: this.getAnalyticSubUnit,
+    GetAnalyticSubUnit<T = Models.AnalyticSubUnit[]>(params: Models.QuartalParam): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.getAnalyticSubUnit,
+                config: {
+                    params: {
+                        ...params,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
         });
     }
 }

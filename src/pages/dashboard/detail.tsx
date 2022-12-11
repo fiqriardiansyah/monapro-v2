@@ -1,5 +1,6 @@
+/* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
-import { Button, Divider, message, Progress, Select, Skeleton, Space, Tooltip } from "antd";
+import { Button, DatePicker, Divider, message, Progress, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -26,6 +27,7 @@ import Utils from "utils";
 import { randomRevenue } from "modules/dashboard/data";
 import RecapDataTable from "modules/recap-data/table";
 import recapDataService from "services/api-endpoints/recap-data";
+import moment, { Moment } from "moment";
 
 export const chartDataDefault = {
     labels: [],
@@ -41,15 +43,21 @@ const DashboardDetail = () => {
     }
 
     const [chartData, setChartData] = useState(chartDataDefault);
+    const [qtl, setQtl] = useState(1);
+    const [year, setYear] = useState<Moment | null>(null);
 
     const { id } = useParams();
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
 
     const getHeaderSubUnit = useQuery(
-        [dashboardSubUnitService.getHeaderSubunit, id],
+        [dashboardSubUnitService.getHeaderSubunit, id, year, qtl],
         async () => {
-            const res = await dashboardSubUnitService.GetHeaderSubunit({ id: id as any });
+            const res = await dashboardSubUnitService.GetHeaderSubunit({
+                id: id as any,
+                quartal_id: qtl,
+                year: year ? moment(year).format("yyyy") : (0 as any),
+            });
             return res.data.data;
         },
         {
@@ -57,15 +65,24 @@ const DashboardDetail = () => {
         }
     );
 
-    const getRecapData = useQuery([dashboardSubUnitService.getRecapData, page, id], async () => {
-        const req = await dashboardSubUnitService.GetRecapData({ subunitId: id as any, page });
+    const getRecapData = useQuery([dashboardSubUnitService.getRecapData, page, id, year, qtl], async () => {
+        const req = await dashboardSubUnitService.GetRecapData({
+            subunitId: id as any,
+            page,
+            quartal_id: qtl,
+            year: year ? moment(year).format("yyyy") : (0 as any),
+        });
         return req.data.data;
     });
 
     useQuery(
-        [dashboardSubUnitService.getChartSubunit, id],
+        [dashboardSubUnitService.getChartSubunit, id, year, qtl],
         async () => {
-            const req = await dashboardSubUnitService.GetChartSubunit({ id: id as any });
+            const req = await dashboardSubUnitService.GetChartSubunit({
+                id: id as any,
+                quartal_id: qtl,
+                year: year ? moment(year).format("yyyy") : (0 as any),
+            });
             return req.data.data;
         },
         {
@@ -134,6 +151,10 @@ const DashboardDetail = () => {
             .catch(callback);
     };
 
+    const onChangeYear = (moment: Moment | null) => {
+        setYear(moment);
+    };
+
     return (
         <div className="min-h-screen px-10">
             <Header
@@ -145,6 +166,12 @@ const DashboardDetail = () => {
                     </Link>
                 )}
                 title={getHeaderSubUnit.data?.subunit_name || "Getting data..."}
+                action={
+                    <Space>
+                        <DatePicker value={year} onChange={onChangeYear} allowClear picker="year" />
+                        <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
+                    </Space>
+                }
             />
             <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
