@@ -55,6 +55,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         setValue,
         getValues,
         watch,
+        reset,
     } = useForm<FDataContractSpNopes>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -107,9 +108,24 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        setPrevData(null);
+        form.setFieldsValue({
+            justification_id: "",
+            no_contract: "",
+            about_manage: "",
+            date: "",
+            value: "",
+            doc: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {
@@ -175,7 +191,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading || detailMutation.isLoading}
+                    disabled={loading || detailMutation.isLoading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

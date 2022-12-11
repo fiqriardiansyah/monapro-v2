@@ -266,3 +266,12 @@ export interface AnalyticSubUnit {
         not_paid: number;
     }[];
 }
+
+export interface LineChart {
+    subunit_id: number;
+    subunit_name: string;
+    list_chart: {
+        month: string;
+        total: null | number;
+    }[];
+}

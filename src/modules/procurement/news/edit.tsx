@@ -55,6 +55,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         setValue,
         getValues,
         watch,
+        reset,
     } = useForm<FDataNews>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -111,9 +112,27 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        setPrevData(null);
+        processFileBAP(null);
+        processFileBAPP(null);
+        processFileBAR(null);
+        reset();
+        form.setFieldsValue({
+            justification_id: "",
+            no_bar: "",
+            no_bap: "",
+            no_bapp: "",
+            file_bap: "",
+            file_bapp: "",
+            file_bar: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

@@ -1,10 +1,10 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
 import { AgendaFinance, IsPaid } from "models";
-import AddAgendaFinance from "modules/agenda/finance/add";
-import EditAgendaFinance from "modules/agenda/finance/edit";
-import { FDataAgendaFinance } from "modules/agenda/finance/models";
-import AgendaFinanceTable from "modules/agenda/finance/table";
+import AddAgendaFinance from "modules/agenda/finance[not-used]/add";
+import EditAgendaFinance from "modules/agenda/finance[not-used]/edit";
+import { FDataAgendaFinance } from "modules/agenda/finance[not-used]/models";
+import AgendaFinanceTable from "modules/agenda/finance[not-used]/table";
 import React, { useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";

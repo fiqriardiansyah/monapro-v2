@@ -39,6 +39,7 @@ const EditSubUnit = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        reset,
     } = useForm<SubUnitData>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -64,6 +65,7 @@ const EditSubUnit = ({ onSubmit, loading, children }: Props) => {
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        reset();
     };
 
     const openModal = () => {

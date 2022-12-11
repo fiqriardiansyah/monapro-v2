@@ -61,6 +61,8 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         watch,
+        reset,
+        setValue,
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -141,9 +143,30 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        setType(SPONSORSHIP);
+        processFile(null);
+        reset();
+        form.setFieldsValue({
+            justification_date: "",
+            agenda_data_id: "",
+            value: "",
+            about_justification: "",
+            approval_position_id: "",
+            load_type_id: "",
+            subunit_id: "",
+            quartal_id: "",
+            note: "",
+            event_date: "",
+            estimation_paydate: "",
+            doc_justification: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {
@@ -175,27 +198,22 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         processFile(file);
     };
 
-    const disabledMonth = (date: Moment): boolean => {
-        if (!quartal || !date) return true;
-        const monthNum = (quartal - 1) * 3;
-        const quartalStart = moment().month(monthNum);
-        const quartalEnd = moment().add(monthNum + 3, "month");
-
-        if (moment().month(date.format("MM")) > quartalStart && moment().month(date.format("MM")) < quartalEnd) {
-            return false;
-        }
-
-        return true;
+    const changeTypeHandler = (tp: number) => {
+        setType(tp);
+        setValue("agenda_data_id", "");
+        form.setFieldsValue({
+            agenda_data_id: "",
+        });
     };
 
     return (
         <>
             <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Space className="!mb-7">
-                    <Button onClick={() => setType(SPONSORSHIP)} type={type === SPONSORSHIP ? "primary" : "default"}>
+                    <Button onClick={() => changeTypeHandler(SPONSORSHIP)} type={type === SPONSORSHIP ? "primary" : "default"}>
                         Sponsorship
                     </Button>
-                    <Button onClick={() => setType(PROCUREMENT)} type={type === PROCUREMENT ? "primary" : "default"}>
+                    <Button onClick={() => changeTypeHandler(PROCUREMENT)} type={type === PROCUREMENT ? "primary" : "default"}>
                         Procurement
                     </Button>
                 </Space>

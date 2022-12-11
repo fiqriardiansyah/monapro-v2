@@ -56,14 +56,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const {
-        handleSubmit,
-        control,
-        formState: { isValid },
-        setValue,
-        getValues,
-        watch,
-    } = useForm<FDataAgenda>({
+    const { handleSubmit, control, setValue, getValues, watch, reset } = useForm<FDataAgenda>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -125,9 +118,29 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        setPrevData(null);
+        form.setFieldsValue({
+            date: "",
+            endorse: "",
+            letter_no: "",
+            letter_date: "",
+            sender: "",
+            about: "",
+            subunit_id: "",
+            decision: "",
+            event_date: "",
+            document: "",
+            status: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

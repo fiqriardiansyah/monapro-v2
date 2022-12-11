@@ -48,6 +48,7 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
+        reset,
     } = useForm<FDataContractSpNopes>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -73,9 +74,23 @@ const AddContract = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        form.setFieldsValue({
+            justification_id: "",
+            no_contract: "",
+            about_manage: "",
+            date: "",
+            value: "",
+            doc: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

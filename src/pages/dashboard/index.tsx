@@ -52,20 +52,25 @@ const DashboardPage = () => {
         return res.data.data;
     });
 
+    const getLineChart = useQuery([dashboardService.getLineChart, qtl, year], async () => {
+        const res = await dashboardService.GetLineChart({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
+        return res.data.data;
+    });
+
     useEffect(() => {
-        if (!analyticSubUnit.data) return;
+        if (!getLineChart.data) return;
         setChartData((prev) => ({
             ...prev,
             labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
-            datasets: [...(analyticSubUnit.data || [])].map((el, i) => ({
+            datasets: [...(getLineChart.data || [])].map((el, i) => ({
                 label: el.subunit_name,
-                data: randomRevenue[Utils.getRandomIntRange(0, randomRevenue.length - 1)] ?? randomRevenue[0],
+                data: el.list_chart?.map((el) => el.total || 0),
                 backgroundColor: COLORS[i],
                 borderColor: COLORS[i],
                 borderWidth: 1,
             })) as any,
         }));
-    }, [qtl, analyticSubUnit.data]);
+    }, [qtl, getLineChart.data]);
 
     const onChangeYear = (moment: Moment | null) => {
         setYear(moment);

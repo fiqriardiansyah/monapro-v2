@@ -52,6 +52,7 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const {
+        reset,
         handleSubmit,
         control,
         formState: { isValid },
@@ -79,9 +80,28 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        form.setFieldsValue({
+            date: "",
+            endorse: "",
+            letter_no: "",
+            letter_date: "",
+            sender: "",
+            about: "",
+            subunit_id: "",
+            decision: "",
+            event_date: "",
+            document: "",
+            status: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

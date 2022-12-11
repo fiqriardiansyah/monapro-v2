@@ -31,6 +31,7 @@ const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
+        reset,
     } = useForm<SubUnitData>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -39,6 +40,7 @@ const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        reset();
     };
 
     const openModal = () => {

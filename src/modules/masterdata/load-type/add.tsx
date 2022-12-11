@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Form, Modal, Row, Space } from "antd";
 import React, { useState } from "react";
@@ -54,14 +55,37 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
+        reset,
     } = useForm<FDataLoadType>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
+    const resetForm = () => {
+        setQuartalVisible(1);
+        reset();
+        form.setFieldsValue({
+            load_name: "",
+            year: "",
+            jan: "",
+            feb: "",
+            mar: "",
+            apr: "",
+            may: "",
+            jun: "",
+            jul: "",
+            agu: "",
+            sep: "",
+            oct: "",
+            nov: "",
+            des: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {
@@ -153,6 +177,7 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                                         {el.month?.map((month) => (
                                             <ControlledInputNumber
                                                 control={control}
+                                                key={month}
                                                 labelCol={{ xs: 12 }}
                                                 name={month.toLowerCase() as any}
                                                 label={month.toUpperCase()}

@@ -47,6 +47,7 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
     const {
         handleSubmit,
         control,
+        reset,
         formState: { isValid },
     } = useForm<FDataAgendaDisposition>({
         mode: "onChange",
@@ -72,9 +73,23 @@ const AddAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        form.setFieldsValue({
+            agenda_data_id: "",
+            disposition_doc: "",
+            disposition_date: "",
+            disposition_to: "",
+            letter_no: "",
+            note: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

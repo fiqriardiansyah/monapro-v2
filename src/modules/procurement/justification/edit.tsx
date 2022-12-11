@@ -55,7 +55,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { handleSubmit, control, setValue, getValues, watch } = useForm<FDataJustification>({
+    const { handleSubmit, control, setValue, getValues, watch, reset } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -148,9 +148,30 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFile(null);
+        reset();
+        setPrevData(null);
+        form.setFieldsValue({
+            justification_date: "",
+            agenda_data_id: "",
+            value: "",
+            about_justification: "",
+            approval_position_id: "",
+            load_type_id: "",
+            subunit_id: "",
+            quartal_id: "",
+            note: "",
+            event_date: "",
+            estimation_paydate: "",
+            doc_justification: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

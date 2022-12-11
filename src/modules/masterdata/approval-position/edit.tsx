@@ -38,6 +38,7 @@ const EditApprovalPosition = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        reset,
     } = useForm<ApprovalPosition>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -60,9 +61,15 @@ const EditApprovalPosition = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        reset();
+        setPrevData(null);
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

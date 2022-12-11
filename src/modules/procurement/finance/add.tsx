@@ -51,6 +51,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
+        reset,
     } = useForm<FDataFinance>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -76,9 +77,26 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const resetForm = () => {
+        processFileAttach(null);
+        processFileInvoice(null);
+        reset();
+        form.setFieldsValue({
+            justification_id: "",
+            invoice_file: "",
+            tel21_date: "",
+            spb_date: "",
+            payment_date: "",
+            value_payment: "",
+            note: "",
+            attachment_file: "",
+        });
+    };
+
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {

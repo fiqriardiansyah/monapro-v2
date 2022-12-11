@@ -58,10 +58,32 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
         control,
         formState: { isValid },
         setValue,
+        reset,
     } = useForm<FDataLoadType>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
+
+    const resetForm = () => {
+        setPrevData(null);
+        reset();
+        form.setFieldsValue({
+            load_name: "",
+            year: "",
+            jan: "",
+            feb: "",
+            mar: "",
+            apr: "",
+            may: "",
+            jun: "",
+            jul: "",
+            agu: "",
+            sep: "",
+            oct: "",
+            nov: "",
+            des: "",
+        });
+    };
 
     const detailMutation = useMutation(
         async (id: string) => {
@@ -107,6 +129,7 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
+        resetForm();
     };
 
     const openModal = () => {
