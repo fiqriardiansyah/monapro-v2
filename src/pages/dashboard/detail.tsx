@@ -252,6 +252,7 @@ const DashboardDetail = () => {
             </div>
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data rekapan</p>
             <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getRecapData} />
+            <div className="h-20" />
         </div>
     );
 };

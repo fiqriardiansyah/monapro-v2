@@ -99,28 +99,29 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
-            title: "Tanggal Justifikasi",
-            dataIndex: "justification_date",
-            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        },
-        {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
+        {
+            title: "Tanggal Perkiraan bayar",
+            dataIndex: "estimation_paydate",
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format("DD-MM-yyyy") : "-"}</p>,
+        },
+
         {
             title: "Nilai",
             dataIndex: "value",
             render: (text) => <p className="capitalize m-0">{!Number.isNaN(text) ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
         {
-            title: "Sub Unit",
-            dataIndex: "subunit_name",
+            title: "Jenis Beban",
+            dataIndex: "load_type",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
-            title: "Jenis Beban",
-            dataIndex: "load_type",
+            title: "Sub Unit",
+            dataIndex: "subunit_name",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
