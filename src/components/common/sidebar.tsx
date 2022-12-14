@@ -82,7 +82,7 @@ function Sidebar({ collapse }: Props) {
             getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
-        getItem("Data Rekapan", RECAP_PATH, <BsClipboardData />),
+        getItem("Data Rekap", RECAP_PATH, <BsClipboardData />),
     ];
 
     return (

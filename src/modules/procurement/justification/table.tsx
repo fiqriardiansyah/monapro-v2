@@ -150,7 +150,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
                         Edit
                     </Button>
                     <Button type={record?.lock_budget !== 1 ? "primary" : "default"} onClick={() => onClickLockBudgetHandler(record)}>
-                        {record?.lock_budget === 1 ? "UnLocked" : "Lock"}
+                        {record?.lock_budget === 1 ? "Unlock" : "Lock"}
                     </Button>
                 </Space>
             ),
