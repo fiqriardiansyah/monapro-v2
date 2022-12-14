@@ -79,6 +79,7 @@ const DashboardPage = () => {
     return (
         <div className="min-h-screen px-10">
             <Header
+                search={false}
                 title="Dashboard"
                 action={
                     <Space>
@@ -135,7 +136,7 @@ const DashboardPage = () => {
                 </State>
                 <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Sub unit per quartal</p>
-                    <Line data={chartData} options={{ plugins: { legend: { position: "bottom" } } }} />
+                    <Line data={chartData} options={{ plugins: { legend: { display: false } } }} />
                 </div>
                 {/* <div className="p-3 bg-white rounded-md row-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-6 capitalize">Pemakaian Sub Unit</p>
@@ -181,7 +182,7 @@ const DashboardPage = () => {
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    <div className="max-h-[300px] overflow-y-auto">
+                                    <div className="max-h-[250px] overflow-y-auto">
                                         {getSubHeader.data?.list_activity?.map((el, i: number) => {
                                             return (
                                                 <div className="w-full flex items-center justify-between mb-2">

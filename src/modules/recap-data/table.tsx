@@ -116,7 +116,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
         },
         {
             title: "Jenis Beban",
-            dataIndex: "load_type",
+            dataIndex: "load_name",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {

@@ -61,66 +61,79 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         {
             title: "No Justifikasi",
             dataIndex: "no_justification",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tanggal Justifikasi",
             dataIndex: "justification_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "No Agenda",
             dataIndex: "no_agenda",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal",
             dataIndex: "about_justification",
+            width: "150px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Posisi",
             dataIndex: "position",
+            width: "150px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Beban",
             dataIndex: "load_name",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Nilai",
             dataIndex: "value",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Sub unit",
             dataIndex: "subunit_name",
+            width: "150px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pembuat",
             dataIndex: "creator",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Catatan",
             dataIndex: "note",
+            width: "150px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "Perkiraan bayar",
             dataIndex: "estimation_paydate",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "Dok Justifikasi",
             dataIndex: "doc_justification",
+            width: "150px",
             render: (url, record) => {
                 if (!url) return "-";
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
@@ -146,7 +159,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
 
     return (
         <Table
-            scroll={{ x: 1500 }}
+            scroll={{ x: 2000 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
