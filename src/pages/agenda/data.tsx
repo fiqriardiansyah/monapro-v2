@@ -1,6 +1,8 @@
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { AgendaData, AgendaDataLockBudgetData } from "models";
 import AddAgendaData from "modules/agenda/data/add";
 import EditAgendaData from "modules/agenda/data/edit";
@@ -18,6 +20,8 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const AgendaDataPage = <T extends TDataAgenda>() => {
     const { notificationInstance } = useContext(StateContext);
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -149,13 +153,15 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Data Agenda"
                 action={
-                    <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Agenda
-                            </Button>
-                        )}
-                    </AddAgendaData>
+                    !isForbidden && (
+                        <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah Agenda
+                                </Button>
+                            )}
+                        </AddAgendaData>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
@@ -6,6 +6,8 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse, Role } from "models";
 import { ROLE } from "utils/constant";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 
 type Props = {
     fetcher: UseQueryResult<BasePaginationResponse<Role>, unknown>;
@@ -14,6 +16,9 @@ type Props = {
 };
 
 const RoleManagementTable = <T extends Role>({ fetcher, onClickEdit, loading }: Props) => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "profile" });
+
     const [role, setRole] = useState<Role | null>(null);
 
     const location = useLocation();
@@ -54,28 +59,34 @@ const RoleManagementTable = <T extends Role>({ fetcher, onClickEdit, loading }: 
         {
             title: "Role Name",
             dataIndex: "role_name",
-            render: (text, record) => (
-                <Select defaultValue={record.role_id} onChange={(value) => setRole({ ...record, role_id: value })} options={ROLE} />
-            ),
+            render: (text, record) => {
+                if (isForbidden) return <p>{text || "-"}</p>;
+                return <Select defaultValue={record.role_id} onChange={(value) => setRole({ ...record, role_id: value })} options={ROLE} />;
+            },
         },
         {
             title: "Email",
             dataIndex: "email",
             render: (text) => <p className="lowercase m-0">{text}</p>,
         },
-        {
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type={role && role.email === record.email ? "primary" : "text"} onClick={() => editHandler(record)}>
-                        Edit
-                    </Button>
-                </Space>
-            ),
-        },
     ];
+
+    const action: ColumnsType<Role>[0] = {
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type={role && role.email === record.email ? "primary" : "text"} onClick={() => editHandler(record)}>
+                    Edit
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
 
     return (
         <Table

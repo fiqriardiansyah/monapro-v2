@@ -14,6 +14,7 @@ import procurementService from "services/api-endpoints/procurement";
 import newsService from "services/api-endpoints/procurement/news";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
+import { COMMON_FILE_EXTENSIONS } from "utils/constant";
 import { FDataNews } from "./models";
 
 type ChildrenProps = {
@@ -263,7 +264,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     <InputFile
                                         handleChange={onFileBAPChangeHandler}
                                         label="bap document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        types={COMMON_FILE_EXTENSIONS}
                                         multiple={false}
                                         name="file_bap"
                                     />
@@ -284,7 +285,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     <InputFile
                                         handleChange={onFileBARChangeHandler}
                                         label="bar document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        types={COMMON_FILE_EXTENSIONS}
                                         multiple={false}
                                         name="file_bar"
                                     />
@@ -305,7 +306,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                     <InputFile
                                         handleChange={onFileBAPPChangeHandler}
                                         label="bapp document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        types={COMMON_FILE_EXTENSIONS}
                                         multiple={false}
                                         name="file_bapp"
                                     />

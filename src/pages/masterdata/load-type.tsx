@@ -1,11 +1,13 @@
 import { Alert, Button, message } from "antd";
 import Header from "components/common/header";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { LoadType } from "models";
 import AddLoadType from "modules/masterdata/load-type/add";
 import EditLoadType from "modules/masterdata/load-type/edit";
 import { FDataLoadType, FDataLoadTypeId, TDataLoadType } from "modules/masterdata/load-type/models";
 import LoadTypeTable from "modules/masterdata/load-type/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
@@ -15,6 +17,9 @@ import Utils from "utils";
 // [FINISH]
 
 const LoadTypePage = <T extends TDataLoadType>() => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "master_data" });
+
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -141,13 +146,15 @@ const LoadTypePage = <T extends TDataLoadType>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Jenis Beban"
                 action={
-                    <AddLoadType loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah beban
-                            </Button>
-                        )}
-                    </AddLoadType>
+                    !isForbidden && (
+                        <AddLoadType loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah beban
+                                </Button>
+                            )}
+                        </AddLoadType>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

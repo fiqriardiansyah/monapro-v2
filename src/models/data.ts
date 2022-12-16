@@ -8,6 +8,26 @@ export interface AuthData {
     email: string;
     token: string;
     phone: any;
+    role_access: [
+        {
+            dashboard: boolean;
+        },
+        {
+            agenda: boolean;
+        },
+        {
+            justification: boolean;
+        },
+        {
+            data_recap: boolean;
+        },
+        {
+            master_data: boolean;
+        },
+        {
+            profile: boolean;
+        }
+    ];
 }
 
 export interface Profile extends Omit<AuthData, "is_new" | "token" | "phone" | "fullname"> {
@@ -57,6 +77,12 @@ export interface LoadType {
     oct: string;
     nov: string;
     des: string;
+}
+
+export interface Sop {
+    id: number | string;
+    name: string;
+    document: string | null;
 }
 
 export interface ApprovalPosition {

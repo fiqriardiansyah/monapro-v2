@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import contractService from "services/api-endpoints/procurement/contract";
 import moment from "moment";
-import { FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataContractSpNopes } from "./models";
@@ -245,7 +245,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                     <InputFile
                                         handleChange={onFileChangeHandler}
                                         label="file document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        types={COMMON_FILE_EXTENSIONS}
                                         multiple={false}
                                         name="doc_justification"
                                     />

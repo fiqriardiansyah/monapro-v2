@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
@@ -9,6 +9,8 @@ import { ImWarning } from "react-icons/im";
 import moment from "moment";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { TDataJustification } from "./models";
 
 type Props<T> = {
@@ -18,6 +20,9 @@ type Props<T> = {
 };
 
 const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -139,23 +144,28 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
             },
         },
-        {
-            width: "250px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type={record?.lock_budget !== 1 ? "primary" : "default"} onClick={() => onClickLockBudgetHandler(record)}>
-                        {record?.lock_budget === 1 ? "Unlock" : "Lock"}
-                    </Button>
-                </Space>
-            ),
-        },
     ];
+
+    const action: ColumnsType<T>[0] = {
+        width: "250px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+                <Button type={record?.lock_budget !== 1 ? "primary" : "default"} onClick={() => onClickLockBudgetHandler(record)}>
+                    {record?.lock_budget === 1 ? "Unlock" : "Lock"}
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
 
     return (
         <Table

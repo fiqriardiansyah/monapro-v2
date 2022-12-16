@@ -7,12 +7,10 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
-import Utils from "utils";
-import useIsForbidden from "hooks/useIsForbidden";
+import { TDataRecapData } from "modules/recap-data/models";
 import { UserContext } from "context/user";
-import { TDataRecapData } from "./models";
+import useIsForbidden from "hooks/useIsForbidden";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -20,9 +18,9 @@ type Props<T> = {
     onClickPaid: (data: T, callback: () => void) => void;
 };
 
-const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, onClickPaid }: Props<T>) => {
+const DashboardRecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, onClickPaid }: Props<T>) => {
     const { state } = useContext(UserContext);
-    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "data_recap" });
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "dashboard" });
 
     const location = useLocation();
     const [params] = useSearchParams();
@@ -192,4 +190,4 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
     );
 };
 
-export default RecapDataTable;
+export default DashboardRecapDataTable;

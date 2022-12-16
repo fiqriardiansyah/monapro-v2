@@ -6,7 +6,7 @@ import { message } from "antd";
 import type { RcFile } from "antd/es/upload/interface";
 import Cookies from "js-cookie";
 import { BasePaginationResponse, BaseTableData } from "models";
-import { DEFAULT_ERROR_MESSAGE, EMAIL_USER, locale, NAME_USER, TOKEN_USER } from "./constant";
+import { DEFAULT_ERROR_MESSAGE, EMAIL_USER, locale, NAME_USER, ROLE_ACCESS, TOKEN_USER } from "./constant";
 
 export default class Utils {
     static charCodeA = 65;
@@ -101,6 +101,7 @@ export default class Utils {
         Cookies.remove(TOKEN_USER);
         Cookies.remove(NAME_USER);
         Cookies.remove(EMAIL_USER);
+        localStorage.removeItem(ROLE_ACCESS);
     };
 
     static pause(time: number) {

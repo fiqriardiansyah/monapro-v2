@@ -1,10 +1,13 @@
 export const TOKEN_USER = "token";
 export const NAME_USER = "name";
 export const EMAIL_USER = "email";
+export const ROLE_ACCESS = "rleacss";
 export const locale = "en-us";
 
 export const FORMAT_DATE = "yyyy-MM-DD";
 export const FORMAT_SHOW_DATE = "DD MMM yyyy";
+
+export const COMMON_FILE_EXTENSIONS = ["doc", "docx", "txt", "pdf", "html", "ppt", "pptx", "jpg", "jpeg", "png", "zip", "rar", "xls", "xlsx"];
 
 export const DEFAULT_ERROR_MESSAGE = "Ooops something wrong!";
 export const FILE_TYPE_ERROR = "file type not support!";
@@ -109,6 +112,29 @@ export const QUARTAL_MONTH = [
     {
         quartal: 4,
         month: ["Oktober", "November", "Desember"],
+    },
+];
+
+export const FINANCE_STATE = [
+    {
+        value: 0,
+        label: "Belum Bayar",
+    },
+    {
+        value: 1,
+        label: "Bayar",
+    },
+    {
+        value: 2,
+        label: "Process Invoice",
+    },
+    {
+        value: 3,
+        label: "Verifikasi",
+    },
+    {
+        value: 4,
+        label: "SPB",
     },
 ];
 

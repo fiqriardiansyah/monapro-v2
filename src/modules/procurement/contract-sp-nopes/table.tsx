@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
@@ -9,6 +9,8 @@ import moment from "moment";
 import { FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -16,6 +18,9 @@ type Props<T> = {
 };
 
 const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit }: Props<T>) => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -75,20 +80,25 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Kontrak-SP-NOPES_${record.id}` })} />;
             },
         },
-        {
-            width: "100px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                </Space>
-            ),
-        },
     ];
+
+    const action: ColumnsType<T>[0] = {
+        width: "100px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
 
     return (
         <Table

@@ -38,22 +38,22 @@ const DashboardPage = () => {
     const [chartData, setChartData] = useState(dataRevenueDefault);
 
     const getAllHeader = useQuery([dashboardService.getAllHeader, qtl, year], async () => {
-        const res = await dashboardService.GetAllHeader({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
+        const res = await dashboardService.GetAllHeader({ quartal_id: qtl as any, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
     const getSubHeader = useQuery([dashboardService.getSubHeader, qtl, year], async () => {
-        const res = await dashboardService.GetSubHeader({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
+        const res = await dashboardService.GetSubHeader({ quartal_id: qtl as any, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
     const analyticSubUnit = useQuery([dashboardService.getAnalyticSubUnit, qtl, year], async () => {
-        const res = await dashboardService.GetAnalyticSubUnit({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
+        const res = await dashboardService.GetAnalyticSubUnit({ quartal_id: qtl as any, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
     const getLineChart = useQuery([dashboardService.getLineChart, qtl, year], async () => {
-        const res = await dashboardService.GetLineChart({ quartal_id: qtl, year: year ? moment(year).format("yyyy") : (0 as any) });
+        const res = await dashboardService.GetLineChart({ quartal_id: qtl as any, year: year ? moment(year).format("yyyy") : (0 as any) });
         return res.data.data;
     });
 
@@ -61,7 +61,7 @@ const DashboardPage = () => {
         if (!getLineChart.data) return;
         setChartData((prev) => ({
             ...prev,
-            labels: QUARTAL_MONTH.find((el) => el.quartal === qtl)?.month as any,
+            labels: QUARTAL_MONTH.find((el) => el.quartal === (qtl as any))?.month as any,
             datasets: [...(getLineChart.data || [])].map((el, i) => ({
                 label: el.subunit_name,
                 data: el.list_chart?.map((el) => el.total || 0),
@@ -84,7 +84,7 @@ const DashboardPage = () => {
                 action={
                     <Space>
                         <DatePicker value={year} onChange={onChangeYear} allowClear picker="year" />
-                        <Select value={qtl} onChange={(val) => setQtl(val)} options={QUARTAL} />
+                        <Select value={qtl} onChange={(val) => setQtl(val)} options={[{ value: "", label: "All" }, ...QUARTAL]} />
                     </Space>
                 }
             />
@@ -182,7 +182,7 @@ const DashboardPage = () => {
                         {(state) => (
                             <>
                                 <State.Data state={state}>
-                                    <div className="max-h-[250px] overflow-y-auto">
+                                    <div className="max-h-[250px] overflow-y-auto px-3">
                                         {getSubHeader.data?.list_activity?.map((el, i: number) => {
                                             return (
                                                 <div className="w-full flex items-center justify-between mb-2">

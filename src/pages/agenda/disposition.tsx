@@ -1,6 +1,8 @@
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { AgendaDisposition } from "models";
 import AddAgendaDisposition from "modules/agenda/disposition/add";
 import EditAgendaDisposition from "modules/agenda/disposition/edit";
@@ -17,6 +19,8 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const AgendaDispositionPage = <T extends AgendaDisposition>() => {
     const { notificationInstance } = useContext(StateContext);
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -129,13 +133,15 @@ const AgendaDispositionPage = <T extends AgendaDisposition>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Disposisi Agenda"
                 action={
-                    <AddAgendaDisposition loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Disposisi
-                            </Button>
-                        )}
-                    </AddAgendaDisposition>
+                    !isForbidden && (
+                        <AddAgendaDisposition loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah Disposisi
+                                </Button>
+                            )}
+                        </AddAgendaDisposition>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

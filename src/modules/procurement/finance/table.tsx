@@ -1,5 +1,5 @@
-import React from "react";
-import { Button, Modal, Space, Table } from "antd";
+import React, { useContext } from "react";
+import { Button, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -7,30 +7,35 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { FORMAT_SHOW_DATE } from "utils/constant";
+import { FINANCE_STATE, FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { TDataFinance } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickPaid: (data: T, callback: () => void) => void;
+    onClickPaid: (data: { dt: T; status: number }, callback: () => void) => void;
 };
 
 const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdit }: Props<T>) => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const onClickPaidHandler = (data: T) => {
+    const onClickPaidHandler = (data: T, status: number) => {
         Modal.confirm({
-            title: "Lock",
+            title: "Finance",
             icon: <ImWarning className="text-red-400" />,
-            content: `Set Bayar dengan id ${data.id}?`,
+            content: `Ubah data dengan id ${data.id}?`,
             onOk() {
                 return new Promise((resolve, reject) => {
-                    onClickPaid(data, () => {
+                    onClickPaid({ dt: data, status }, () => {
                         resolve(true);
                     });
                 });
@@ -110,23 +115,31 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Finance-Lampiran_${record.id}` })} />;
             },
         },
-        {
-            width: "200px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button disabled={record?.is_paid === 1} type="primary" onClick={() => onClickPaidHandler(record)}>
-                        Bayar
-                    </Button>
-                </Space>
-            ),
-        },
     ];
+
+    const action: ColumnsType<T>[0] = {
+        width: "250px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+                <Select
+                    className="w-[150px]"
+                    defaultValue={record.is_paid}
+                    onChange={(value) => onClickPaidHandler(record, value)}
+                    options={FINANCE_STATE}
+                />
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
 
     return (
         <Table

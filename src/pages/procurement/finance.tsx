@@ -1,6 +1,8 @@
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { IsPaid } from "models";
 import AddFinance from "modules/procurement/finance/add";
 import EditFinance from "modules/procurement/finance/edit";
@@ -17,6 +19,8 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const FinancePage = <T extends TDataFinance>() => {
     const { notificationInstance } = useContext(StateContext);
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -96,7 +100,7 @@ const FinancePage = <T extends TDataFinance>() => {
         {
             onSuccess: () => {
                 getList.refetch();
-                message.success("Bayar dikunci!");
+                message.success("Data Finance diubah!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -105,8 +109,8 @@ const FinancePage = <T extends TDataFinance>() => {
     );
 
     // crud handler
-    const onClickPaidHandler = async (data: TDataFinance, callback: () => void) => {
-        await setPaidMutation.mutateAsync({ id: data.id, is_paid: 1 });
+    const onClickPaidHandler = async (data: { dt: TDataFinance; status: number }, callback: () => void) => {
+        await setPaidMutation.mutateAsync({ id: data.dt.id, is_paid: data.status });
         callback();
     };
     const onClickEdit = (data: T) => {
@@ -148,13 +152,15 @@ const FinancePage = <T extends TDataFinance>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Finance"
                 action={
-                    <AddFinance loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Finance
-                            </Button>
-                        )}
-                    </AddFinance>
+                    !isForbidden && (
+                        <AddFinance loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah Finance
+                                </Button>
+                            )}
+                        </AddFinance>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

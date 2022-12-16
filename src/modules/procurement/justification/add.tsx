@@ -15,7 +15,7 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment, { Moment } from "moment";
-import { FORMAT_DATE, QUARTAL } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import { FDataJustification } from "./models";
 
@@ -327,7 +327,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileChangeHandler}
                                     label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="doc_justification"
                                 />

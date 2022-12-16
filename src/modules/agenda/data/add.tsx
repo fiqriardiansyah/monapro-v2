@@ -11,7 +11,7 @@ import ControlledInputDate from "components/form/controlled-inputs/controlled-in
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
-import { DECISION, FOLLOW_UP, FORMAT_DATE, STATUS_AGENDA } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, DECISION, FOLLOW_UP, FORMAT_DATE, STATUS_AGENDA } from "utils/constant";
 import { useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import moment from "moment";
@@ -209,7 +209,7 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileChangeHandler}
                                     label="file document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="document"
                                 />

@@ -1,6 +1,8 @@
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import { AgendaDataLockBudgetData, BasePaginationResponse, Justification } from "models";
 import AddJustification from "modules/procurement/justification/add";
 import EditJustification from "modules/procurement/justification/edit";
@@ -16,6 +18,8 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const JustificationPage = <T extends TDataJustification>() => {
     const { notificationInstance } = useContext(StateContext);
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -147,13 +151,15 @@ const JustificationPage = <T extends TDataJustification>() => {
                 title="Justifikasi"
                 onSubmitSearch={onSearchHandler}
                 action={
-                    <AddJustification loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Justifikasi
-                            </Button>
-                        )}
-                    </AddJustification>
+                    !isForbidden && (
+                        <AddJustification loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah Justifikasi
+                                </Button>
+                            )}
+                        </AddJustification>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

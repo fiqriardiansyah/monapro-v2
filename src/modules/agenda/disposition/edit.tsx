@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "react-query";
 import agendaService from "services/api-endpoints/agenda";
 import agendaDispositionService from "services/api-endpoints/agenda/agenda-disposition";
 import moment from "moment";
-import { FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataAgendaDisposition } from "./models";
@@ -245,7 +245,7 @@ const EditAgendaDisposition = ({ onSubmit, loading, children }: Props) => {
                                     <InputFile
                                         handleChange={onFileChangeHandler}
                                         label="file document"
-                                        types={["pdf", "jpg", "jpeg", "png"]}
+                                        types={COMMON_FILE_EXTENSIONS}
                                         multiple={false}
                                         name="document"
                                     />

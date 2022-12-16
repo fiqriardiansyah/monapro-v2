@@ -12,6 +12,7 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import useBase64File from "hooks/useBase64File";
+import { COMMON_FILE_EXTENSIONS } from "utils/constant";
 import { FDataNews } from "./models";
 
 type ChildrenProps = {
@@ -170,7 +171,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileBAPChangeHandler}
                                     label="bap document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="file_bap"
                                 />
@@ -179,7 +180,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileBARChangeHandler}
                                     label="bar document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="file_bar"
                                 />
@@ -188,7 +189,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileBAPPChangeHandler}
                                     label="bapp document"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="file_bapp"
                                 />

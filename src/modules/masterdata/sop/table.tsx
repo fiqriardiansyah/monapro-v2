@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, List, Modal, Space, Table } from "antd";
+import { Button, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -8,16 +8,17 @@ import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { TDataLoadType } from "./models";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
+import { TDataSop } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
     onClickDelete: (data: T, callback: () => void) => void;
-    onClickDetail: (data: T) => void;
 };
 
-const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "master_data" });
 
@@ -62,88 +63,19 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "Nama Beban",
-            dataIndex: "load_name",
+            title: "Nama Peraturan",
+            dataIndex: "name",
             width: "200px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Januari",
-            dataIndex: "jan",
+            title: "Dokumen",
+            dataIndex: "document",
             width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Februari",
-            dataIndex: "feb",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Maret",
-            dataIndex: "mar",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "April",
-            dataIndex: "apr",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Mei",
-            dataIndex: "may",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Juni",
-            dataIndex: "jun",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "July",
-            dataIndex: "jul",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Agustus",
-            dataIndex: "agu",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "September",
-            dataIndex: "sep",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Oktober",
-            dataIndex: "oct",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "November",
-            dataIndex: "nov",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Desember",
-            dataIndex: "des",
-            width: "150px",
-            render: (text) => <p className=" capitalize m-0 text-xs">{Number(text || "0").ToIndCurrency("Rp")}</p>,
-        },
-        {
-            title: "Tahun",
-            width: "100px",
-            dataIndex: "year",
-            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Peraturan_${record.name}` })} />;
+            },
         },
     ];
 
@@ -170,7 +102,6 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
 
     return (
         <Table
-            scroll={{ x: 300 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -186,4 +117,4 @@ const LoadTypeTable = <T extends TDataLoadType>({ fetcher, onClickDelete, onClic
     );
 };
 
-export default LoadTypeTable;
+export default SopTable;

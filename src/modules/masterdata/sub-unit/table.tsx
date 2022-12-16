@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
@@ -6,6 +6,8 @@ import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
+import useIsForbidden from "hooks/useIsForbidden";
+import { UserContext } from "context/user";
 import { TDataSubUnit } from "./models";
 
 type Props<T> = {
@@ -16,6 +18,9 @@ type Props<T> = {
 };
 
 const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickEdit, onClickDetail }: Props<T>) => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "master_data" });
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -66,23 +71,28 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
             dataIndex: "pic_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        {
-            title: "Action",
-            width: "200px",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => onClickEdit(record)}>
-                        Edit
-                    </Button>
-                    <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
-                        Hapus
-                    </Button>
-                </Space>
-            ),
-        },
     ];
+
+    const action: ColumnsType<T>[0] = {
+        title: "Action",
+        width: "200px",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+                <Button type="primary" className="BTN-DELETE" onClick={() => onClickDlt(record)}>
+                    Hapus
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
 
     return (
         <Table

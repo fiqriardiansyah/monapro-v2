@@ -14,7 +14,7 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment from "moment";
-import { FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import { FDataFinance } from "./models";
 
@@ -164,7 +164,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileInvoiceChangeHandler}
                                     label="File invoice"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="invoice_file"
                                 />
@@ -194,7 +194,7 @@ const AddFinance = ({ onSubmit, loading, children }: Props) => {
                                 <InputFile
                                     handleChange={onFileAttachChangeHandler}
                                     label="File"
-                                    types={["pdf", "jpg", "jpeg", "png"]}
+                                    types={COMMON_FILE_EXTENSIONS}
                                     multiple={false}
                                     name="attachment_file"
                                 />

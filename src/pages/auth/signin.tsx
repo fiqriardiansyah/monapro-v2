@@ -5,7 +5,7 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { SignInEmailData } from "models";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { EMAIL_USER, NAME_USER, TOKEN_USER } from "utils/constant";
+import { EMAIL_USER, NAME_USER, ROLE_ACCESS, TOKEN_USER } from "utils/constant";
 import * as yup from "yup";
 import Cookies from "js-cookie";
 import { UserContext } from "context/user";
@@ -32,13 +32,13 @@ const SignInPage = () => {
 
     const signInMutation = useMutation(
         async (data: SignInEmailData) => {
-            // const req = await authService.SignInEmail(data);
-            // return req.data.data;
-            return {
-                token: "$2a$10$gbVjlLpqVgBxqAxwuPrgQ.XvXR8qSBauRu1djwApYzlBY7qn",
-                fullname: "Dev Corcomm",
-                email: "dev.corcomm@gmail.com",
-            };
+            const req = await authService.SignInEmail(data);
+            return req.data.data;
+            // return {
+            //     token: "$2a$10$gbVjlLpqVgBxqAxwuPrgQ.XvXR8qSBauRu1djwApYzlBY7qn",
+            //     fullname: "Dev Corcomm",
+            //     email: "dev.corcomm@gmail.com",
+            // };
         },
         {
             onError: (error: any) => {
@@ -52,6 +52,7 @@ const SignInPage = () => {
         Cookies.set(TOKEN_USER, user.token);
         Cookies.set(NAME_USER, user.fullname);
         Cookies.set(EMAIL_USER, user.email);
+        localStorage.setItem(ROLE_ACCESS, JSON.stringify(user.role_access));
         if (setState) {
             setState((prev) => ({
                 ...prev,

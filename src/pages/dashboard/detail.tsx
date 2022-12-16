@@ -1,8 +1,8 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
-import { Button, DatePicker, Divider, message, Progress, Select, Skeleton, Space, Tooltip } from "antd";
+import { Button, DatePicker, message, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
@@ -10,24 +10,16 @@ import BlueWaveImage from "assets/svgs/blue-wave.svg";
 import GreenWaveImage from "assets/svgs/green-wave.svg";
 import OrangeWaveImage from "assets/svgs/orange-wave.svg";
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import RemainingBudget from "modules/dashboard/component/remaining-budget";
-import ProgressCustome from "modules/dashboard/component/progress-custome";
 import { IoMdArrowBack } from "react-icons/io";
-import { DASHBOARD_PATH } from "utils/routes";
-import AgendaDataTable from "modules/agenda/data/table";
-import { BasePaginationResponse, RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
+import { RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
 import { useMutation, useQuery } from "react-query";
-import JustificationTable from "modules/procurement/justification/table";
 import dashboardSubUnitService from "services/api-endpoints/dashboard/subunit-detail";
 import State from "components/common/state";
-import AgendaSubUnitTable from "modules/dashboard/index/agenda-table";
-import JustificationSubUnitTable from "modules/dashboard/index/justification-table";
-import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
+import { COLORS, QUARTAL } from "utils/constant";
 import Utils from "utils";
-import { randomRevenue } from "modules/dashboard/data";
-import RecapDataTable from "modules/recap-data/table";
 import recapDataService from "services/api-endpoints/recap-data";
 import moment, { Moment } from "moment";
+import DashboardRecapDataTable from "modules/dashboard/component/recap-table";
 
 export const chartDataDefault = {
     labels: [],
@@ -251,7 +243,7 @@ const DashboardDetail = () => {
                 </div>
             </div>
             <p className="capitalize font-semibold text-xl mt-8 mb-4">data rekapan</p>
-            <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getRecapData} />
+            <DashboardRecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getRecapData} />
             <div className="h-20" />
         </div>
     );

@@ -5,17 +5,22 @@ import { ApprovalPosition } from "models";
 import AddApprovalPosition from "modules/masterdata/approval-position/add";
 import { TDataApprovalPosition } from "modules/masterdata/approval-position/models";
 import ApprovalPositionTable from "modules/masterdata/approval-position/table";
-import React, { useRef } from "react";
+import React, { useContext, useRef } from "react";
 import { useMutation, useQuery } from "react-query";
 import EditApprovalPosition from "modules/masterdata/approval-position/edit";
 import DetailApprovalPosition from "modules/masterdata/approval-position/detail";
 import approvalPositionService from "services/api-endpoints/masterdata/approval-position";
 import Utils from "utils";
 import { useSearchParams } from "react-router-dom";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 
 // [FINISH]
 
 const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "master_data" });
+
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const query = searchParams.get("query") || "";
@@ -143,13 +148,15 @@ const ApprovalPositionPage = <T extends TDataApprovalPosition>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Jabatan Approval"
                 action={
-                    <AddApprovalPosition loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah posisi
-                            </Button>
-                        )}
-                    </AddApprovalPosition>
+                    !isForbidden && (
+                        <AddApprovalPosition loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah posisi
+                                </Button>
+                            )}
+                        </AddApprovalPosition>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}

@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 import { AuthData } from "models";
 import React, { createContext, Dispatch, SetStateAction, useMemo, useState } from "react";
-import { EMAIL_USER, NAME_USER, TOKEN_USER } from "utils/constant";
+import { EMAIL_USER, NAME_USER, ROLE_ACCESS, TOKEN_USER } from "utils/constant";
 
 type Props = {
     children: any;
@@ -22,6 +22,7 @@ const UserContext = createContext<ValueContextType>({
             token: Cookies.get(TOKEN_USER),
             fullname: Cookies.get(NAME_USER),
             email: Cookies.get(EMAIL_USER),
+            role_access: JSON.parse(localStorage.getItem(ROLE_ACCESS) || "{}"),
         },
     },
 });
@@ -32,6 +33,7 @@ function UserProvider({ children }: Props) {
             token: Cookies.get(TOKEN_USER),
             fullname: Cookies.get(NAME_USER),
             email: Cookies.get(EMAIL_USER),
+            role_access: JSON.parse(localStorage.getItem(ROLE_ACCESS) || "{}"),
         },
     });
 

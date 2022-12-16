@@ -1,6 +1,8 @@
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 import AddNegotiation from "modules/procurement/negotiation/add";
 import EditNegotiation from "modules/procurement/negotiation/edit";
 import { FDataNegotiation, TDataNegotiation } from "modules/procurement/negotiation/models";
@@ -16,6 +18,8 @@ import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 
 const NegotiationPage = <T extends TDataNegotiation>() => {
     const { notificationInstance } = useContext(StateContext);
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -128,13 +132,15 @@ const NegotiationPage = <T extends TDataNegotiation>() => {
                 onSubmitSearch={onSearchHandler}
                 title="Negosiasi"
                 action={
-                    <AddNegotiation loading={createMutation.isLoading} onSubmit={addHandler}>
-                        {(data) => (
-                            <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                Tambah Negosiasi
-                            </Button>
-                        )}
-                    </AddNegotiation>
+                    !isForbidden && (
+                        <AddNegotiation loading={createMutation.isLoading} onSubmit={addHandler}>
+                            {(data) => (
+                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah Negosiasi
+                                </Button>
+                            )}
+                        </AddNegotiation>
+                    )
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
