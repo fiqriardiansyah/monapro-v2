@@ -61,7 +61,14 @@ const RoleManagementTable = <T extends Role>({ fetcher, onClickEdit, loading }: 
             dataIndex: "role_name",
             render: (text, record) => {
                 if (isForbidden) return <p>{text || "-"}</p>;
-                return <Select defaultValue={record.role_id} onChange={(value) => setRole({ ...record, role_id: value })} options={ROLE} />;
+                return (
+                    <Select
+                        className="w-[140px]"
+                        defaultValue={record.role_id}
+                        onChange={(value) => setRole({ ...record, role_id: value })}
+                        options={ROLE}
+                    />
+                );
             },
         },
         {

@@ -1,24 +1,15 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
-import { Alert, Button, Card, DatePicker, Divider, Progress, Select, Skeleton, Space, Tooltip } from "antd";
+import { Alert, DatePicker, Select, Skeleton, Space } from "antd";
 import Header from "components/common/header";
 import React, { useEffect, useState } from "react";
 import { Chart, registerables } from "chart.js";
 import { Line } from "react-chartjs-2";
-
-import BlueWaveImage from "assets/svgs/blue-wave.svg";
-import GreenWaveImage from "assets/svgs/green-wave.svg";
-import OrangeWaveImage from "assets/svgs/orange-wave.svg";
-import { Link } from "react-router-dom";
-import { mainBudget, randomRevenue } from "modules/dashboard/data";
 import RemainingBudget from "modules/dashboard/component/remaining-budget";
-import ProgressCustome from "modules/dashboard/component/progress-custome";
-import { DASHBOARD_PATH } from "utils/routes";
 import { useQuery } from "react-query";
 import dashboardService from "services/api-endpoints/dashboard";
 import State from "components/common/state";
 import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
-import Utils from "utils";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 import moment, { Moment } from "moment";
 
@@ -32,7 +23,7 @@ const DashboardPage = () => {
         Chart.register(...registerables);
     }
 
-    const [qtl, setQtl] = useState(1);
+    const [qtl, setQtl] = useState(0);
     const [year, setYear] = useState<Moment | null>(null);
 
     const [chartData, setChartData] = useState(dataRevenueDefault);
@@ -84,7 +75,12 @@ const DashboardPage = () => {
                 action={
                     <Space>
                         <DatePicker value={year} onChange={onChangeYear} allowClear picker="year" />
-                        <Select value={qtl} onChange={(val) => setQtl(val)} options={[{ value: "", label: "All" }, ...QUARTAL]} />
+                        <Select
+                            className="w-[100px]"
+                            value={qtl}
+                            onChange={(val) => setQtl(val)}
+                            options={[{ value: 0, label: "All" }, ...QUARTAL]}
+                        />
                     </Space>
                 }
             />

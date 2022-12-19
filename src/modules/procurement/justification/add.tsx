@@ -1,7 +1,8 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-self-compare */
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -15,7 +16,7 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment, { Moment } from "moment";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL, PROCUREMENT_VALUES, SPONSORSHIP_VALUES } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import { FDataJustification } from "./models";
 
@@ -69,6 +70,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     });
 
     const quartal = watch("quartal_id");
+    const value = watch("value");
 
     const subUnitQuery = useQuery(
         [procurementService.getSubUnit],
@@ -206,6 +208,15 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         });
     };
 
+    useEffect(() => {
+        const values = type === SPONSORSHIP ? SPONSORSHIP_VALUES : PROCUREMENT_VALUES;
+        const findValue = values.sort((a, b) => b.value - a.value).find((el) => el.value < Number(value || 0));
+        form.setFieldsValue({
+            approval_position_id: findValue?.label,
+        });
+        setValue("approval_position_id", findValue?.label || "");
+    }, [value, type]);
+
     return (
         <>
             <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
@@ -312,6 +323,16 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
+                                <ControlledInputText
+                                    disabled
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="approval_position_id"
+                                    label="Approval posisi"
+                                    placeholder="Approval posisi"
+                                />
+                            </Col>
+                            {/* <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
                                     name="approval_position_id"
@@ -322,7 +343,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     loading={approvalQuery.isLoading}
                                     options={approvalQuery.data || []}
                                 />
-                            </Col>
+                            </Col> */}
                             <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}

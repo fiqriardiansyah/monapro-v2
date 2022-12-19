@@ -69,11 +69,23 @@ export const STATUS_AGENDA = [
 export const ROLE = [
     {
         value: 1,
-        label: "Super Admin",
+        label: "User Admin",
     },
     {
         value: 2,
-        label: "Employee",
+        label: "Admin",
+    },
+    {
+        value: 3,
+        label: "Secretary",
+    },
+    {
+        value: 4,
+        label: "User",
+    },
+    {
+        value: 5,
+        label: "Viewer",
     },
 ];
 
@@ -199,6 +211,36 @@ export const COLORS = [
     "rgb(153, 0, 240)",
     "rgb(43, 58, 85)",
     "rgb(209, 140, 224)",
+];
+
+export const PROCUREMENT_VALUES = [
+    {
+        value: -1,
+        label: "VP",
+    },
+    {
+        value: 15000000000,
+        label: "SVP",
+    },
+];
+
+export const SPONSORSHIP_VALUES = [
+    {
+        value: -1,
+        label: "AVP",
+    },
+    {
+        value: 25000000,
+        label: "VP",
+    },
+    {
+        value: 150000000,
+        label: "SVP",
+    },
+    {
+        value: 250000000,
+        label: "Dir. Keu",
+    },
 ];
 
 export default {};

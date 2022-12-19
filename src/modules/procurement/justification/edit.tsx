@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -15,7 +15,7 @@ import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 import procurementService from "services/api-endpoints/procurement";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, PROCUREMENT_VALUES, QUARTAL, SPONSORSHIP_VALUES } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataJustification } from "./models";
@@ -48,6 +48,9 @@ const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     doc_justification: yup.string(),
 });
 
+const SPONSORSHIP = 0;
+const PROCUREMENT = 1;
+
 const EditJustification = ({ onSubmit, loading, children }: Props) => {
     const { base64, processFile, isProcessLoad } = useBase64File();
 
@@ -61,6 +64,8 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
     });
 
     const docWatch = watch("doc_justification");
+    const agenda = watch("agenda_data_id");
+    const value = watch("value");
 
     const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
         const req = await procurementService.GetSubUnit();
@@ -95,14 +100,13 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         [procurementService.getNoAgenda],
         async () => {
             const req = await procurementService.GetNoAgenda();
-            const agenda = req.data.data?.map(
+            return req.data.data?.map(
                 (el) =>
                     ({
                         label: el.no_agenda_secretariat,
                         value: el.agenda_data_id,
                     } as SelectOption)
             );
-            return agenda;
         },
         {
             onError: (error: any) => {
@@ -225,6 +229,15 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         setValue("doc_justification", "");
     };
 
+    useEffect(() => {
+        const values = agenda ? SPONSORSHIP_VALUES : PROCUREMENT_VALUES;
+        const findValue = values.sort((a, b) => b.value - a.value).find((el) => el.value < Number(value || 0));
+        form.setFieldsValue({
+            approval_position_id: findValue?.label,
+        });
+        setValue("approval_position_id", findValue?.label || "");
+    }, [value, agenda]);
+
     return (
         <>
             <Modal
@@ -268,19 +281,20 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     placeholder="Perihal"
                                 />
                             </Col>
-                            <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="agenda_data_id"
-                                    label="No Agenda"
-                                    placeholder="No Agenda"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={agendaDataQuery.isLoading}
-                                    options={agendaDataQuery.data || []}
-                                />
-                            </Col>
-
+                            {agenda && (
+                                <Col span={12}>
+                                    <ControlledSelectInput
+                                        disabled
+                                        name="agenda_data_id"
+                                        label="No Agenda"
+                                        placeholder="No Agenda"
+                                        optionFilterProp="children"
+                                        control={control}
+                                        loading={agendaDataQuery.isLoading}
+                                        options={agendaDataQuery.data || []}
+                                    />
+                                </Col>
+                            )}
                             <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
@@ -330,6 +344,16 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />
                             </Col>
                             <Col span={12}>
+                                <ControlledInputText
+                                    disabled
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="approval_position_id"
+                                    label="Approval posisi"
+                                    placeholder="Approval posisi"
+                                />
+                            </Col>
+                            {/* <Col span={12}>
                                 <ControlledSelectInput
                                     showSearch
                                     name="approval_position_id"
@@ -340,7 +364,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     loading={approvalQuery.isLoading}
                                     options={approvalQuery.data || []}
                                 />
-                            </Col>
+                            </Col> */}
                             <Col span={12}>
                                 {docWatch ? (
                                     <div className="w-full">
