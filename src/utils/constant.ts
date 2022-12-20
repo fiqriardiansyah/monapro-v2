@@ -73,19 +73,19 @@ export const ROLE = [
     },
     {
         value: 2,
-        label: "Admin",
+        label: "Viewer",
     },
     {
         value: 3,
-        label: "Secretary",
-    },
-    {
-        value: 4,
         label: "User",
     },
     {
+        value: 4,
+        label: "Secretary",
+    },
+    {
         value: 5,
-        label: "Viewer",
+        label: "Admin",
     },
 ];
 
@@ -130,11 +130,11 @@ export const QUARTAL_MONTH = [
 export const FINANCE_STATE = [
     {
         value: 0,
-        label: "Belum Bayar",
+        label: "Proses Input",
     },
     {
         value: 1,
-        label: "Proses Input",
+        label: "Sudah Bayar",
     },
     {
         value: 2,
@@ -143,10 +143,6 @@ export const FINANCE_STATE = [
     {
         value: 3,
         label: "SPB",
-    },
-    {
-        value: 4,
-        label: "Sudah Dibayar",
     },
 ];
 
