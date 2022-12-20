@@ -38,7 +38,7 @@ const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     agenda_data_id: yup.string(),
     value: yup.string(),
     about_justification: yup.string(),
-    approval_position_id: yup.string().required("Approval posisi wajib diisi"), // wajib
+    approval_position: yup.string().required("Approval posisi wajib diisi"), // wajib
     load_type_id: yup.string().required("Jenis beban wajib diisi"), // wajib
     subunit_id: yup.string().required("Sub unit wajib diisi"), // wajib
     quartal_id: yup.number().required("Quartal wajib diisi"),
@@ -140,7 +140,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                 setValue("agenda_data_id", data?.agenda_data_id || "");
                 setValue("value", data?.value || 0);
                 setValue("about_justification", data?.about_justification || "");
-                setValue("approval_position_id", data?.approval_position_id || "");
+                setValue("approval_position", data?.approval_position || "");
                 setValue("load_type_id", data?.load_type_id || "");
                 setValue("subunit_id", data?.subunit_id || "");
                 setValue("note", data?.note || "");
@@ -233,9 +233,9 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         const values = agenda ? SPONSORSHIP_VALUES : PROCUREMENT_VALUES;
         const findValue = values.sort((a, b) => b.value - a.value).find((el) => el.value < Number(value || 0));
         form.setFieldsValue({
-            approval_position_id: findValue?.label,
+            approval_position: findValue?.label,
         });
-        setValue("approval_position_id", findValue?.label || "");
+        setValue("approval_position", findValue?.label || "");
     }, [value, agenda]);
 
     return (
@@ -348,7 +348,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                     disabled
                                     control={control}
                                     labelCol={{ xs: 12 }}
-                                    name="approval_position_id"
+                                    name="approval_position"
                                     label="Approval posisi"
                                     placeholder="Approval posisi"
                                 />
