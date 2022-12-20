@@ -5,12 +5,12 @@ import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
-import { UserContext } from "context/user";
-import useIsForbidden from "hooks/useIsForbidden";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
-import { TDataSop } from "./models";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
+import { ImWarning } from "react-icons/im";
+import { TDataRegulation } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -18,13 +18,23 @@ type Props<T> = {
     onClickDelete: (data: T, callback: () => void) => void;
 };
 
-const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: Props<T>) => {
+const RegulationTable = <T extends TDataRegulation>({ fetcher, onClickEdit, onClickDelete }: Props<T>) => {
     const { state } = useContext(UserContext);
-    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "master_data" });
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
+
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        navigate({
+            pathname: location.pathname,
+            search: `?${createSearchParams({
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
+                page: pagination.current?.toString() || "1",
+            })}`,
+        });
+    };
 
     const onClickDlt = (data: T) => {
         Modal.confirm({
@@ -45,16 +55,6 @@ const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: P
         });
     };
 
-    const handleTableChange = (pagination: TablePaginationConfig) => {
-        navigate({
-            pathname: location.pathname,
-            search: `?${createSearchParams({
-                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
-                page: pagination.current?.toString() || "1",
-            })}`,
-        });
-    };
-
     const columns: ColumnsType<T> = [
         {
             width: "50px",
@@ -63,9 +63,9 @@ const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: P
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "Nama Peraturan",
+            title: "Name",
             dataIndex: "name",
-            width: "200px",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
@@ -74,15 +74,15 @@ const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: P
             width: "150px",
             render: (url, record) => {
                 if (!url) return "-";
-                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Peraturan_${record.name}` })} />;
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Regulation ${record.name}` })} />;
             },
         },
     ];
 
     const action: ColumnsType<T>[0] = {
+        width: "250px",
         title: "Action",
         key: "action",
-        width: "200px",
         fixed: "right",
         render: (_, record) => (
             <Space size="middle" direction="horizontal">
@@ -117,4 +117,4 @@ const SopTable = <T extends TDataSop>({ fetcher, onClickDelete, onClickEdit }: P
     );
 };
 
-export default SopTable;
+export default RegulationTable;

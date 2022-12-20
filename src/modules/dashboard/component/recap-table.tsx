@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -11,11 +11,12 @@ import ButtonDownload from "components/common/button-donwload";
 import { TDataRecapData } from "modules/recap-data/models";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
+import { FINANCE_STATE } from "utils/constant";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickLockBudget: (data: T, callback: () => void) => void;
-    onClickPaid: (data: T, callback: () => void) => void;
+    onClickPaid: (data: { dt: T; status: number }, callback: () => void) => void;
 };
 
 const DashboardRecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, onClickPaid }: Props<T>) => {
@@ -45,14 +46,14 @@ const DashboardRecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLoc
         });
     };
 
-    const onClickPaidHandler = (data: T) => {
+    const onClickPaidHandler = (data: T, status: number) => {
         Modal.confirm({
-            title: "Lock",
+            title: "Data Rekap",
             icon: <ImWarning className="text-red-400" />,
-            content: `Set Bayar dengan id justifikasi ${data.justification_id}?`,
+            content: `Ubah data baris ini?`,
             onOk() {
                 return new Promise((resolve, reject) => {
-                    onClickPaid(data, () => {
+                    onClickPaid({ dt: data, status }, () => {
                         resolve(true);
                     });
                 });
@@ -161,9 +162,15 @@ const DashboardRecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLoc
                 <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "default" : "primary"}>
                     {record?.lock_budget === 1 ? "Unlock" : "Lock"}
                 </Button>
-                <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
+                {/* <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
                     Bayar
-                </Button>
+                </Button> */}
+                <Select
+                    className="w-[150px]"
+                    defaultValue={record.is_paid}
+                    onChange={(value) => onClickPaidHandler(record, value)}
+                    options={FINANCE_STATE}
+                />
             </Space>
         ),
     };

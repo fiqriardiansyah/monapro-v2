@@ -33,7 +33,7 @@ import DashboardDetail from "pages/dashboard/detail";
 import { UserContext } from "context/user";
 import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
-import SopPage from "pages/masterdata/sop";
+import RegulationPage from "pages/masterdata/regulation";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -53,7 +53,7 @@ function App() {
                         <Route path={MASTER_DATA_SUB_UNIT_PATH} element={<SubUnitPage />} />
                         <Route path={MASTER_DATA_LOAD_TYPE_PATH} element={<LoadTypePage />} />
                         <Route path={MASTER_DATA_APPROVAL_POSITION_PATH} element={<ApprovalPositionPage />} />
-                        <Route path={MASTER_DATA_SOP_PATH} element={<SopPage />} />
+                        <Route path={MASTER_DATA_SOP_PATH} element={<RegulationPage />} />
                         <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
                         <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
                         <Route path={PROCUREMENT_JUSTIFICATION_PATH} element={<JustificationPage />} />

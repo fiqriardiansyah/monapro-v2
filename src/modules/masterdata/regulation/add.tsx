@@ -1,22 +1,13 @@
-/* eslint-disable no-shadow */
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Button, Form, Modal, Row, Space } from "antd";
+import { Button, Col, Form, Modal, Row, Space } from "antd";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
-
-// components
 import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
-import { LoadType } from "models";
-import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
-import { COMMON_FILE_EXTENSIONS, MONTH_SHORT, QUARTAL_MONTH, QUARTAL_MONTH_SHORT } from "utils/constant";
-import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
-import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
-import moment from "moment";
-import InputFile from "components/form/inputs/input-file";
+import { COMMON_FILE_EXTENSIONS } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
-import { FDataSop } from "./models";
+import InputFile from "components/form/inputs/input-file";
+import { FDataRegulation } from "./models";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -25,18 +16,18 @@ type ChildrenProps = {
 };
 
 type Props = {
-    onSubmit: (data: FDataSop, callback: () => void) => void;
+    onSubmit: (data: FDataRegulation, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
 };
 
-const schema: yup.SchemaOf<Partial<FDataSop>> = yup.object().shape({
-    name: yup.string().required("Nama Peraturan wajib diisi"),
+const schema: yup.SchemaOf<Partial<FDataRegulation>> = yup.object().shape({
+    name: yup.string().required("Nama wajib diisi"),
     document: yup.string(),
     _: yup.string(),
 });
 
-const AddSop = ({ onSubmit, loading, children }: Props) => {
+const AddRegulation = ({ onSubmit, loading, children }: Props) => {
     const { base64, processFile, isProcessLoad } = useBase64File();
 
     const [form] = Form.useForm();
@@ -45,24 +36,14 @@ const AddSop = ({ onSubmit, loading, children }: Props) => {
         handleSubmit,
         control,
         formState: { isValid },
-        reset,
-    } = useForm<FDataSop>({
+    } = useForm<FDataRegulation>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
 
-    const resetForm = () => {
-        reset();
-        form.setFieldsValue({
-            name: "",
-            document: "",
-        });
-    };
-
     const closeModal = () => {
         if (loading) return;
         setIsModalOpen(false);
-        resetForm();
     };
 
     const openModal = () => {
@@ -70,8 +51,13 @@ const AddSop = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
-        onSubmit(data, () => {
+        const parseData: FDataRegulation = {
+            ...data,
+            document: base64,
+        };
+        onSubmit(parseData, () => {
             closeModal();
+            processFile(null);
         });
     });
 
@@ -87,34 +73,40 @@ const AddSop = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal confirmLoading={loading} title="Tambah Peraturan" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Regulasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading}
+                    disabled={loading || isProcessLoad}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}
                     layout="vertical"
                 >
                     <Space direction="vertical" className="w-full">
-                        <ControlledInputText
-                            control={control}
-                            labelCol={{ xs: 12 }}
-                            name="name"
-                            label="Nama Peraturan"
-                            placeholder="Nama Peraturan"
-                        />
-                        <InputFile
-                            handleChange={onFileChangeHandler}
-                            label="Dokumen"
-                            types={COMMON_FILE_EXTENSIONS}
-                            multiple={false}
-                            name="document"
-                        />
+                        <Row gutter={10}>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="name"
+                                    label="Nama Regulasi"
+                                    placeholder="Nama Regulasi"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <InputFile
+                                    handleChange={onFileChangeHandler}
+                                    label="file document"
+                                    types={COMMON_FILE_EXTENSIONS}
+                                    multiple={false}
+                                    name="doc_justification"
+                                />
+                            </Col>
+                        </Row>
 
-                        <div className="w-full mt-4">
+                        <Row justify="start" className="mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan
@@ -123,7 +115,7 @@ const AddSop = ({ onSubmit, loading, children }: Props) => {
                                     Batalkan
                                 </Button>
                             </Space>
-                        </div>
+                        </Row>
                     </Space>
                 </Form>
             </Modal>
@@ -132,4 +124,4 @@ const AddSop = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default AddSop;
+export default AddRegulation;

@@ -69,7 +69,7 @@ const RecapDataPage = () => {
         {
             onSuccess: () => {
                 getListQuery.refetch();
-                message.success("Set Bayar!");
+                message.success("Data Diubah!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -84,9 +84,9 @@ const RecapDataPage = () => {
             .catch(callback);
     };
 
-    const onClickPaid = async (data: RecapData, callback: () => void) => {
+    const onClickPaid = async (data: { dt: RecapData; status: number }, callback: () => void) => {
         await paidMutation
-            .mutateAsync({ finance_id: data.finance_id as any, is_paid: 1 })
+            .mutateAsync({ finance_id: data.dt.finance_id as any, is_paid: data.status })
             .then(callback)
             .catch(callback);
     };

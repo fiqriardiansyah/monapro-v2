@@ -134,19 +134,19 @@ export const FINANCE_STATE = [
     },
     {
         value: 1,
-        label: "Bayar",
+        label: "Proses Input",
     },
     {
         value: 2,
-        label: "Process Invoice",
+        label: "Verifikasi Berkas",
     },
     {
         value: 3,
-        label: "Verifikasi",
+        label: "SPB",
     },
     {
         value: 4,
-        label: "SPB",
+        label: "Sudah Dibayar",
     },
 ];
 

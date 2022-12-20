@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -7,7 +7,7 @@ import { createSearchParams, useLocation, useNavigate, useSearchParams } from "r
 import { BasePaginationResponse } from "models";
 import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
+import { DECISION, FINANCE_STATE, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import useIsForbidden from "hooks/useIsForbidden";
@@ -17,7 +17,7 @@ import { TDataRecapData } from "./models";
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickLockBudget: (data: T, callback: () => void) => void;
-    onClickPaid: (data: T, callback: () => void) => void;
+    onClickPaid: (data: { dt: T; status: number }, callback: () => void) => void;
 };
 
 const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, onClickPaid }: Props<T>) => {
@@ -47,14 +47,24 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
         });
     };
 
-    const onClickPaidHandler = (data: T) => {
+    const handleTableChange = (pagination: TablePaginationConfig) => {
+        navigate({
+            pathname: location.pathname,
+            search: `?${createSearchParams({
+                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
+                page: pagination.current?.toString() || "1",
+            })}`,
+        });
+    };
+
+    const onClickPaidHandler = (data: T, status: number) => {
         Modal.confirm({
-            title: "Lock",
+            title: "Data Rekap",
             icon: <ImWarning className="text-red-400" />,
-            content: `Set Bayar dengan id justifikasi ${data.justification_id}?`,
+            content: `Ubah data baris ini?`,
             onOk() {
                 return new Promise((resolve, reject) => {
-                    onClickPaid(data, () => {
+                    onClickPaid({ dt: data, status }, () => {
                         resolve(true);
                     });
                 });
@@ -63,16 +73,6 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             okButtonProps: {
                 danger: true,
             },
-        });
-    };
-
-    const handleTableChange = (pagination: TablePaginationConfig) => {
-        navigate({
-            pathname: location.pathname,
-            search: `?${createSearchParams({
-                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
-                page: pagination.current?.toString() || "1",
-            })}`,
         });
     };
 
@@ -163,9 +163,15 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
                 <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "default" : "primary"}>
                     {record?.lock_budget === 1 ? "Unlock" : "Lock"}
                 </Button>
-                <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
+                {/* <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
                     Bayar
-                </Button>
+                </Button> */}
+                <Select
+                    className="w-[150px]"
+                    defaultValue={record.is_paid}
+                    onChange={(value) => onClickPaidHandler(record, value)}
+                    options={FINANCE_STATE}
+                />
             </Space>
         ),
     };

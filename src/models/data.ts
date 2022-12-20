@@ -301,3 +301,9 @@ export interface LineChart {
         total: null | number;
     }[];
 }
+
+export interface Regulation {
+    id: number | string;
+    name: string;
+    document: string | null;
+}

@@ -124,7 +124,7 @@ const DashboardDetail = () => {
         {
             onSuccess: () => {
                 getRecapData.refetch();
-                message.success("Set Bayar!");
+                message.success("Data Diubah!");
             },
             onError: (error: any) => {
                 message.error(error?.message);
@@ -136,9 +136,9 @@ const DashboardDetail = () => {
         await lockBudgetMutation.mutateAsync({ justification_id: data.justification_id, lock_budget: 1 }).then(callback).catch(callback);
     };
 
-    const onClickPaid = async (data: RecapData, callback: () => void) => {
+    const onClickPaid = async (data: { dt: RecapData; status: number }, callback: () => void) => {
         await paidMutation
-            .mutateAsync({ finance_id: data.finance_id as any, is_paid: 1 })
+            .mutateAsync({ finance_id: data.dt.finance_id as any, is_paid: data.status })
             .then(callback)
             .catch(callback);
     };
@@ -213,13 +213,13 @@ const DashboardDetail = () => {
                     </div>
                 </div>
             </div>
-            <div className="grid grid-cols-3 gap-4 mt-4 ">
-                <div className="p-3 bg-white rounded-md col-span-2 row-span-2">
+            <div className="grid grid-cols-4 gap-4 mt-4 ">
+                <div className="p-3 bg-white rounded-md col-span-2 row-span-2 2xl:h-[400px] h-[300px] ">
                     <Bar data={chartData} />
                 </div>
-                <div className="p-3 bg-white rounded-md h-full">
+                <div className="p-3 bg-white rounded-md h-fit col-span-2">
                     <p className="m-0 font-medium text-gray-400 mb-2">Sisa Pemakaian</p>
-                    <div className="w-full overflow-y-auto max-h-[350px]">
+                    <div className="w-full overflow-y-auto max-h-[250px] 2xl:h-[300px] px-3">
                         <State data={getHeaderSubUnit.data} isLoading={getHeaderSubUnit.isLoading} isError={getHeaderSubUnit.isError}>
                             {(state) => (
                                 <>
@@ -227,8 +227,8 @@ const DashboardDetail = () => {
                                         {getHeaderSubUnit.data?.list_activity?.map((el, i: number) => {
                                             return (
                                                 <div className="w-full flex items-center justify-between mb-2">
-                                                    <p className="m-0 text-gray-400">{el.load_name}</p>
-                                                    <p className="m-0 text-gray-600 font-medium">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                                    <p className="m-0 text-gray-400 text-xs">{el.load_name}</p>
+                                                    <p className="m-0 text-gray-600 font-medium text-xs">{el.load_usage?.ToIndCurrency("Rp")}</p>
                                                 </div>
                                             );
                                         })}

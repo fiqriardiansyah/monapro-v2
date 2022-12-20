@@ -76,6 +76,12 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
+            title: "Tipe",
+            dataIndex: "-",
+            width: "150px",
+            render: (text, record) => <p className="capitalize m-0">{record.no_agenda ? "sponsorship" : "procurement"}</p>,
+        },
+        {
             title: "No Agenda",
             dataIndex: "no_agenda",
             width: "150px",
