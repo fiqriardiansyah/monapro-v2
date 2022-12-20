@@ -32,7 +32,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
-            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran dengan id justifikasi ${data.justification_id}?`,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran (${data.about_justification})?`,
             onOk() {
                 return new Promise((resolve, reject) => {
                     onClickLockBudget(data, () => {
@@ -163,9 +163,6 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
                 <Button onClick={() => onClickLockBudgetHandler(record)} type={record.lock_budget ? "default" : "primary"}>
                     {record?.lock_budget === 1 ? "Unlock" : "Lock"}
                 </Button>
-                {/* <Button disabled={!!record.is_paid} onClick={() => onClickPaidHandler(record)} type={record.is_paid ? "default" : "primary"}>
-                    Bayar
-                </Button> */}
                 <Select
                     className="w-[150px]"
                     defaultValue={record.is_paid}

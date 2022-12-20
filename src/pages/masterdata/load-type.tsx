@@ -144,13 +144,13 @@ const LoadTypePage = <T extends TDataLoadType>() => {
             </EditLoadType>
             <Header
                 onSubmitSearch={onSearchHandler}
-                title="Jenis Beban"
+                title="Jenis Anggaran"
                 action={
                     !isForbidden && (
                         <AddLoadType loading={createMutation.isLoading} onSubmit={addHandler}>
                             {(data) => (
                                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                    Tambah beban
+                                    Tambah anggaran
                                 </Button>
                             )}
                         </AddLoadType>

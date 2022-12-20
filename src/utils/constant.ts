@@ -130,19 +130,23 @@ export const QUARTAL_MONTH = [
 export const FINANCE_STATE = [
     {
         value: 0,
-        label: "Proses Input",
+        label: "Menunggu berkas Tagihan",
+    },
+    {
+        value: 2,
+        label: "Proses Input Finest",
+    },
+    {
+        value: 3,
+        label: "Verifikasi Keuangan",
+    },
+    {
+        value: 4,
+        label: "SPB",
     },
     {
         value: 1,
         label: "Sudah Bayar",
-    },
-    {
-        value: 2,
-        label: "Verifikasi Berkas",
-    },
-    {
-        value: 3,
-        label: "SPB",
     },
 ];
 

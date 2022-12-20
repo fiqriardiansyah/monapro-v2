@@ -3,15 +3,17 @@ import Header from "components/common/header";
 import { StateContext } from "context/state";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { AgendaData, AgendaDataLockBudgetData } from "models";
+import { AgendaData } from "models";
 import AddAgendaData from "modules/agenda/data/add";
 import EditAgendaData from "modules/agenda/data/edit";
 import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
+import Print from "modules/agenda/data/print";
 import AgendaDataTable from "modules/agenda/data/table";
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import Utils from "utils";
 import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
@@ -22,6 +24,13 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
     const { notificationInstance } = useContext(StateContext);
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
+
+    const componentRef = useRef<HTMLDivElement | null>(null);
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current || null,
+    });
+
+    const [printRow, setPrintRow] = useState<TDataAgenda | null>(null);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -38,21 +47,6 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         const res = await agendaDataService.GetAll<AgendaData>({ page });
         return Utils.toBaseTable<AgendaData, T>(res.data.data);
     });
-
-    // const lockBudgetMutation = useMutation(
-    //     async (data: AgendaDataLockBudgetData) => {
-    //         await agendaDataService.LockBudget(data);
-    //     },
-    //     {
-    //         onSuccess: () => {
-    //             getList.refetch();
-    //             message.success("Budget Locked!");
-    //         },
-    //         onError: (error: any) => {
-    //             message.error(error?.message);
-    //         },
-    //     }
-    // ); [IMPORTANT] not used
 
     const createMutation = useMutation(
         async ({ data }: { data: FDataAgenda }) => {
@@ -116,10 +110,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
             editTriggerRef.current.click();
         }
     };
-    // const onClickLockBudget = async (data: T, callback: () => void) => {
-    //     await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: 1 });
-    //     callback();
-    // }; [IMPORTANT] not used
+
     const addHandler = async (data: FDataAgenda, callback: () => void) => {
         await createMutation.mutateAsync({ data });
         callback();
@@ -133,44 +124,52 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         setSearchParams({ page: "1", query: qr });
     };
 
+    const onClickPrint = async (data: T) => {
+        setPrintRow(data);
+        await new Promise((res, rej) => {
+            setTimeout(() => {
+                res(true);
+            }, 400);
+        });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
-        <div className="min-h-screen px-10">
-            <EditAgendaData loading={editMutation.isLoading} onSubmit={editHandler}>
-                {(data) => (
-                    <button
-                        type="button"
-                        ref={editTriggerRef}
-                        onClick={() => data.openModalWithData(editTriggerRef.current?.dataset.data)}
-                        className="hidden"
-                    >
-                        edit
-                    </button>
-                )}
-            </EditAgendaData>
-            <Header
-                onSubmitSearch={onSearchHandler}
-                title="Data Agenda"
-                action={
-                    !isForbidden && (
-                        <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
-                            {(data) => (
-                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                    Tambah Agenda
-                                </Button>
-                            )}
-                        </AddAgendaData>
-                    )
-                }
-            />
-            {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <AgendaDataTable
-                // onClickLockBudget={onClickLockBudget} [IMPORTANT] not used
-                onClickEdit={onClickEdit}
-                fetcher={getList}
-            />
-        </div>
+        <>
+            <div className="min-h-screen px-10">
+                <EditAgendaData loading={editMutation.isLoading} onSubmit={editHandler}>
+                    {(data) => (
+                        <button
+                            type="button"
+                            ref={editTriggerRef}
+                            onClick={() => data.openModalWithData(editTriggerRef.current?.dataset.data)}
+                            className="hidden"
+                        >
+                            edit
+                        </button>
+                    )}
+                </EditAgendaData>
+                <Header
+                    onSubmitSearch={onSearchHandler}
+                    title="Data Agenda"
+                    action={
+                        !isForbidden && (
+                            <AddAgendaData loading={createMutation.isLoading} onSubmit={addHandler}>
+                                {(data) => (
+                                    <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                        Tambah Agenda
+                                    </Button>
+                                )}
+                            </AddAgendaData>
+                        )
+                    }
+                />
+                {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
+                <AgendaDataTable onClickPrint={onClickPrint} onClickEdit={onClickEdit} fetcher={getList} />
+            </div>
+            {/* <Print data={printRow} ref={componentRef} /> */}
+        </>
     );
 };
 

@@ -63,12 +63,6 @@ function Sidebar({ collapse }: Props) {
 
     const items: MenuProps["items"] = [
         getItem("Dashboard", "/", <MdDashboard />),
-        getItem("Master Data", "master-data", <AiFillDatabase />, [
-            getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
-            getItem("Jenis Beban", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />),
-            // getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />), [IMPORTANT] not used
-            getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
-        ]),
         getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
         // getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
         //     getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
@@ -83,6 +77,12 @@ function Sidebar({ collapse }: Props) {
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
         ]),
         getItem("Data Rekap", RECAP_PATH, <BsClipboardData />),
+        getItem("Master Data", "master-data", <AiFillDatabase />, [
+            getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
+            getItem("Jenis Anggaran", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />),
+            // getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />), [IMPORTANT] not used
+            getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
+        ]),
     ];
 
     return (

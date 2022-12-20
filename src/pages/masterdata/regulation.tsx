@@ -168,7 +168,7 @@ const RegulationPage = <T extends TDataRegulation>() => {
             </EditRegulation>
             <Header
                 onSubmitSearch={onSearchHandler}
-                title="Jenis Beban"
+                title="Peraturan Internal"
                 action={
                     !isForbidden && (
                         <AddRegulation loading={createMutation.isLoading} onSubmit={addHandler}>

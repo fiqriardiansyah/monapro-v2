@@ -67,41 +67,49 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "No Justifikasi",
             dataIndex: "no_justification",
+            width: "250px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
+            width: "250px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Tanggal TEL21/SPB",
             dataIndex: "tel21_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Tanggal SPB Finance",
             dataIndex: "spb_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Tanggal pembayaran",
             dataIndex: "payment_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
             title: "Nilai Pembayaran",
             dataIndex: "value_payment",
+            width: "200px",
             render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Catatan",
             dataIndex: "note",
+            width: "200px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Berkas Tagihan",
             dataIndex: "invoice_file",
+            width: "150px",
             render: (url, record) => {
                 if (!url) return "-";
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Finance-Tagihan_${record.id}` })} />;
@@ -110,6 +118,7 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         {
             title: "Lampiran berkas",
             dataIndex: "attachment_file",
+            width: "150px",
             render: (url, record) => {
                 if (!url) return "-";
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Finance-Lampiran_${record.id}` })} />;
@@ -143,7 +152,7 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
 
     return (
         <Table
-            scroll={{ x: 1400 }}
+            scroll={{ x: 1600 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

@@ -17,9 +17,10 @@ import { TDataAgenda } from "./models";
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
+    onClickPrint: (data: T) => void;
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<T>) => {
+const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickPrint }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
 
@@ -115,7 +116,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
     ];
 
     const action: ColumnsType<T>[0] = {
-        width: "100px",
+        width: "200px",
         title: "Action",
         key: "action",
         fixed: "right",
@@ -123,6 +124,9 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit }: Props<
             <Space size="middle" direction="horizontal">
                 <Button type="text" onClick={() => onClickEdit(record)}>
                     Edit
+                </Button>
+                <Button type="primary" onClick={() => onClickPrint(record)}>
+                    Print
                 </Button>
             </Space>
         ),

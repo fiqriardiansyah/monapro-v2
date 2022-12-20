@@ -133,7 +133,10 @@ const DashboardDetail = () => {
     );
 
     const onClickLockBudget = async (data: RecapData, callback: () => void) => {
-        await lockBudgetMutation.mutateAsync({ justification_id: data.justification_id, lock_budget: 1 }).then(callback).catch(callback);
+        await lockBudgetMutation
+            .mutateAsync({ justification_id: data.justification_id, lock_budget: data.lock_budget ? 0 : 1 })
+            .then(callback)
+            .catch(callback);
     };
 
     const onClickPaid = async (data: { dt: RecapData; status: number }, callback: () => void) => {
