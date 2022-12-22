@@ -13,6 +13,8 @@ import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 import moment, { Moment } from "moment";
 
+import BannerImage from "assets/banner.jpeg";
+
 export const dataRevenueDefault = {
     labels: [],
     datasets: [],
@@ -69,11 +71,11 @@ const DashboardPage = () => {
 
     return (
         <div className="min-h-screen px-10">
+            <img src={BannerImage} alt="banner" className="w-full mt-10" />
             <Header
                 search={false}
-                title="Dashboard"
-                action={
-                    <Space>
+                back={() => (
+                    <Space className="">
                         <DatePicker value={year} onChange={onChangeYear} allowClear picker="year" />
                         <Select
                             className="w-[100px]"
@@ -81,9 +83,11 @@ const DashboardPage = () => {
                             onChange={(val) => setQtl(val)}
                             options={[{ value: 0, label: "All" }, ...QUARTAL]}
                         />
-                        <p className="m-0 font-semibol text-xl text-gray-500">{getAllHeader.data?.total_budget?.ToIndCurrency("Rp")}</p>
+                        <p className="m-0 font-semibol text-lg bg-white border-solid border border-gray-300 rounded px-4 h-8 text-gray-500">
+                            {getAllHeader.data?.total_budget?.ToIndCurrency("Rp")}
+                        </p>
                     </Space>
-                }
+                )}
             />
             <div className="grid grid-cols-4 grid-rows-3 gap-4 mb-10">
                 <State data={getAllHeader.data} isLoading={getAllHeader.isLoading} isError={getAllHeader.isError}>

@@ -267,18 +267,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 </Col>
                             )}
                             <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="quartal_id"
-                                    label="Quartal"
-                                    placeholder="Quartal"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    // loading={approvalQuery.isLoading}
-                                    options={QUARTAL}
-                                />
-                            </Col>
-                            <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
                             </Col>
                             <Col span={12}>
@@ -331,6 +319,18 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                             </Col>
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="quartal_id"
+                                    label="Quartal"
+                                    placeholder="Quartal"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    // loading={approvalQuery.isLoading}
+                                    options={QUARTAL}
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="note" label="Catatan" placeholder="Catatan" />

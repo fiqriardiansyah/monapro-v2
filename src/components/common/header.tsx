@@ -7,6 +7,8 @@ import { Link } from "react-router-dom";
 import Utils from "utils";
 import { PROFILE_PATH } from "utils/routes";
 
+import ProfileImage from "assets/profile.jpeg";
+
 type Props = {
     title?: string;
     action?: React.ReactNode;
@@ -86,7 +88,14 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                         onOpenChange={handleOpenChange}
                     >
                         <Link to={PROFILE_PATH}>
-                            <FaUserCircle className="w-8 h-8 text-gray-400 cursor-pointer" />
+                            <Space direction="horizontal">
+                                <p className="m-0 capitalize font-medium text-gray-600">Hello, {state.user?.fullname || ""}</p>
+                                <img
+                                    src={ProfileImage}
+                                    alt="profile"
+                                    className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border"
+                                />
+                            </Space>
                         </Link>
                     </Popover>
                 </>

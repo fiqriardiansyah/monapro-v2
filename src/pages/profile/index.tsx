@@ -1,9 +1,9 @@
-import { Alert, Button, Card, Input, Skeleton } from "antd";
+import { Alert, Button, Card, Input, message, Skeleton } from "antd";
 import Header from "components/common/header";
 import State from "components/common/state";
 import { StateContext } from "context/state";
 import { Role } from "models";
-import { TDataRoleManagement } from "modules/profile/models";
+import { FDataUser, TDataRoleManagement } from "modules/profile/models";
 import RoleManagementTable from "modules/profile/role-table";
 import React, { useContext } from "react";
 import { FaUserCircle } from "react-icons/fa";
@@ -12,6 +12,8 @@ import { useMutation, useQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import profileService from "services/api-endpoints/profile";
 import ProfileImage from "assets/profile.jpeg";
+import { AiOutlinePlus } from "react-icons/ai";
+import AddUser from "modules/profile/add";
 
 const ProfilePage = () => {
     const [searchParams] = useSearchParams();
@@ -28,20 +30,36 @@ const ProfilePage = () => {
         return res.data.data;
     });
 
+    const addUser = useMutation(
+        async (data: FDataUser) => {
+            return (await profileService.AddUser(data)).data.data;
+        },
+        {
+            onSuccess: () => {
+                message.success("New user added!");
+                getRole.refetch();
+            },
+        }
+    );
+
     const editRole = useMutation(
         async (data: Role) => {
             await profileService.EditRole(data);
         },
         {
             onSuccess: () => {
+                message.success("Role Edited!");
                 getRole.refetch();
             },
         }
     );
 
     const onClickEditHandler = (data: Role) => {
-        console.log(data);
         editRole.mutate(data);
+    };
+
+    const onSubmitUser = (data: FDataUser, callback: () => void) => {
+        addUser.mutateAsync(data).then(callback).catch(callback);
     };
 
     return (
@@ -88,7 +106,16 @@ const ProfilePage = () => {
                 )}
             </State>
 
-            <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">data role management</h1>
+            <div className="flex items-center justify-between">
+                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">data role management</h1>
+                <AddUser onSubmit={onSubmitUser} loading={addUser.isLoading}>
+                    {(dt) => (
+                        <Button onClick={dt.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                            Tambah User
+                        </Button>
+                    )}
+                </AddUser>
+            </div>
             <RoleManagementTable loading={editRole.isLoading} fetcher={getRole} onClickEdit={onClickEditHandler} />
         </div>
     );
