@@ -100,13 +100,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         [procurementService.getNoAgenda],
         async () => {
             const req = await procurementService.GetNoAgenda();
-            return req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.no_agenda_secretariat,
-                        value: el.agenda_data_id,
-                    } as SelectOption)
-            );
+            return req.data.data;
         },
         {
             onError: (error: any) => {
@@ -238,6 +232,15 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         setValue("approval_position", findValue?.label || "");
     }, [value, agenda]);
 
+    useEffect(() => {
+        if (agenda === undefined || agenda === null || !agenda) return;
+        const about = agendaDataQuery.data?.find((el) => el.agenda_data_id === Number(agenda))?.about;
+        form.setFieldsValue({
+            about_justification: about || detailMutation.data?.about_justification,
+        });
+        setValue("about_justification", about || detailMutation.data?.about_justification || "");
+    }, [agenda]);
+
     return (
         <>
             <Modal
@@ -291,7 +294,15 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                         optionFilterProp="children"
                                         control={control}
                                         loading={agendaDataQuery.isLoading}
-                                        options={agendaDataQuery.data || []}
+                                        options={
+                                            agendaDataQuery.data?.map(
+                                                (el) =>
+                                                    ({
+                                                        label: el.no_agenda_secretariat,
+                                                        value: el.agenda_data_id,
+                                                    } as SelectOption)
+                                            ) || []
+                                        }
                                     />
                                 </Col>
                             )}

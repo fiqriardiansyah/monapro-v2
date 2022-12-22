@@ -7,7 +7,6 @@ import { AgendaData } from "models";
 import AddAgendaData from "modules/agenda/data/add";
 import EditAgendaData from "modules/agenda/data/edit";
 import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
-import Print from "modules/agenda/data/print";
 import AgendaDataTable from "modules/agenda/data/table";
 import React, { useContext, useRef, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -103,6 +102,11 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         }
     );
 
+    const getTemplateDocx = useMutation(async () => {
+        const req = await agendaDataService.GetTemplateDocx();
+        console.log(req);
+    });
+
     // crud handler
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
@@ -126,11 +130,7 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
 
     const onClickPrint = async (data: T) => {
         setPrintRow(data);
-        await new Promise((res, rej) => {
-            setTimeout(() => {
-                res(true);
-            }, 400);
-        });
+        // getTemplateDocx.mutate();
     };
 
     const errors = [getList, createMutation, editMutation];

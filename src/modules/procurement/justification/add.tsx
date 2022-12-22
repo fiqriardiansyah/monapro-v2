@@ -69,7 +69,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         resolver: yupResolver(schema),
     });
 
-    const quartal = watch("quartal_id");
+    const agenda = watch("agenda_data_id");
     const value = watch("value");
 
     const subUnitQuery = useQuery(
@@ -129,14 +129,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         [procurementService.getNoAgenda],
         async () => {
             const req = await procurementService.GetNoAgenda();
-            const agenda = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.no_agenda_secretariat,
-                        value: el.agenda_data_id,
-                    } as SelectOption)
-            );
-            return agenda;
+            return req.data.data;
         },
         {
             onError: (error: any) => {
@@ -217,6 +210,17 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         setValue("approval_position", findValue?.label || "");
     }, [value, type]);
 
+    useEffect(() => {
+        if (type === SPONSORSHIP) {
+            if (agenda === undefined || agenda === null) return;
+            const about = agendaDataQuery.data?.find((el) => el.agenda_data_id === Number(agenda))?.about;
+            form.setFieldsValue({
+                about_justification: about || "",
+            });
+            setValue("about_justification", about || "");
+        }
+    }, [agenda, type]);
+
     return (
         <>
             <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
@@ -250,7 +254,15 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                         optionFilterProp="children"
                                         control={control}
                                         loading={agendaDataQuery.isLoading}
-                                        options={agendaDataQuery.data || []}
+                                        options={
+                                            agendaDataQuery.data?.map(
+                                                (el) =>
+                                                    ({
+                                                        label: el.no_agenda_secretariat,
+                                                        value: el.agenda_data_id,
+                                                    } as SelectOption)
+                                            ) || []
+                                        }
                                     />
                                 </Col>
                             )}
@@ -282,6 +294,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText
                                     control={control}
                                     labelCol={{ xs: 12 }}
+                                    disabled={type === SPONSORSHIP}
                                     name="about_justification"
                                     label="Perihal"
                                     placeholder="Perihal"

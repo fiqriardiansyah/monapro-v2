@@ -22,6 +22,7 @@ type Props = {
 const schema: yup.SchemaOf<Omit<SubUnitData, "id">> = yup.object().shape({
     pic_name: yup.string().required("Nama PIC wajib diisi"),
     unit_name: yup.string().required("Nama unit wajib diisi"),
+    code: yup.string().required("Kode wajib diisi"),
 });
 
 const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
@@ -74,6 +75,7 @@ const AddSubUnit = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="pic_name" label="Nama PIC" placeholder="Nama PIC" />
+                        <ControlledInputText control={control} labelCol={{ xs: 12 }} name="code" label="Kode" placeholder="Kode" />
                         <ControlledInputText control={control} labelCol={{ xs: 12 }} name="unit_name" label="Nama unit" placeholder="Nama unit" />
 
                         <Row justify="start">

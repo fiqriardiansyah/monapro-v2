@@ -14,7 +14,9 @@ import procurementService from "services/api-endpoints/procurement";
 import newsService from "services/api-endpoints/procurement/news";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
-import { COMMON_FILE_EXTENSIONS } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import moment from "moment";
+import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import { FDataNews } from "./models";
 
 type ChildrenProps = {
@@ -32,9 +34,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataNews>> = yup.object().shape({
     justification_id: yup.string(),
-    no_bar: yup.string(),
-    no_bap: yup.string(),
-    no_bapp: yup.string(),
+    date_news: yup.string().nullable(),
     file_bap: yup.string(),
     file_bapp: yup.string(),
     file_bar: yup.string(),
@@ -95,20 +95,16 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
             onSuccess: (data) => {
                 form.setFieldsValue({
                     justification_id: data?.justification_id || "",
-                    no_bap: data?.no_bap || "",
-                    no_bar: data?.no_bar || "",
-                    no_bapp: data?.no_bapp || "",
                     file_bap: data?.file_bap || "",
                     file_bar: data?.file_bar || "",
                     file_bapp: data?.file_bapp || "",
+                    date_news: data?.date_news ? (moment(data?.date_news) as any) : moment(),
                 });
                 setValue("justification_id", data?.justification_id || "");
-                setValue("no_bap", data?.no_bap || "");
-                setValue("no_bar", data?.no_bar || "");
-                setValue("no_bapp", data?.no_bapp || "");
                 setValue("file_bap", data?.file_bap || "");
                 setValue("file_bar", data?.file_bar || "");
                 setValue("file_bapp", data?.file_bapp || "");
+                setValue("date_news", data?.date_news ? (moment(data?.date_news) as any) : moment());
             },
         }
     );
@@ -121,9 +117,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
         reset();
         form.setFieldsValue({
             justification_id: "",
-            no_bar: "",
-            no_bap: "",
-            no_bapp: "",
+            date_news: null,
             file_bap: "",
             file_bapp: "",
             file_bar: "",
@@ -152,6 +146,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: FDataNews = {
             ...data,
+            date_news: data.date_news ? moment(data.date_news).format(FORMAT_DATE) : "",
             file_bap: base64BAP || getValues()?.file_bap || null,
             file_bapp: base64BAPP || getValues()?.file_bapp || null,
             file_bar: base64BAR || getValues()?.file_bar || null,
@@ -241,13 +236,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bap" label="No BAP" placeholder="No BAP" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bar" label="No BAR" placeholder="No BAR" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bapp" label="No BAPP" placeholder="No BAPP" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date_news" label="Tanggal Berita Acara" />
                             </Col>
                             <Col span={12}>
                                 {bapDocWatch ? (

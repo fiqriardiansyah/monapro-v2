@@ -67,6 +67,11 @@ const SubUnitTable = <T extends TDataSubUnit>({ fetcher, onClickDelete, onClickE
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
+            title: "Code",
+            dataIndex: "code",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
             title: "Nama PIC",
             dataIndex: "pic_name",
             render: (text) => <p className="capitalize m-0">{text}</p>,

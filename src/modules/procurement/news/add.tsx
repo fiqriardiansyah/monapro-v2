@@ -12,7 +12,9 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import useBase64File from "hooks/useBase64File";
-import { COMMON_FILE_EXTENSIONS } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
+import moment from "moment";
 import { FDataNews } from "./models";
 
 type ChildrenProps = {
@@ -29,9 +31,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataNews>> = yup.object().shape({
     justification_id: yup.string(),
-    no_bar: yup.string(),
-    no_bap: yup.string(),
-    no_bapp: yup.string(),
+    date_news: yup.string().nullable(),
     file_bap: yup.string(),
     file_bapp: yup.string(),
     file_bar: yup.string(),
@@ -81,6 +81,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
         reset();
         form.setFieldsValue({
             justification_id: "",
+            date_news: null,
             no_bar: "",
             no_bap: "",
             no_bapp: "",
@@ -103,6 +104,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: FDataNews = {
             ...data,
+            date_news: data.date_news ? moment(data.date_news).format(FORMAT_DATE) : "",
             file_bap: base64BAP,
             file_bapp: base64BAPP,
             file_bar: base64BAR,
@@ -159,13 +161,7 @@ const AddNews = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bap" label="No BAP" placeholder="No BAP" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bar" label="No BAR" placeholder="No BAR" />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="no_bapp" label="No BAPP" placeholder="No BAPP" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date_news" label="Tanggal Berita Acara" />
                             </Col>
                             <Col span={12}>
                                 <InputFile

@@ -24,7 +24,7 @@ const DashboardPage = () => {
     }
 
     const [qtl, setQtl] = useState(0);
-    const [year, setYear] = useState<Moment | null>(null);
+    const [year, setYear] = useState<Moment | null>(moment(moment.now()));
 
     const [chartData, setChartData] = useState(dataRevenueDefault);
 
@@ -81,6 +81,7 @@ const DashboardPage = () => {
                             onChange={(val) => setQtl(val)}
                             options={[{ value: 0, label: "All" }, ...QUARTAL]}
                         />
+                        <p className="m-0 font-semibold text-gray-500">Total Budget: Rp.1000000000</p>
                     </Space>
                 }
             />
@@ -96,10 +97,17 @@ const DashboardPage = () => {
                                             key={i}
                                         />
                                     ))}
+                                {getAllHeader.data?.remaining_budget &&
+                                    getAllHeader.data?.remaining_budget?.map((el, i: number) => (
+                                        <RemainingBudget
+                                            data={{ title: "Sisa Anggaran", budget: el.remaining_budget, percent: el.percentage_remaining }}
+                                            key={i}
+                                        />
+                                    ))}
                                 {getAllHeader.data?.total_usage &&
                                     getAllHeader.data.total_usage?.map((el, i: number) => (
                                         <RemainingBudget
-                                            data={{ title: "Total Pemakaian", budget: el.total_usage, percent: el.percentage_usage }}
+                                            data={{ title: "Sudah Dibayar", budget: el.total_usage, percent: el.percentage_usage }}
                                             key={i}
                                         />
                                     ))}
@@ -107,13 +115,6 @@ const DashboardPage = () => {
                                     getAllHeader.data?.not_paid?.map((el, i: number) => (
                                         <RemainingBudget
                                             data={{ title: "Belum Bayar", budget: el.not_paid, percent: el.percentage_notpaid }}
-                                            key={i}
-                                        />
-                                    ))}
-                                {getAllHeader.data?.remaining_budget &&
-                                    getAllHeader.data?.remaining_budget?.map((el, i: number) => (
-                                        <RemainingBudget
-                                            data={{ title: "Sisa Anggaran", budget: el.remaining_budget, percent: el.percentage_remaining }}
                                             key={i}
                                         />
                                     ))}

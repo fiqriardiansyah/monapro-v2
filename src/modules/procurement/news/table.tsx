@@ -9,6 +9,7 @@ import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
+import moment from "moment";
 import { TDataNews } from "./models";
 
 type Props<T> = {
@@ -50,6 +51,11 @@ const NewsTable = <T extends TDataNews>({ fetcher, onClickEdit }: Props<T>) => {
             title: "Perihal Justifikasi",
             dataIndex: "about_justification",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
+        },
+        {
+            title: "Tanggal Berita Acara",
+            dataIndex: "date_news",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text ? moment(text).format("DD MMM yyyy") : "-"}</p>,
         },
         {
             title: "No BAP",
@@ -112,6 +118,7 @@ const NewsTable = <T extends TDataNews>({ fetcher, onClickEdit }: Props<T>) => {
 
     return (
         <Table
+            scroll={{ x: 1500 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}

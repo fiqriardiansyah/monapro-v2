@@ -20,8 +20,20 @@ class AgendaDataService extends BaseService {
 
     search = "/agenda-data/search-agenda-data";
 
+    templateDocx = "https://panggilin-user.s3.ap-southeast-1.amazonaws.com/resources/telco/Template+Agenda.docx";
+
     constructor() {
         super();
+    }
+
+    GetTemplateDocx<T = any>() {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.get<T>({
+                url: this.templateDocx,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     Search<T = any>(param: Models.SearchParam) {

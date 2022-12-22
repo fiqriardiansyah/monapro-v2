@@ -49,6 +49,7 @@ export interface SelectOption {
 export interface SubUnitData {
     id: number | string;
     unit_name: string;
+    code: string;
     pic_name: string;
 }
 
@@ -192,6 +193,7 @@ export interface News {
     justification_id: string;
     no_justification: string;
     about_justification: string;
+    date_news: string | null;
     no_bap: string;
     no_bar: string;
     no_bapp: string;
@@ -264,6 +266,7 @@ export interface SubLoadProcurement {
 export interface NoAgendaProcurement {
     agenda_data_id: number;
     no_agenda_secretariat: string;
+    about: string;
 }
 
 export interface AgendaDataDisposition {

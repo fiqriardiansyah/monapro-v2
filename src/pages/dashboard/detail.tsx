@@ -36,7 +36,7 @@ const DashboardDetail = () => {
 
     const [chartData, setChartData] = useState(chartDataDefault);
     const [qtl, setQtl] = useState(1);
-    const [year, setYear] = useState<Moment | null>(null);
+    const [year, setYear] = useState<Moment | null>(moment(moment.now()));
 
     const { id } = useParams();
     const [searchParams] = useSearchParams();
