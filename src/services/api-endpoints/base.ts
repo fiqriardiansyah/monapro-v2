@@ -1,5 +1,6 @@
 import { AxiosResponse } from "axios";
 import { BaseResponse } from "models";
+import ApiMethod from "services/api-methods";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 
 /* eslint-disable class-methods-use-this */

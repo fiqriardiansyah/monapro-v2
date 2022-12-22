@@ -81,7 +81,7 @@ const DashboardPage = () => {
                             onChange={(val) => setQtl(val)}
                             options={[{ value: 0, label: "All" }, ...QUARTAL]}
                         />
-                        <p className="m-0 font-semibold text-gray-500">Total Budget: Rp.1000000000</p>
+                        <p className="m-0 font-semibol text-xl text-gray-500">{getAllHeader.data?.total_budget?.ToIndCurrency("Rp")}</p>
                     </Space>
                 }
             />

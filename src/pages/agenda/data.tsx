@@ -1,3 +1,4 @@
+/* eslint-disable import/extensions */
 import { Alert, Button, message, Progress } from "antd";
 import Header from "components/common/header";
 import { StateContext } from "context/state";
@@ -14,22 +15,24 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import { useReactToPrint } from "react-to-print";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
+import printService from "services/api-endpoints/print";
+import Docxtemplater from "docxtemplater";
+import PizZip from "pizzip";
+import PizZipUtils from "pizzip/utils/index";
+import { saveAs } from "file-saver";
+
 import Utils from "utils";
 import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import moment from "moment";
 
-// [FINISH]
+function loadFile(url: string, callback: any) {
+    PizZipUtils.getBinaryContent(url, callback);
+}
 
 const AgendaDataPage = <T extends TDataAgenda>() => {
     const { notificationInstance } = useContext(StateContext);
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
-
-    const componentRef = useRef<HTMLDivElement | null>(null);
-    const handlePrint = useReactToPrint({
-        content: () => componentRef.current || null,
-    });
-
-    const [printRow, setPrintRow] = useState<TDataAgenda | null>(null);
 
     const [searchParams, setSearchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -102,11 +105,6 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
         }
     );
 
-    const getTemplateDocx = useMutation(async () => {
-        const req = await agendaDataService.GetTemplateDocx();
-        console.log(req);
-    });
-
     // crud handler
     const onClickEdit = (data: T) => {
         if (editTriggerRef.current) {
@@ -129,8 +127,27 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
     };
 
     const onClickPrint = async (data: T) => {
-        setPrintRow(data);
-        // getTemplateDocx.mutate();
+        loadFile("https://panggilin-user.s3.ap-southeast-1.amazonaws.com/resources/telco/Template+Agenda.docx", (error: any, content: any) => {
+            if (error) throw error;
+            const zip = new PizZip(content);
+            const doc = new Docxtemplater(zip, {
+                paragraphLoop: true,
+                linebreaks: true,
+            });
+            doc.render({
+                agenda_no: data.no_agenda_secretariat,
+                letter_no: data.letter_no,
+                sender: data.sender,
+                about: data.about,
+                receive_date: data.date ? moment(data.date).format("DD-MM-yyyy") : "-",
+                letter_date: data.letter_date ? moment(data.letter_date).format("DD-MM-yyyy") : "-",
+            });
+            const blob = doc.getZip().generate({
+                type: "blob",
+                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            });
+            saveAs(blob, `${data.no_agenda_secretariat}.docx`);
+        });
     };
 
     const errors = [getList, createMutation, editMutation];

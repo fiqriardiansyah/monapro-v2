@@ -8,6 +8,7 @@ export interface BasePaginationResponse<T = any> {
 }
 
 export interface GetHeaderDashboard {
+    total_budget: number;
     plan_budget: {
         plan_budget: number;
         percentage_plan: number;
