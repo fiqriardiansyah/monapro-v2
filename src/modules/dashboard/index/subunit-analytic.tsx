@@ -32,7 +32,7 @@ const SubUnitAnalytic = ({ data }: Props) => {
                                     <img src={BlueWaveImage} alt="" className="w-full" />
                                 </div>
                                 <div className="bg-white p-3 rounded-md flex flex-col items-center">
-                                    <p className="m-0 font-medium text-gray-400">Total Pemakaian</p>
+                                    <p className="m-0 font-medium text-gray-400">Sudah Bayar</p>
                                     <p className="m-0 text-orange-400 font-medium text-lg my-3">
                                         {!Number.isNaN(analytic.total_usage) ? Number(analytic.total_usage).ToIndCurrency("Rp") : "-"}
                                     </p>

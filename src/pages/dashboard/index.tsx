@@ -9,7 +9,7 @@ import RemainingBudget from "modules/dashboard/component/remaining-budget";
 import { useQuery } from "react-query";
 import dashboardService from "services/api-endpoints/dashboard";
 import State from "components/common/state";
-import { COLORS, QUARTAL, QUARTAL_MONTH } from "utils/constant";
+import { COLORS, MONTH_SHORT, QUARTAL, QUARTAL_MONTH } from "utils/constant";
 import SubUnitAnalytic from "modules/dashboard/index/subunit-analytic";
 import moment, { Moment } from "moment";
 
@@ -52,9 +52,10 @@ const DashboardPage = () => {
 
     useEffect(() => {
         if (!getLineChart.data) return;
+        const isAllMonth = getLineChart.data[0].list_chart?.length === MONTH_SHORT.length;
         setChartData((prev) => ({
             ...prev,
-            labels: QUARTAL_MONTH.find((el) => el.quartal === (qtl as any))?.month as any,
+            labels: isAllMonth ? MONTH_SHORT : (QUARTAL_MONTH.find((el) => el.quartal === (qtl as any))?.month as any),
             datasets: [...(getLineChart.data || [])].map((el, i) => ({
                 label: el.subunit_name,
                 data: el.list_chart?.map((el) => el.total || 0),
@@ -125,9 +126,9 @@ const DashboardPage = () => {
                             </State.Data>
                             <State.Loading state={state}>
                                 <RemainingBudget.Loading title="Plan Budget" />
-                                <RemainingBudget.Loading title="Total Pemakaian" />
-                                <RemainingBudget.Loading title="Belum Bayar" />
                                 <RemainingBudget.Loading title="Sisa Anggaran" />
+                                <RemainingBudget.Loading title="Sudah Bayar" />
+                                <RemainingBudget.Loading title="Belum Bayar" />
                             </State.Loading>
                             <State.Error state={state}>
                                 <Alert message={(getAllHeader.error as any)?.message} type="error" />
