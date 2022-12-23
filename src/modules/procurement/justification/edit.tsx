@@ -342,7 +342,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledSelectInput
                                     showSearch
                                     name="quartal_id"
-                                    label="Quartal"
+                                    label="Quartal Perkiraan Bayar"
                                     placeholder="Quartal"
                                     optionFilterProp="children"
                                     control={control}

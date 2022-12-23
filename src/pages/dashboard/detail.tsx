@@ -1,6 +1,6 @@
 /* eslint-disable no-shadow */
 /* eslint-disable react/no-array-index-key */
-import { Button, DatePicker, message, Select, Skeleton, Space, Tooltip } from "antd";
+import { Button, DatePicker, Input, message, Select, Skeleton, Space, Tooltip } from "antd";
 import Header from "components/common/header";
 import React, { useState } from "react";
 import { Chart, registerables } from "chart.js";
@@ -13,7 +13,7 @@ import { Link, useParams, useSearchParams } from "react-router-dom";
 import { IoMdArrowBack } from "react-icons/io";
 import { RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
 import { useMutation, useQuery } from "react-query";
-import dashboardSubUnitService from "services/api-endpoints/dashboard/subunit-detail";
+import dashboardSubUnitService, { SaveNote } from "services/api-endpoints/dashboard/subunit-detail";
 import State from "components/common/state";
 import { COLORS, QUARTAL } from "utils/constant";
 import Utils from "utils";
@@ -150,6 +150,31 @@ const DashboardDetail = () => {
         setYear(moment);
     };
 
+    const [note, setNote] = useState(getHeaderSubUnit.data?.note || "");
+    const [isEdit, setIsEdit] = useState(false);
+
+    const saveNote = useMutation(
+        [dashboardSubUnitService.saveNote, getHeaderSubUnit.data?.subunit_id],
+        async (data: SaveNote) => {
+            return (await dashboardSubUnitService.SaveNote(data)).data.data;
+        },
+        {
+            onSuccess: () => {
+                setIsEdit(false);
+                getHeaderSubUnit.refetch();
+            },
+        }
+    );
+
+    const onSaveNote = () => {
+        saveNote.mutate({ subunit_id: getHeaderSubUnit.data?.subunit_id, note });
+    };
+
+    const onCancel = () => {
+        setIsEdit(false);
+        setNote(getHeaderSubUnit.data?.note || "");
+    };
+
     return (
         <div className="min-h-screen px-10">
             <Header
@@ -210,9 +235,34 @@ const DashboardDetail = () => {
                     </State>
                 </div>
                 <div className="col-span-1 h-full">
-                    <div className="bg-white p-3 rounded-md h-full">
-                        <p className="m-0 font-medium text-gray-400">Recently News</p>
-                        <p className="mt-2">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maiores architecto illo quia</p>
+                    <div className="bg-white p-3 rounded-md h-full flex flex-col justify-between">
+                        <div className="">
+                            <p className="m-0 font-medium text-gray-400">Notes</p>
+                            {isEdit ? (
+                                <Input.TextArea
+                                    defaultValue={getHeaderSubUnit.data?.note}
+                                    onChange={(e) => setNote(e.target.value)}
+                                    placeholder="Your notes here..."
+                                    className="w-full h-full"
+                                />
+                            ) : (
+                                <p>{getHeaderSubUnit.data?.note}</p>
+                            )}
+                        </div>
+                        {isEdit ? (
+                            <div className="self-end justify-self-end">
+                                <Button onClick={onCancel} type="link" className="mt-4 self-end justify-self-end">
+                                    Cancel
+                                </Button>
+                                <Button loading={saveNote.isLoading} onClick={onSaveNote} type="default" className="mt-4 ">
+                                    Save
+                                </Button>
+                            </div>
+                        ) : (
+                            <Button onClick={() => setIsEdit(true)} type="link" className="mt-4 self-end justify-self-end">
+                                Edit
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>

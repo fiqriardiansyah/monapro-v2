@@ -37,6 +37,7 @@ export interface GetSubHeaderDashboard {
 export interface GetHeaderSubUnitDashboard {
     subunit_id: number;
     subunit_name: string;
+    note: string;
     list_analytic: {
         plan_budget: number;
         total_usage: number;

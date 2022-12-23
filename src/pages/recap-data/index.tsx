@@ -23,21 +23,24 @@ const RecapDataPage = () => {
 
     // crud fetcher
     const getListQuery = useQuery(
-        [isFilter ? recapDataService.filter : recapDataService.getAll, page, year, month, quartalId, loadTypeId, subunitId],
+        [isFilter ? recapDataService.filter : recapDataService.getAll, page, year, month, quartalId, loadTypeId, subunitId, query],
         async () => {
-            if (isFilter) {
-                const req = await recapDataService.Filter({
-                    page,
-                    year,
-                    month,
-                    quartal_id: quartalId,
-                    load_type_id: loadTypeId,
-                    subunit_id: subunitId,
-                });
-                return req.data.data;
+            if (query) {
+                return (await recapDataService.Search({ page, query })).data.data;
             }
-            const req = await recapDataService.GetAll({ page });
-            return req.data.data;
+            if (isFilter) {
+                return (
+                    await recapDataService.Filter({
+                        page,
+                        year,
+                        month,
+                        quartal_id: quartalId,
+                        load_type_id: loadTypeId,
+                        subunit_id: subunitId,
+                    })
+                ).data.data;
+            }
+            return (await recapDataService.GetAll({ page })).data.data;
         }
     );
 
@@ -93,9 +96,13 @@ const RecapDataPage = () => {
 
     const errors = [getListQuery];
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     return (
         <div className="min-h-screen px-10">
-            <Header title="Data Rekapan" />
+            <Header title="Data Rekapan" onSubmitSearch={onSearchHandler} />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
             {isFilter ? (
                 <Card>

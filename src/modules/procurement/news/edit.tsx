@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
 // components
-import ControlledInputText from "components/form/controlled-inputs/controlled-input-text";
 import { News, SelectOption } from "models";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
 import InputFile from "components/form/inputs/input-file";
@@ -215,7 +214,7 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                     form={form}
                     labelCol={{ span: 3 }}
                     labelAlign="left"
-                    disabled={loading || detailMutation.isLoading}
+                    disabled={loading || detailMutation.isLoading || isProcessLoadBAP || isProcessLoadBAPP || isProcessLoadBAR}
                     colon={false}
                     style={{ width: "100%" }}
                     onFinish={onSubmitHandler}

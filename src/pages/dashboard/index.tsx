@@ -212,7 +212,7 @@ const DashboardPage = () => {
                     <>
                         <State.Data state={state}>
                             {analyticSubUnit.data?.map((subUnit: any) => (
-                                <SubUnitAnalytic data={subUnit} key={subUnit.subunit_id} />
+                                <SubUnitAnalytic fetcher={analyticSubUnit} data={subUnit} key={subUnit.subunit_id} />
                             ))}
                         </State.Data>
                         <State.Loading state={state}>

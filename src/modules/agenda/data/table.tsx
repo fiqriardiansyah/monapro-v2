@@ -50,11 +50,11 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             dataIndex: "no_agenda_secretariat",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        {
-            title: "No Agenda disposisi",
-            dataIndex: "no_agenda_disposition",
-            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        },
+        // {
+        //     title: "No Agenda disposisi",
+        //     dataIndex: "no_agenda_disposition",
+        //     render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+        // },
         {
             title: "Tanggal",
             dataIndex: "date",

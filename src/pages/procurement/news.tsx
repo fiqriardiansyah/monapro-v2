@@ -131,17 +131,17 @@ const NewsPage = <T extends TDataNews>() => {
             <Header
                 onSubmitSearch={onSearchHandler}
                 title="Berita Acara"
-                action={
-                    !isForbidden && (
-                        <AddNews loading={createMutation.isLoading} onSubmit={addHandler}>
-                            {(data) => (
-                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                    Tambah Berita Acara
-                                </Button>
-                            )}
-                        </AddNews>
-                    )
-                }
+                // action={
+                //     !isForbidden && (
+                //         <AddNews loading={createMutation.isLoading} onSubmit={addHandler}>
+                //             {(data) => (
+                //                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                //                     Tambah Berita Acara
+                //                 </Button>
+                //             )}
+                //         </AddNews>
+                //     )
+                // }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
             <NewsTable onClickEdit={onClickEdit} fetcher={getList} />

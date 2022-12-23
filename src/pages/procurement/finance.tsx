@@ -151,17 +151,17 @@ const FinancePage = <T extends TDataFinance>() => {
             <Header
                 onSubmitSearch={onSearchHandler}
                 title="Finance"
-                action={
-                    !isForbidden && (
-                        <AddFinance loading={createMutation.isLoading} onSubmit={addHandler}>
-                            {(data) => (
-                                <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                    Tambah Finance
-                                </Button>
-                            )}
-                        </AddFinance>
-                    )
-                }
+                // action={
+                //     !isForbidden && (
+                //         <AddFinance loading={createMutation.isLoading} onSubmit={addHandler}>
+                //             {(data) => (
+                //                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                //                     Tambah Finance
+                //                 </Button>
+                //             )}
+                //         </AddFinance>
+                //     )
+                // }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
             <FinanceTable onClickPaid={onClickPaidHandler} onClickEdit={onClickEdit} fetcher={getList} />

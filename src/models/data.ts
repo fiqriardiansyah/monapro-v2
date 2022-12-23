@@ -289,6 +289,7 @@ export interface RemainingBudget {
 export interface AnalyticSubUnit {
     subunit_id: number;
     subunit_name: string;
+    note: string;
     list_analytic: {
         plan_budget: number;
         total_usage: number;

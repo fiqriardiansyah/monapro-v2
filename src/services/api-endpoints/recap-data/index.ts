@@ -4,6 +4,10 @@ import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
+export interface SearchParam {
+    query: string;
+    page: any;
+}
 class RecapDataService extends BaseService {
     getAll = "/data-recap/get-all";
 
@@ -13,8 +17,25 @@ class RecapDataService extends BaseService {
 
     filter = "data-recap/filter";
 
+    search = "/data-recap/search";
+
     constructor() {
         super();
+    }
+
+    Search<T = Models.RecapData>(param: SearchParam) {
+        return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
+                url: this.search,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     GetAll<T = Models.RecapData>(param: Models.ContractGetAllParam) {

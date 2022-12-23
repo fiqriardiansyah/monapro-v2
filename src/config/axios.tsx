@@ -34,30 +34,32 @@ axiosClient.interceptors.response.use(
         const { status, data } = res;
         if (status === 401 || data?.status === 401) {
             Utils.SignOut();
-            notification.error({
-                message: "Authentication",
-                description: data.message || DEFAULT_ERROR_MESSAGE,
-                btn: (
-                    <Button type="primary" onClick={() => window.location.reload()}>
-                        Refresh
-                    </Button>
-                ),
-            });
+            window.location.reload();
+            // notification.error({
+            //     message: "Authentication",
+            //     description: data.message || DEFAULT_ERROR_MESSAGE,
+            //     btn: (
+            //         <Button type="primary" onClick={() => }>
+            //             Refresh
+            //         </Button>
+            //     ),
+            // });
         }
         return process.env.NODE_ENV === "development" ? responseLogger(res) : res;
     },
     (error) => {
         if (error.response?.status === 401) {
             Utils.SignOut();
-            notification.error({
-                message: "Authentication",
-                description: error.response?.message || DEFAULT_ERROR_MESSAGE,
-                btn: (
-                    <Button type="primary" onClick={() => window.location.reload()}>
-                        Refresh
-                    </Button>
-                ),
-            });
+            window.location.reload();
+            // notification.error({
+            //     message: "Authentication",
+            //     description: error.response?.message || DEFAULT_ERROR_MESSAGE,
+            //     btn: (
+            //         <Button type="primary" onClick={() => window.location.reload()}>
+            //             Refresh
+            //         </Button>
+            //     ),
+            // });
         }
         return process.env.NODE_ENV === "development" ? errorLogger(error) : error;
     }
