@@ -10,3 +10,8 @@ export interface FDataUser {
     role_id: number;
     full_name: string;
 }
+
+export interface FEditUser {
+    full_name: string;
+    profile_image: string | null;
+}

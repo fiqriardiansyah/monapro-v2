@@ -19,8 +19,25 @@ class RecapDataService extends BaseService {
 
     search = "/data-recap/search";
 
+    filterAll = "/data-recap/filter-all";
+
     constructor() {
         super();
+    }
+
+    FilterAll<T = Models.RecapData>(param: Models.RecapFilterAllParam) {
+        return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
+                url: this.filterAll,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     Search<T = Models.RecapData>(param: SearchParam) {

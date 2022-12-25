@@ -337,3 +337,7 @@ export interface RecapFilterParam {
     month: number | string;
     page: number | string;
 }
+
+export interface RecapFilterAllParam extends Omit<RecapFilterParam, "page"> {
+    _?: any;
+}

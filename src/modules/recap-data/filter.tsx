@@ -24,7 +24,12 @@ const schema: yup.SchemaOf<Partial<FilterRecapData>> = yup.object().shape({
     year: yup.string(),
 });
 
-const Filter = () => {
+type Props = {
+    onClickDownload: () => void;
+    loading?: boolean;
+};
+
+const Filter = ({ onClickDownload, loading }: Props) => {
     const [searchParams, setSearchParams] = useSearchParams();
 
     const [form] = Form.useForm();
@@ -181,7 +186,7 @@ const Filter = () => {
                     </div>
                 </div>
                 <div className="flex items-center justify-between mt-4">
-                    <Button className="!flex !items-center" icon={<FiDownload className="mr-2" />}>
+                    <Button loading={loading} onClick={onClickDownload} className="!flex !items-center" icon={<FiDownload className="mr-2" />}>
                         Download
                     </Button>
                     <Space>

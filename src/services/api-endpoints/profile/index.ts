@@ -2,7 +2,7 @@
 import { AxiosResponse } from "axios";
 import * as Models from "models";
 import { AuthData } from "models";
-import { FDataUser } from "modules/profile/models";
+import { FDataUser, FEditUser } from "modules/profile/models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
@@ -16,8 +16,21 @@ class ProfileService extends BaseService {
 
     addUser = "/profile/add-user";
 
+    editProfile = "/profile/edit-profile";
+
     constructor() {
         super();
+    }
+
+    EditProfile<T = {}>(data: FEditUser) {
+        return this.ProxyRequest<T>(async () => {
+            const req = await ApiMethod.post<T>({
+                url: this.editProfile,
+                data,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     GetProfile<T = Models.Profile>(): Promise<AxiosResponse<Models.BaseResponse<T>, any>> {

@@ -3,7 +3,7 @@ import Header from "components/common/header";
 import State from "components/common/state";
 import { StateContext } from "context/state";
 import { Role } from "models";
-import { FDataUser, TDataRoleManagement } from "modules/profile/models";
+import { FDataUser, FEditUser, TDataRoleManagement } from "modules/profile/models";
 import RoleManagementTable from "modules/profile/role-table";
 import React, { useContext } from "react";
 import { FaUserCircle } from "react-icons/fa";
@@ -14,6 +14,7 @@ import profileService from "services/api-endpoints/profile";
 import ProfileImage from "assets/profile.jpeg";
 import { AiOutlinePlus } from "react-icons/ai";
 import AddUser from "modules/profile/add";
+import ModalEditProfile from "modules/profile/modal-edit-profile";
 
 const ProfilePage = () => {
     const [searchParams] = useSearchParams();
@@ -39,6 +40,9 @@ const ProfilePage = () => {
                 message.success("New user added!");
                 getRole.refetch();
             },
+            onError: (err: any) => {
+                message.error(err?.message);
+            },
         }
     );
 
@@ -51,6 +55,25 @@ const ProfilePage = () => {
                 message.success("Role Edited!");
                 getRole.refetch();
             },
+            onError: (err: any) => {
+                message.error(err?.message);
+            },
+        }
+    );
+
+    const editProfile = useMutation(
+        async (data: FEditUser) => {
+            await profileService.EditProfile(data);
+        },
+        {
+            onSuccess: () => {
+                message.success("Profile Edited!");
+                getRole.refetch();
+                getProfile.refetch();
+            },
+            onError: (err: any) => {
+                message.error(err?.message);
+            },
         }
     );
 
@@ -60,6 +83,10 @@ const ProfilePage = () => {
 
     const onSubmitUser = (data: FDataUser, callback: () => void) => {
         addUser.mutateAsync(data).then(callback).catch(callback);
+    };
+
+    const onSubmitEditProfile = (data: FEditUser, callback: () => void) => {
+        editProfile.mutateAsync(data).finally(callback);
     };
 
     return (
@@ -81,17 +108,23 @@ const ProfilePage = () => {
                             <h1 className="capitalize text-xl font-bold text-gray-600 m-0">profile</h1>
                             <span className="">Hi, {getProfile.data?.full_name} selamat datang kembali</span>
                             <Card className="!mt-6 !w-full">
-                                <div className="w-full flex items-center gap-6">
-                                    {/* {getProfile.data?.profile_image ? (
-                                        <img src={getProfile.data.profile_image} alt="" className="w-36 h-36 bg-gray-200 rounded-full" />
+                                <div className="w-full flex items-center gap-6 relative">
+                                    {getProfile.data?.profile_image ? (
+                                        <img src={getProfile.data.profile_image} alt="" className="w-36 h-36 bg-gray-200 rounded-full object-cover" />
                                     ) : (
-                                        <FaUserCircle className="w-36 h-36 text-gray-300 cursor-pointer" />
-                                    )} */}
-                                    <img src={ProfileImage} alt="" className="w-36 h-36 bg-gray-200 rounded-full object-cover" />
+                                        <div className="w-36 h-36 bg-gray-200 rounded-full" />
+                                    )}
                                     <div className="w-[400px] gap-4 flex flex-col">
                                         <Input disabled value={getProfile.data?.full_name} name="full_name" />
                                         <Input disabled value={getProfile.data?.email} name="email" />
                                     </div>
+                                    <ModalEditProfile onSubmit={onSubmitEditProfile} loading={editProfile.isLoading}>
+                                        {(dt) => (
+                                            <Button onClick={dt.openModal} type="link" className="!absolute !top-0 !right-0">
+                                                Edit
+                                            </Button>
+                                        )}
+                                    </ModalEditProfile>
                                 </div>
                             </Card>
                         </State.Data>

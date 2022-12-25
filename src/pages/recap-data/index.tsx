@@ -4,10 +4,13 @@ import State from "components/common/state";
 import { RecapData, RecapIsPaidData, RecapLockBudgetData } from "models";
 import Filter from "modules/recap-data/filter";
 import RecapDataTable from "modules/recap-data/table";
+import moment from "moment";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import recapDataService from "services/api-endpoints/recap-data";
+import Utils from "utils";
+import { FINANCE_STATE, FORMAT_SHOW_DATE } from "utils/constant";
 
 const RecapDataPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -80,6 +83,10 @@ const RecapDataPage = () => {
         }
     );
 
+    const filterAll = useMutation([], async () => {
+        return (await recapDataService.FilterAll({ year, month, quartal_id: quartalId, load_type_id: loadTypeId, subunit_id: subunitId })).data.data;
+    });
+
     const onClickLockBudget = async (data: RecapData, callback: () => void) => {
         await lockBudgetMutation
             .mutateAsync({ justification_id: data.justification_id, lock_budget: data.lock_budget === 1 ? 0 : 1 })
@@ -98,6 +105,32 @@ const RecapDataPage = () => {
 
     const onSearchHandler = (qr: string) => {
         setSearchParams({ page: "1", query: qr });
+    };
+
+    const onClickDownload = () => {
+        filterAll.mutateAsync().then((res) => {
+            const parseData = res.list?.map((el) => ({
+                "Justifikasi ID": el.justification_id,
+                "Finance ID": el.finance_id,
+                "No Agenda": el.no_agenda || "-",
+                "No Justifikasi": el.no_justification || "-",
+                "Perihal Justifikasi": el.about_justification || "-",
+                "Perkiraan Bayar": el.estimation_paydate ? moment(el.estimation_paydate).format(FORMAT_SHOW_DATE) : "-",
+                Nilai: el.value?.ToIndCurrency("Rp") || "-",
+                "Jenis Beban": el.load_name || "-",
+                "Sub unit": el.subunit_name || "-",
+                "No Kontrak": el.no_contract || "-",
+                "No BAP": el.no_bap || "-",
+                "File BAP": el.file_bap || "-",
+                "No BAR": el.no_bar || "-",
+                "File BAR": el.file_bar || "-",
+                "No BAPP": el.file_bapp || "-",
+                "File BAPP": el.file_bapp || "-",
+                "Budget Dikunci": el.lock_budget ? "Lock" : "-",
+                Dibayar: FINANCE_STATE.find((f) => f.value === el.is_paid)?.label,
+            }));
+            Utils.jsonToCSVConvertor({ json: parseData as any, title: "Data Rekap", showLabel: true });
+        });
     };
 
     return (
@@ -145,7 +178,7 @@ const RecapDataPage = () => {
                 </Card>
             ) : null}
             <div className="h-4" />
-            <Filter />
+            <Filter loading={filterAll.isLoading} onClickDownload={onClickDownload} />
             <div className="h-4" />
             <RecapDataTable onClickLockBudget={onClickLockBudget} onClickPaid={onClickPaid} fetcher={getListQuery} />
         </div>
