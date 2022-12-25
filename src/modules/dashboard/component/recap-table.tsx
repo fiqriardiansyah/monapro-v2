@@ -31,7 +31,7 @@ const DashboardRecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLoc
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
-            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran dengan id justifikasi ${data.justification_id}?`,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran dengan ${data.about_justification}?`,
             onOk() {
                 return new Promise((resolve, reject) => {
                     onClickLockBudget(data, () => {
