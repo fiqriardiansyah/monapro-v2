@@ -7,6 +7,7 @@ export interface AuthData {
     fullname: string;
     email: string;
     token: string;
+    profile_image: string;
     phone: any;
     role_access: [
         {
@@ -30,7 +31,7 @@ export interface AuthData {
     ];
 }
 
-export interface Profile extends Omit<AuthData, "is_new" | "token" | "phone" | "fullname"> {
+export interface Profile extends Omit<AuthData, "is_new" | "token" | "phone" | "fullname" | "profile_image"> {
     profile_image: string | null;
     full_name: string;
     _?: any;

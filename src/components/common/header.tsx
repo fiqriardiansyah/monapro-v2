@@ -1,13 +1,10 @@
 import { Button, Popover, Space } from "antd";
 import { UserContext } from "context/user";
 import React, { useContext, useState } from "react";
-import { FaUserCircle } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Utils from "utils";
 import { PROFILE_PATH } from "utils/routes";
-
-import ProfileImage from "assets/profile.jpeg";
 
 type Props = {
     title?: string;
@@ -90,11 +87,15 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                         <Link to={PROFILE_PATH}>
                             <Space direction="horizontal">
                                 <p className="m-0 capitalize font-medium text-gray-600">Hello, {state.user?.fullname || ""}</p>
-                                <img
-                                    src={ProfileImage}
-                                    alt="profile"
-                                    className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border"
-                                />
+                                {state.user?.profile_image ? (
+                                    <img
+                                        src={state.user?.profile_image}
+                                        alt="profile"
+                                        className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border"
+                                    />
+                                ) : (
+                                    <div className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border bg-gray-200" />
+                                )}
                             </Space>
                         </Link>
                     </Popover>
