@@ -136,10 +136,10 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
-            title: "Perkiraan bayar",
+            title: "Bulan penagihan",
             dataIndex: "estimation_paydate",
             width: "150px",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+            render: (text) => <p className="capitalize m-0">{moment(text).format("MMM yyyy")}</p>,
         },
         {
             title: "Dok Justifikasi",

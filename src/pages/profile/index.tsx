@@ -15,10 +15,12 @@ import ProfileImage from "assets/profile.jpeg";
 import { AiOutlinePlus } from "react-icons/ai";
 import AddUser from "modules/profile/add";
 import ModalEditProfile from "modules/profile/modal-edit-profile";
+import JustificationTable from "modules/profile/justification-table";
 
 const ProfilePage = () => {
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
+    const pageJustification = searchParams.get("page-justification") || 1;
     const query = searchParams.get("query") || "";
 
     const getProfile = useQuery([profileService.getProfile], async () => {
@@ -28,6 +30,11 @@ const ProfilePage = () => {
 
     const getRole = useQuery([profileService.getRole, page], async () => {
         const res = await profileService.GetRole({ page });
+        return res.data.data;
+    });
+
+    const myJustification = useQuery([profileService.myJustification, pageJustification], async () => {
+        const res = await profileService.MyJustification({ page: pageJustification });
         return res.data.data;
     });
 
@@ -150,6 +157,11 @@ const ProfilePage = () => {
                 </AddUser>
             </div>
             <RoleManagementTable loading={editRole.isLoading} fetcher={getRole} onClickEdit={onClickEditHandler} />
+
+            <div className="flex items-center justify-between">
+                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">justifikasi {getProfile.data?.full_name}</h1>
+            </div>
+            <JustificationTable fetcher={myJustification} />
         </div>
     );
 };

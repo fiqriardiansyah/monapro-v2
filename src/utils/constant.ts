@@ -171,6 +171,32 @@ export const QUARTAL_MONTH_SHORT = [
     },
 ];
 
+export const QUARTAL_MONTH_SHORT_EN = [
+    {
+        quartal: 1,
+        month: ["jan", "feb", "mar"],
+    },
+    {
+        quartal: 2,
+        month: ["apr", "may", "jun"],
+    },
+    {
+        quartal: 3,
+        month: ["jul", "aug", "sep"],
+    },
+    {
+        quartal: 4,
+        month: ["oct", "nov", "dec"],
+    },
+];
+
+export const STATUS_CASH_CARRY = [
+    {
+        value: 1,
+        label: "New",
+    },
+];
+
 export const COLORS = [
     "rgb(0, 158, 255)",
     "rgb(244, 157, 26)",

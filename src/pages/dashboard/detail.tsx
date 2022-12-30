@@ -271,7 +271,7 @@ const DashboardDetail = () => {
                     <Bar data={chartData} />
                 </div>
                 <div className="p-3 bg-white rounded-md h-fit col-span-2">
-                    <p className="m-0 font-medium text-gray-400 mb-2">Sisa Pemakaian</p>
+                    <p className="m-0 font-medium text-gray-400 mb-2">Jenis Aktivitas</p>
                     <div className="w-full overflow-y-auto max-h-[250px] 2xl:h-[300px] px-3">
                         <State data={getHeaderSubUnit.data} isLoading={getHeaderSubUnit.isLoading} isError={getHeaderSubUnit.isError}>
                             {(state) => (

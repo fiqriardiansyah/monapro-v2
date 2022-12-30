@@ -15,7 +15,7 @@ import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 import procurementService from "services/api-endpoints/procurement";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, PROCUREMENT_VALUES, QUARTAL, SPONSORSHIP_VALUES } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, PROCUREMENT_VALUES, QUARTAL, QUARTAL_MONTH_SHORT_EN, SPONSORSHIP_VALUES } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataJustification } from "./models";
@@ -66,6 +66,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
     const docWatch = watch("doc_justification");
     const agenda = watch("agenda_data_id");
     const value = watch("value");
+    const estimationPaydate = watch("estimation_paydate");
 
     const subUnitQuery = useQuery([procurementService.getSubUnit], async () => {
         const req = await procurementService.GetSubUnit();
@@ -241,6 +242,14 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
         setValue("about_justification", about || detailMutation.data?.about_justification || "");
     }, [agenda]);
 
+    useEffect(() => {
+        if (!estimationPaydate) return;
+        const month = moment(estimationPaydate).format("MMM").toLocaleLowerCase();
+        const idQuartal = QUARTAL_MONTH_SHORT_EN.find((el) => el.month.includes(month))?.quartal;
+        form.setFieldValue("quartal_id", idQuartal);
+        setValue("quartal_id", idQuartal!);
+    }, [estimationPaydate]);
+
     return (
         <>
             <Modal
@@ -336,13 +345,19 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="estimation_paydate" label="Perkiraan bayar" />
+                                <ControlledInputDate
+                                    control={control}
+                                    picker="month"
+                                    labelCol={{ xs: 12 }}
+                                    name="estimation_paydate"
+                                    label="Bulan penagihan"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledSelectInput
-                                    showSearch
+                                    disabled
                                     name="quartal_id"
-                                    label="Quartal Perkiraan Bayar"
+                                    label="Quartal penagihan"
                                     placeholder="Quartal"
                                     optionFilterProp="children"
                                     control={control}

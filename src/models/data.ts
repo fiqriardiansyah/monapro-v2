@@ -218,6 +218,20 @@ export interface Finance {
     is_paid?: number;
 }
 
+export interface CashCarry {
+    id: number | string;
+    submission_date: string;
+    submission_value: string;
+    load_type_id: string;
+    load_name: string;
+    subunit_id: string;
+    subunit_name: string;
+    billing_month: string;
+    about: string;
+    file_document: string | null;
+    status: string;
+}
+
 export interface RecapData {
     justification_id: number;
     finance_id: number | null;

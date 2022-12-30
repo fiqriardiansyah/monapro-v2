@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Route, Routes, BrowserRouter } from "react-router-dom";
 import Layout from "components/common/layout";
 import {
+    AGENDA_CASH_CARRY_PATH,
     AGENDA_DATA_PATH,
     AGENDA_DISPOSITION_PATH,
     DASHBOARD_PATH,
@@ -34,6 +35,7 @@ import { UserContext } from "context/user";
 import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
 import RegulationPage from "pages/masterdata/regulation";
+import CashCarryPage from "pages/agenda/cash-carry";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -55,6 +57,7 @@ function App() {
                         <Route path={MASTER_DATA_APPROVAL_POSITION_PATH} element={<ApprovalPositionPage />} />
                         <Route path={MASTER_DATA_SOP_PATH} element={<RegulationPage />} />
                         <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
+                        <Route path={AGENDA_CASH_CARRY_PATH} element={<CashCarryPage />} />
                         <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
                         <Route path={PROCUREMENT_JUSTIFICATION_PATH} element={<JustificationPage />} />
                         <Route path={PROCUREMENT_CONTRACT_PATH} element={<ContractPage />} />

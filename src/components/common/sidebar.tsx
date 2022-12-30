@@ -19,6 +19,7 @@ import MonaproIcon from "assets/svgs/monapro-icon.svg";
 // utils
 import { useLocation, useNavigate } from "react-router-dom";
 import {
+    AGENDA_CASH_CARRY_PATH,
     AGENDA_DATA_PATH,
     AGENDA_DISPOSITION_PATH,
     AGENDA_FINANCE_PATH,
@@ -63,12 +64,13 @@ function Sidebar({ collapse }: Props) {
 
     const items: MenuProps["items"] = [
         getItem("Dashboard", "/", <MdDashboard />),
-        getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
-        // getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-        //     getItem("Data Agenda", AGENDA_DATA_PATH, <GrNotes />),
-        //     // getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />), [IMPORTANT] not used
-        //     // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
-        // ]),
+        // getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
+        getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
+            getItem("Agenda Data", AGENDA_DATA_PATH, <GrNotes />),
+            getItem("Cash & Carry", AGENDA_CASH_CARRY_PATH, <HiOutlineBanknotes />),
+            // getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />), [IMPORTANT] not used
+            // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
+        ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
             // getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used

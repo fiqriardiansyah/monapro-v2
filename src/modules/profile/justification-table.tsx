@@ -1,20 +1,24 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse, Justification } from "models";
-import { ImWarning } from "react-icons/im";
+import { BasePaginationResponse } from "models";
 import moment from "moment";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
+import { TDataJustification } from "modules/procurement/justification/models";
 
-type Props = {
-    fetcher: UseQueryResult<BasePaginationResponse<Justification>, unknown>;
+type Props<T> = {
+    fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
 };
 
-const JustificationSubUnitTable = ({ fetcher }: Props) => {
+const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>) => {
+    const { state } = useContext(UserContext);
+
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
@@ -29,7 +33,7 @@ const JustificationSubUnitTable = ({ fetcher }: Props) => {
         });
     };
 
-    const columns: ColumnsType<Justification> = [
+    const columns: ColumnsType<T> = [
         {
             width: "50px",
             title: "No",
@@ -39,66 +43,85 @@ const JustificationSubUnitTable = ({ fetcher }: Props) => {
         {
             title: "No Justifikasi",
             dataIndex: "no_justification",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tanggal Justifikasi",
             dataIndex: "justification_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
+        },
+        {
+            title: "Tipe",
+            dataIndex: "-",
+            width: "150px",
+            render: (text, record) => <p className="capitalize m-0">{record.no_agenda ? "sponsorship" : "procurement"}</p>,
         },
         {
             title: "No Agenda",
             dataIndex: "no_agenda",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal",
             dataIndex: "about_justification",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Posisi",
             dataIndex: "position",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Beban",
             dataIndex: "load_name",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Nilai",
             dataIndex: "value",
-            render: (text) => <p className="capitalize m-0">{parseInt(text || 0, 10).ToIndCurrency("Rp")}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0">{Number(text || "0").ToIndCurrency("Rp")}</p>,
         },
         {
             title: "Sub unit",
             dataIndex: "subunit_name",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pembuat",
             dataIndex: "creator",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Catatan",
             dataIndex: "note",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Pelaksanaan acara",
             dataIndex: "event_date",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
             title: "Bulan penagihan",
             dataIndex: "estimation_paydate",
-            render: (text) => <p className="capitalize m-0">{moment(text).format("MMM yyy")}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0">{moment(text).format("MMM yyyy")}</p>,
         },
         {
             title: "Dok Justifikasi",
             dataIndex: "doc_justification",
+            width: "150px",
             render: (url, record) => {
                 if (!url) return "-";
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
@@ -108,7 +131,7 @@ const JustificationSubUnitTable = ({ fetcher }: Props) => {
 
     return (
         <Table
-            scroll={{ x: 1500 }}
+            scroll={{ x: 2000 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -124,4 +147,4 @@ const JustificationSubUnitTable = ({ fetcher }: Props) => {
     );
 };
 
-export default JustificationSubUnitTable;
+export default JustificationTable;

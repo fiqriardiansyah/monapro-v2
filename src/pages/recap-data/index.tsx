@@ -115,7 +115,7 @@ const RecapDataPage = () => {
                 "No Agenda": el.no_agenda || "-",
                 "No Justifikasi": el.no_justification || "-",
                 "Perihal Justifikasi": el.about_justification || "-",
-                "Perkiraan Bayar": el.estimation_paydate ? moment(el.estimation_paydate).format(FORMAT_SHOW_DATE) : "-",
+                "Bulan penagihan": el.estimation_paydate ? moment(el.estimation_paydate).format("MMM yyyy") : "-",
                 Nilai: el.value?.ToIndCurrency("Rp") || "-",
                 "Jenis Beban": el.load_name || "-",
                 "Sub unit": el.subunit_name || "-",

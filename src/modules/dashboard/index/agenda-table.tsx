@@ -53,7 +53,7 @@ const AgendaSubUnitTable = ({ fetcher }: Props) => {
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
-            title: "Endorse",
+            title: "Inisiator",
             dataIndex: "endorse",
             render: (text) => <p className="capitalize m-0">{text ? Number(text).ToIndCurrency("Rp") : "-"}</p>,
         },
@@ -106,9 +106,9 @@ const AgendaSubUnitTable = ({ fetcher }: Props) => {
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
-            title: "Perkiraan bayar",
+            title: "Bulan penagihan",
             dataIndex: "payment_estimation_date",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format("MMM yyyy") : "-"}</p>,
         },
         {
             title: "Kunci Anggaran",

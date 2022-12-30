@@ -1,28 +1,25 @@
 import React, { useContext } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
-
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
 import moment from "moment";
-import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
-import ButtonDownload from "components/common/button-donwload";
-import Utils from "utils";
+import { FORMAT_SHOW_DATE, STATUS_CASH_CARRY } from "utils/constant";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { TDataAgenda } from "./models";
+import ButtonDownload from "components/common/button-donwload";
+import Utils from "utils";
+import { TDataCashCarry } from "./models";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
-    onClickPrint: (data: T) => void;
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickPrint }: Props<T>) => {
+const CashCarryTable = <T extends TDataCashCarry>({ fetcher, onClickEdit }: Props<T>) => {
     const { state } = useContext(UserContext);
-    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const location = useLocation();
     const [params] = useSearchParams();
@@ -46,77 +43,60 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
         },
         {
-            title: "No Agenda sekretariat",
-            dataIndex: "no_agenda_secretariat",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        // {
-        //     title: "No Agenda disposisi",
-        //     dataIndex: "no_agenda_disposition",
-        //     render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        // },
-        {
-            title: "Tanggal",
-            dataIndex: "date",
+            title: "Tanggal pengajuan",
+            dataIndex: "submission_date",
+            width: "250px",
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
         {
-            title: "Inisiator",
-            dataIndex: "endorse",
-            render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
+            title: "Nilai pengajuan",
+            dataIndex: "submission_value",
+            width: "250px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{Number(text)?.ToIndCurrency("Rp")}</p>,
         },
         {
-            title: "No Surat",
-            dataIndex: "letter_no",
+            title: "Jenis beban",
+            dataIndex: "load_name",
+            width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Tanggal Surat",
-            dataIndex: "letter_date",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
-        },
-        {
-            title: "Pengirim",
-            dataIndex: "sender",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
-        {
-            title: "Perihal",
-            dataIndex: "about",
-            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
             title: "Sub unit",
             dataIndex: "subunit_name",
-            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
+            width: "150px",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
-            title: "Keputusan",
-            dataIndex: "decision",
-            render: (text) => <p className="capitalize m-0">{DECISION.find((el) => el.value === text)?.label}</p>,
+            title: "Bulan penagihan",
+            dataIndex: "billing_month",
+            width: "150px",
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format("MMM yyyy") : "-"}</p>,
+        },
+        {
+            title: "Perihal",
+            dataIndex: "about",
+            width: "200px",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        },
+        {
+            title: "Dokumen",
+            dataIndex: "file_document",
+            width: "200px",
+            render: (url, record) => {
+                if (!url) return "-";
+                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Cash_Carry_${record.id}` })} />;
+            },
         },
         {
             title: "Status",
             dataIndex: "status",
-            render: (text) => <p className="capitalize m-0">{STATUS_AGENDA.find((el) => el.value === text)?.label || "-"}</p>,
-        },
-        {
-            title: "Dokumen",
-            dataIndex: "document",
-            render: (url, record) => {
-                if (!url) return "-";
-                return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Agenda-Data_${record.id}` })} />;
-            },
-        },
-        {
-            title: "Pelaksanaan acara",
-            dataIndex: "event_date",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
+            width: "200px",
+            render: (text) => <p className="capitalize m-0 leading-3 text-xs">{STATUS_CASH_CARRY.find((el) => el.value === text)?.label}</p>,
         },
     ];
 
     const action: ColumnsType<T>[0] = {
-        width: "200px",
+        width: "100px",
         title: "Action",
         key: "action",
         fixed: "right",
@@ -124,9 +104,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             <Space size="middle" direction="horizontal">
                 <Button type="text" onClick={() => onClickEdit(record)}>
                     Edit
-                </Button>
-                <Button type="primary" onClick={() => onClickPrint(record)}>
-                    Print
                 </Button>
             </Space>
         ),
@@ -138,7 +115,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
 
     return (
         <Table
-            scroll={{ x: 2000 }}
+            scroll={{ x: 1300 }}
             size="small"
             loading={fetcher.isLoading}
             columns={columns}
@@ -154,4 +131,4 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
     );
 };
 
-export default AgendaDataTable;
+export default CashCarryTable;

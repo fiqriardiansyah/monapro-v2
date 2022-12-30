@@ -152,7 +152,13 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputText control={control} labelCol={{ xs: 12 }} name="endorse" label="Endorse" placeholder="Endorse" />
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="endorse"
+                                    label="Inisiator"
+                                    placeholder="Inisiator"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="letter_no" label="No Surat" placeholder="Nomor" />

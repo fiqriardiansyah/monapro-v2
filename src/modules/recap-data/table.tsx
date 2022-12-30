@@ -99,9 +99,9 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
         {
-            title: "Tanggal Perkiraan bayar",
+            title: "Bulan penagihan",
             dataIndex: "estimation_paydate",
-            render: (text) => <p className="capitalize m-0">{text ? moment(text).format("DD-MM-yyyy") : "-"}</p>,
+            render: (text) => <p className="capitalize m-0">{text ? moment(text).format("MMM yyyy") : "-"}</p>,
         },
 
         {

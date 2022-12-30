@@ -2,6 +2,7 @@
 import { AxiosResponse } from "axios";
 import * as Models from "models";
 import { AuthData } from "models";
+import { TDataJustification } from "modules/procurement/justification/models";
 import { FDataUser, FEditUser } from "modules/profile/models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
@@ -18,13 +19,28 @@ class ProfileService extends BaseService {
 
     editProfile = "/profile/edit-profile";
 
+    myJustification = "/profile/get-my-justification";
+
     constructor() {
         super();
     }
 
+    MyJustification<T = TDataJustification>(params: { page: any }) {
+        return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
+                url: this.myJustification,
+                config: {
+                    params,
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
     EditProfile<T = {}>(data: FEditUser) {
         return this.ProxyRequest<T>(async () => {
-            const req = await ApiMethod.post<T>({
+            const req = await ApiMethod.put<T>({
                 url: this.editProfile,
                 data,
             });
