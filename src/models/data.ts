@@ -34,6 +34,7 @@ export interface AuthData {
 export interface Profile extends Omit<AuthData, "is_new" | "token" | "phone" | "fullname" | "profile_image"> {
     profile_image: string | null;
     full_name: string;
+    username: string;
     _?: any;
 }
 

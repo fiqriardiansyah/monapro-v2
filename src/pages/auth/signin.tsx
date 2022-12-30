@@ -17,7 +17,7 @@ import Background from "assets/background.jpg";
 // [FINISH]
 
 const schema: yup.SchemaOf<SignInEmailData> = yup.object().shape({
-    email: yup.string().required("Email wajib diisi"),
+    email: yup.string().required("Email / Username wajib diisi"),
     password: yup.string().required("Password wajib diisi"),
 });
 
@@ -78,7 +78,13 @@ const SignInPage = () => {
                         layout="vertical"
                     >
                         <Space direction="vertical" className="w-full">
-                            <ControlledInputText control={control} labelCol={{ xs: 12 }} name="email" label="Email" placeholder="Email" />
+                            <ControlledInputText
+                                control={control}
+                                labelCol={{ xs: 12 }}
+                                name="email"
+                                label="Email / Username"
+                                placeholder="Email / Username"
+                            />
                             <ControlledInputText
                                 control={control}
                                 labelCol={{ xs: 12 }}

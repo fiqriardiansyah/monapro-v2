@@ -9,9 +9,11 @@ export interface FDataUser {
     password: string;
     role_id: number;
     full_name: string;
+    username: string;
 }
 
 export interface FEditUser {
     full_name: string;
     profile_image: string | null;
+    username: string;
 }

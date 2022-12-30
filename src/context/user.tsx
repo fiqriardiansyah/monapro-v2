@@ -1,6 +1,8 @@
 import Cookies from "js-cookie";
 import { AuthData } from "models";
 import React, { createContext, Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useQuery } from "react-query";
+import authService from "services/api-endpoints/auth";
 import { EMAIL_USER, NAME_USER, ROLE_ACCESS, TOKEN_USER } from "utils/constant";
 
 type Props = {
@@ -36,6 +38,22 @@ function UserProvider({ children }: Props) {
             role_access: JSON.parse(localStorage.getItem(ROLE_ACCESS) || "{}"),
         },
     });
+
+    useQuery(
+        [authService.getLoginUser],
+        async () => {
+            return (await authService.GetLoginUser()).data.data;
+        },
+        {
+            enabled: !!Cookies.get(TOKEN_USER),
+            onSuccess: (data) => {
+                setState((prev) => ({
+                    ...prev,
+                    user: data,
+                }));
+            },
+        }
+    );
 
     const value = useMemo(
         () => ({

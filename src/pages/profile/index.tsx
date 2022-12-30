@@ -16,17 +16,37 @@ import { AiOutlinePlus } from "react-icons/ai";
 import AddUser from "modules/profile/add";
 import ModalEditProfile from "modules/profile/modal-edit-profile";
 import JustificationTable from "modules/profile/justification-table";
+import { UserContext } from "context/user";
 
 const ProfilePage = () => {
+    const { setState } = useContext(UserContext);
+
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
     const pageJustification = searchParams.get("page-justification") || 1;
     const query = searchParams.get("query") || "";
 
-    const getProfile = useQuery([profileService.getProfile], async () => {
-        const res = await profileService.GetProfile();
-        return res.data.data;
-    });
+    const getProfile = useQuery(
+        [profileService.getProfile],
+        async () => {
+            const res = await profileService.GetProfile();
+            return res.data.data;
+        },
+        {
+            onSuccess: (data) => {
+                if (setState) {
+                    setState((prev) => ({
+                        ...prev,
+                        user: {
+                            ...prev.user,
+                            fullname: data.full_name,
+                            profile_image: data.profile_image as any,
+                        },
+                    }));
+                }
+            },
+        }
+    );
 
     const getRole = useQuery([profileService.getRole, page], async () => {
         const res = await profileService.GetRole({ page });
@@ -122,8 +142,9 @@ const ProfilePage = () => {
                                         <div className="w-36 h-36 bg-gray-200 rounded-full" />
                                     )}
                                     <div className="w-[400px] gap-4 flex flex-col">
-                                        <Input disabled value={getProfile.data?.full_name} name="full_name" />
-                                        <Input disabled value={getProfile.data?.email} name="email" />
+                                        <Input title="Nama" disabled value={getProfile.data?.full_name} name="full_name" />
+                                        <Input title="Username" disabled value={getProfile.data?.username} name="username" />
+                                        <Input title="Email" disabled value={getProfile.data?.email} name="email" />
                                     </div>
                                     <ModalEditProfile onSubmit={onSubmitEditProfile} loading={editProfile.isLoading}>
                                         {(dt) => (

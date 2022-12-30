@@ -25,6 +25,7 @@ const schema: yup.SchemaOf<Partial<FDataUser>> = yup.object().shape({
     password: yup.string().required("Password wajib diisi"),
     role_id: yup.number().required("Role wajib diisi"),
     full_name: yup.string().required("Nama wajib diisi"),
+    username: yup.string().required("Username wajib diisi"),
 });
 
 const AddUser = ({ onSubmit, loading, children }: Props) => {
@@ -77,6 +78,7 @@ const AddUser = ({ onSubmit, loading, children }: Props) => {
                     layout="vertical"
                 >
                     <Space direction="vertical" className="w-full">
+                        <ControlledInputText control={control} labelCol={{ xs: 24 }} name="username" label="Username" placeholder="Username" />
                         <ControlledInputText control={control} labelCol={{ xs: 24 }} name="full_name" label="Nama" placeholder="Nama" />
                         <ControlledInputText control={control} labelCol={{ xs: 24 }} name="email" label="Email" placeholder="Email" />
                         <ControlledInputText

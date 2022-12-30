@@ -23,7 +23,8 @@ type Props = {
 };
 
 const schema: yup.SchemaOf<Partial<FEditUser>> = yup.object().shape({
-    full_name: yup.string(),
+    full_name: yup.string().required("Nama wajib diisi"),
+    username: yup.string().required("Username wajib diisi"),
     profile_image: yup.string().nullable(),
 });
 
@@ -54,9 +55,11 @@ const ModalEditProfile = ({ onSubmit, loading, children }: Props) => {
             onSuccess: (data) => {
                 form.setFieldsValue({
                     full_name: data.full_name,
+                    username: data.username,
                     profile_image: data.profile_image,
                 });
                 setValue("full_name", data.full_name);
+                setValue("username", data.username);
                 setValue("profile_image", data.profile_image as any);
             },
         }
@@ -124,7 +127,10 @@ const ModalEditProfile = ({ onSubmit, loading, children }: Props) => {
                                 multiple={false}
                                 name="profile_image"
                             />
-                            <ControlledInputText control={control} labelCol={{ xs: 24 }} name="full_name" label="" placeholder="Nama" />
+                        </div>
+                        <div className="grid grid-cols-2 gap-5 mt-4">
+                            <ControlledInputText control={control} labelCol={{ xs: 24 }} name="username" label="Username" placeholder="Username" />
+                            <ControlledInputText control={control} labelCol={{ xs: 24 }} name="full_name" label="Nama" placeholder="Nama" />
                         </div>
 
                         <Row justify="start" className="mt-10">
