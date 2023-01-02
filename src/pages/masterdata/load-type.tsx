@@ -1,4 +1,4 @@
-import { Alert, Button, message } from "antd";
+import { Alert, Button, message, Result } from "antd";
 import Header from "components/common/header";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
@@ -127,6 +127,14 @@ const LoadTypePage = <T extends TDataLoadType>() => {
     };
 
     const errors = [getList, deleteMutation, createMutation, editMutation];
+
+    if (state.user?.role_id !== 1) {
+        return (
+            <div className="h-screen">
+                <Result status="error" title="Forbidden" subTitle="Akses ditolak" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen px-10">

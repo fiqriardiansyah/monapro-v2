@@ -222,9 +222,10 @@ const EditCashCarry = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="submission_date" label="Tanngal pengajuan" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputNumber
+                                <ControlledInputText
                                     control={control}
-                                    labelCol={{ xs: 12 }}
+                                    labelCol={{ xs: 24 }}
+                                    type="number"
                                     name="submission_value"
                                     label="Nilai pengajuan"
                                     placeholder="Nilai pengajuan"

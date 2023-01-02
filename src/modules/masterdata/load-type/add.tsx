@@ -175,12 +175,12 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
                                     <div className="w-full flex gap-4 items-center">
                                         <p className="capitalize w-[300px] ">quartal: {el.quartal}</p>
                                         {el.month?.map((month) => (
-                                            <ControlledInputNumber
+                                            <ControlledInputText
                                                 control={control}
-                                                key={month}
                                                 labelCol={{ xs: 12 }}
+                                                type="number"
                                                 name={month.toLowerCase() as any}
-                                                label={month.toUpperCase()}
+                                                label={month}
                                                 placeholder={month}
                                             />
                                         ))}

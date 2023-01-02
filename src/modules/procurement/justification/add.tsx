@@ -279,9 +279,10 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputNumber
+                                <ControlledInputText
                                     control={control}
-                                    labelCol={{ xs: 12 }}
+                                    labelCol={{ xs: 24 }}
+                                    type="number"
                                     name="value"
                                     label="Nilai justifikasi"
                                     placeholder="Nilai justifikasi"

@@ -233,7 +233,14 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputNumber control={control} labelCol={{ xs: 12 }} name="value" label="Nilai" placeholder="Nilai" />
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    type="number"
+                                    name="value"
+                                    label="Nilai"
+                                    placeholder="Nilai"
+                                />
                             </Col>
                             <Col span={12}>
                                 {docWatch ? (

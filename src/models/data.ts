@@ -8,6 +8,7 @@ export interface AuthData {
     email: string;
     token: string;
     profile_image: string;
+    role_id: number;
     phone: any;
     role_access: [
         {

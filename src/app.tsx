@@ -10,6 +10,7 @@ import {
     MASTER_DATA_LOAD_TYPE_PATH,
     MASTER_DATA_SOP_PATH,
     MASTER_DATA_SUB_UNIT_PATH,
+    MYACTIVITY_PATH,
     PROCUREMENT_CONTRACT_PATH,
     PROCUREMENT_FINANCE_PATH,
     PROCUREMENT_JUSTIFICATION_PATH,
@@ -36,6 +37,7 @@ import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
 import RegulationPage from "pages/masterdata/regulation";
 import CashCarryPage from "pages/agenda/cash-carry";
+import MyActivity from "pages/profile/activity";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -51,6 +53,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<DashboardPage />} />
                         <Route path={PROFILE_PATH} element={<ProfilePage />} />
+                        <Route path={MYACTIVITY_PATH} element={<MyActivity />} />
                         <Route path={`${DASHBOARD_PATH}/:id`} element={<DashboardDetail />} />
                         <Route path={MASTER_DATA_SUB_UNIT_PATH} element={<SubUnitPage />} />
                         <Route path={MASTER_DATA_LOAD_TYPE_PATH} element={<LoadTypePage />} />

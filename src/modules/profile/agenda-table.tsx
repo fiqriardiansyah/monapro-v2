@@ -1,30 +1,21 @@
-import React, { useContext, useRef } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import React, { useContext } from "react";
+import { Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
-
 import { UseQueryResult } from "react-query";
 import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
+import { BasePaginationResponse, AgendaData } from "models";
 import moment from "moment";
-import { DECISION, FOLLOW_UP, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
+import { DECISION, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { UserContext } from "context/user";
-import useIsForbidden from "hooks/useIsForbidden";
-import { useReactToPrint } from "react-to-print";
-import { TDataAgenda } from "./models";
-import Print from "./print";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
-    onClickEdit: (data: T) => void;
-    onClickPrint: (data: T) => void;
 };
 
-const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickPrint }: Props<T>) => {
+const AgendaDataTable = <T extends AgendaData>({ fetcher }: Props<T>) => {
     const { state } = useContext(UserContext);
-    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
 
     const location = useLocation();
     const [params] = useSearchParams();
@@ -52,11 +43,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             dataIndex: "no_agenda_secretariat",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        // {
-        //     title: "No Agenda disposisi",
-        //     dataIndex: "no_agenda_disposition",
-        //     render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        // },
         {
             title: "Tanggal",
             dataIndex: "date",
@@ -116,31 +102,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             render: (text) => <p className="capitalize m-0">{text ? moment(text).format(FORMAT_SHOW_DATE) : "-"}</p>,
         },
     ];
-
-    const action: ColumnsType<T>[0] = {
-        width: "200px",
-        title: "Action",
-        key: "action",
-        fixed: "right",
-        render: (_, record) => (
-            <Space size="middle" direction="horizontal">
-                <Button type="text" onClick={() => onClickEdit(record)}>
-                    Edit
-                </Button>
-                <Print data={record}>
-                    {(dt) => (
-                        <Button type="primary" onClick={dt.clickPrint}>
-                            Print
-                        </Button>
-                    )}
-                </Print>
-            </Space>
-        ),
-    };
-
-    if (!isForbidden) {
-        columns.push(action);
-    }
 
     return (
         <Table

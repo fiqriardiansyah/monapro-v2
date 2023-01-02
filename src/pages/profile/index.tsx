@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { Alert, Button, Card, Input, message, Skeleton } from "antd";
 import Header from "components/common/header";
 import State from "components/common/state";
@@ -19,7 +20,7 @@ import JustificationTable from "modules/profile/justification-table";
 import { UserContext } from "context/user";
 
 const ProfilePage = () => {
-    const { setState } = useContext(UserContext);
+    const { setState, state } = useContext(UserContext);
 
     const [searchParams] = useSearchParams();
     const page = searchParams.get("page") || 1;
@@ -170,19 +171,24 @@ const ProfilePage = () => {
             <div className="flex items-center justify-between">
                 <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">data role management</h1>
                 <AddUser onSubmit={onSubmitUser} loading={addUser.isLoading}>
-                    {(dt) => (
-                        <Button onClick={dt.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                            Tambah User
-                        </Button>
-                    )}
+                    {(dt) => {
+                        if (state.user?.role_id === 1) {
+                            return (
+                                <Button onClick={dt.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
+                                    Tambah User
+                                </Button>
+                            );
+                        }
+                        return <p />;
+                    }}
                 </AddUser>
             </div>
             <RoleManagementTable loading={editRole.isLoading} fetcher={getRole} onClickEdit={onClickEditHandler} />
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
                 <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">justifikasi {getProfile.data?.full_name}</h1>
             </div>
-            <JustificationTable fetcher={myJustification} />
+            <JustificationTable fetcher={myJustification} /> */}
         </div>
     );
 };

@@ -146,7 +146,7 @@ const FinanceTable = <T extends TDataFinance>({ fetcher, onClickPaid, onClickEdi
         ),
     };
 
-    if (!isForbidden) {
+    if (state.user?.role_id === 1) {
         columns.push(action);
     }
 

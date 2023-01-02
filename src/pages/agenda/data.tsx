@@ -24,6 +24,7 @@ import { saveAs } from "file-saver";
 import Utils from "utils";
 import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
 import moment from "moment";
+import Print from "modules/agenda/data/print";
 
 function loadFile(url: string, callback: any) {
     PizZipUtils.getBinaryContent(url, callback);
@@ -127,27 +128,28 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
     };
 
     const onClickPrint = async (data: T) => {
-        loadFile("https://panggilin-user.s3.ap-southeast-1.amazonaws.com/resources/telco/Template+Agenda.docx", (error: any, content: any) => {
-            if (error) throw error;
-            const zip = new PizZip(content);
-            const doc = new Docxtemplater(zip, {
-                paragraphLoop: true,
-                linebreaks: true,
-            });
-            doc.render({
-                agenda_no: data.no_agenda_secretariat,
-                letter_no: data.letter_no,
-                sender: data.sender,
-                about: data.about,
-                receive_date: data.date ? moment(data.date).format("DD-MM-yyyy") : "-",
-                letter_date: data.letter_date ? moment(data.letter_date).format("DD-MM-yyyy") : "-",
-            });
-            const blob = doc.getZip().generate({
-                type: "blob",
-                mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            });
-            saveAs(blob, `${data.no_agenda_secretariat}.docx`);
-        });
+        // ! if you want to download word file instead
+        // loadFile("https://panggilin-user.s3.ap-southeast-1.amazonaws.com/resources/telco/Template+Agenda.docx", (error: any, content: any) => {
+        //     if (error) throw error;
+        //     const zip = new PizZip(content);
+        //     const doc = new Docxtemplater(zip, {
+        //         paragraphLoop: true,
+        //         linebreaks: true,
+        //     });
+        //     doc.render({
+        //         agenda_no: data.no_agenda_secretariat,
+        //         letter_no: data.letter_no,
+        //         sender: data.sender,
+        //         about: data.about,
+        //         receive_date: data.date ? moment(data.date).format("DD-MM-yyyy") : "-",
+        //         letter_date: data.letter_date ? moment(data.letter_date).format("DD-MM-yyyy") : "-",
+        //     });
+        //     const blob = doc.getZip().generate({
+        //         type: "blob",
+        //         mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        //     });
+        //     saveAs(blob, `${data.no_agenda_secretariat}.docx`);
+        // });
     };
 
     const errors = [getList, createMutation, editMutation];
@@ -185,7 +187,6 @@ const AgendaDataPage = <T extends TDataAgenda>() => {
                 {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
                 <AgendaDataTable onClickPrint={onClickPrint} onClickEdit={onClickEdit} fetcher={getList} />
             </div>
-            {/* <Print data={printRow} ref={componentRef} /> */}
         </>
     );
 };

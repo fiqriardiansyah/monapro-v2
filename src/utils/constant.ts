@@ -69,7 +69,7 @@ export const STATUS_AGENDA = [
 export const ROLE = [
     {
         value: 1,
-        label: "User Admin",
+        label: "Super Admin",
     },
     {
         value: 2,

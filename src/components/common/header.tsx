@@ -1,10 +1,10 @@
-import { Button, Popover, Space } from "antd";
+import { Button, Dropdown, MenuProps, Popover, Space } from "antd";
 import { UserContext } from "context/user";
 import React, { useContext, useState } from "react";
-import { FiSearch } from "react-icons/fi";
-import { Link } from "react-router-dom";
+import { FiChevronRight, FiSearch } from "react-icons/fi";
+import { Link, useLocation } from "react-router-dom";
 import Utils from "utils";
-import { PROFILE_PATH } from "utils/routes";
+import { MYACTIVITY_PATH, PROFILE_PATH } from "utils/routes";
 
 type Props = {
     title?: string;
@@ -18,6 +18,7 @@ type Props = {
 
 const Header = ({ additional, title, action, placeholderInput = "Search...", onSubmitSearch, search = true, back }: Props) => {
     const { state, setState } = useContext(UserContext);
+    const location = useLocation();
 
     const [open, setOpen] = useState(false);
 
@@ -47,6 +48,48 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
         }
     };
 
+    const items: MenuProps["items"] = [
+        {
+            key: "1",
+            label: <p className="text-black font-semibold m-0 capitalize w-[200px]">{state.user?.fullname}</p>,
+            disabled: true,
+        },
+        {
+            key: "2",
+            label: (
+                <Link to={PROFILE_PATH}>
+                    <p
+                        className={`m-0 capitalize flex justify-between items-center ${
+                            location.pathname === PROFILE_PATH ? "text-primary" : "text-gray-400"
+                        }`}
+                    >
+                        profile <FiChevronRight />
+                    </p>
+                </Link>
+            ),
+        },
+        {
+            key: "3",
+            label: (
+                <Link to={MYACTIVITY_PATH}>
+                    <p
+                        className={` m-0 capitalize flex justify-between items-center ${
+                            location.pathname === MYACTIVITY_PATH ? "text-primary" : "text-gray-400"
+                        }`}
+                    >
+                        my active <FiChevronRight />
+                    </p>
+                </Link>
+            ),
+        },
+        {
+            key: "4",
+            label: <p className="capitalize m-0">logout</p>,
+            danger: true,
+            onClick: logoutHandler,
+        },
+    ];
+
     return (
         <div className="flex flex-col w-full 5 z-10 container mx-auto py-2 mt-5">
             <div className="w-full flex items-center justify-between">
@@ -73,7 +116,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                     )}
                     {additional && additional()}
                     {title && !search && !additional && <h1 className="capitalize text-xl font-bold text-gray-600 m-0">{title}</h1>}
-                    <Popover
+                    {/* <Popover
                         content={
                             <div className="flex flex-col">
                                 <p className="text-gray-400 m-0 lowercase">{state.user?.email}</p>
@@ -102,7 +145,21 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                                 )}
                             </Space>
                         </Link>
-                    </Popover>
+                    </Popover> */}
+                    <Dropdown menu={{ items }}>
+                        <Space direction="horizontal">
+                            <p className="m-0 capitalize font-medium text-gray-600">Hello, {state.user?.fullname || ""}</p>
+                            {state.user?.profile_image ? (
+                                <img
+                                    src={state.user?.profile_image}
+                                    alt="profile"
+                                    className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border"
+                                />
+                            ) : (
+                                <div className="w-9 h-9 cursor-pointer rounded-full object-cover border-solid border-white border bg-gray-200" />
+                            )}
+                        </Space>
+                    </Dropdown>
                 </>
             </div>
             <div className="w-full flex items-center justify-between mt-4">

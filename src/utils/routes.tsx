@@ -1,4 +1,5 @@
 export const PROFILE_PATH = "/profile";
+export const MYACTIVITY_PATH = "/profile/myactivity";
 export const RECAP_PATH = "/recap";
 export const SIGN_IN_PATH = "/signin";
 export const SOP_PATH = "/sop";

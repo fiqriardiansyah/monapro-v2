@@ -169,7 +169,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
         ),
     };
 
-    if (!isForbidden) {
+    if (state.user?.role_id === 1) {
         columns.push(action);
     }
 
