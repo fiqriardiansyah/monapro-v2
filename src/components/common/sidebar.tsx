@@ -9,7 +9,6 @@ import { TfiHandPointUp, TfiWrite } from "react-icons/tfi";
 import { CiMoneyBill } from "react-icons/ci";
 import { IoDocumentAttachOutline } from "react-icons/io5";
 import { GrNotes } from "react-icons/gr";
-import { CgNotes } from "react-icons/cg";
 import { GiTakeMyMoney } from "react-icons/gi";
 import { VscServerProcess } from "react-icons/vsc";
 
