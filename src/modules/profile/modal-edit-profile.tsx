@@ -9,6 +9,7 @@ import useBase64File from "hooks/useBase64File";
 import profileService from "services/api-endpoints/profile";
 import { useQuery } from "react-query";
 import { FEditUser } from "./models";
+import ModalPasswordChange from "./modal-password-change";
 
 type ChildrenProps = {
     isModalOpen: boolean;
@@ -133,7 +134,7 @@ const ModalEditProfile = ({ onSubmit, loading, children }: Props) => {
                             <ControlledInputText control={control} labelCol={{ xs: 24 }} name="full_name" label="Nama" placeholder="Nama" />
                         </div>
 
-                        <Row justify="start" className="mt-10">
+                        <div className="w-full items-center flex justify-between mt-10">
                             <Space>
                                 <Button type="primary" htmlType="submit" loading={loading} disabled={!isValid}>
                                     Simpan
@@ -142,7 +143,21 @@ const ModalEditProfile = ({ onSubmit, loading, children }: Props) => {
                                     Batalkan
                                 </Button>
                             </Space>
-                        </Row>
+                            <ModalPasswordChange>
+                                {(dt) => (
+                                    <Button
+                                        onClick={() => {
+                                            dt.openModal();
+                                            setIsModalOpen(false);
+                                        }}
+                                        type="link"
+                                        className=""
+                                    >
+                                        Ubah Password
+                                    </Button>
+                                )}
+                            </ModalPasswordChange>
+                        </div>
                     </Space>
                 </Form>
             </Modal>

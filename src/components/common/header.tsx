@@ -77,7 +77,7 @@ const Header = ({ additional, title, action, placeholderInput = "Search...", onS
                             location.pathname === MYACTIVITY_PATH ? "text-primary" : "text-gray-400"
                         }`}
                     >
-                        my active <FiChevronRight />
+                        my activity <FiChevronRight />
                     </p>
                 </Link>
             ),

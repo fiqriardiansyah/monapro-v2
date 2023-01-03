@@ -65,28 +65,29 @@ const MyActivity = () => {
                     </Link>
                 )}
             />
+            <h1 className="capitalize text-xl font-semibold m-0 mb-5">my activity</h1>
             <div className="flex items-center justify-between">
-                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">justifikasi</h1>
+                <h1 className="capitalize text-base font-semibold !text-gray-400 m-0 mb-5 mt-4">justifikasi</h1>
             </div>
             <JustificationTable fetcher={myJustification} />
 
             <div className="flex items-center justify-between">
-                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">cash dan carry</h1>
+                <h1 className="capitalize text-base font-semibold !text-gray-400 m-0 mb-5 mt-4">cash dan carry</h1>
             </div>
             <CashCarryTable fetcher={myCashCarry} />
 
             <div className="flex items-center justify-between">
-                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">agenda</h1>
+                <h1 className="capitalize text-base font-semibold !text-gray-400 m-0 mb-5 mt-4">agenda</h1>
             </div>
             <AgendaDataTable fetcher={myAgenda} />
 
             <div className="flex items-center justify-between">
-                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">Kontrak/SPK/NOPES</h1>
+                <h1 className="capitalize text-base font-semibold !text-gray-400 m-0 mb-5 mt-4">Kontrak/SPK/NOPES</h1>
             </div>
             <ContractSpNopesTable fetcher={myContract} />
 
             <div className="flex items-center justify-between">
-                <h1 className="capitalize text-xl font-semibold text-gray-600 m-0 mt-10 mb-5">Berita Acara</h1>
+                <h1 className="capitalize text-base font-semibold !text-gray-400 m-0 mb-5 mt-4">Berita Acara</h1>
             </div>
             <NewsTable fetcher={myNews} />
         </div>

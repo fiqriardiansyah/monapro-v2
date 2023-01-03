@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { MdDashboard } from "react-icons/md";
@@ -36,6 +36,7 @@ import {
     RECAP_PATH,
     SOP_PATH,
 } from "utils/routes";
+import { UserContext } from "context/user";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -54,6 +55,7 @@ type Props = {
 };
 
 function Sidebar({ collapse }: Props) {
+    const { state } = useContext(UserContext);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -80,7 +82,7 @@ function Sidebar({ collapse }: Props) {
         getItem("Data Rekap", RECAP_PATH, <BsClipboardData />),
         getItem("Master Data", "master-data", <AiFillDatabase />, [
             getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
-            getItem("Jenis Anggaran", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />),
+            state.user?.role_id === 1 ? getItem("Jenis Anggaran", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />) : null,
             // getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />), [IMPORTANT] not used
             getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
         ]),
