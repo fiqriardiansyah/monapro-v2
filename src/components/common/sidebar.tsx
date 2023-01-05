@@ -65,19 +65,17 @@ function Sidebar({ collapse }: Props) {
 
     const items: MenuProps["items"] = [
         getItem("Dashboard", "/", <MdDashboard />),
-        // getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
-        getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-            getItem("Agenda Data", AGENDA_DATA_PATH, <GrNotes />),
-            getItem("Cash & Carry", AGENDA_CASH_CARRY_PATH, <HiOutlineBanknotes />),
-            // getItem("Disposisi Agenda", AGENDA_DISPOSITION_PATH, <CgNotes />), [IMPORTANT] not used
-            // getItem("Finance Agenda", AGENDA_FINANCE_PATH, <HiOutlineBanknotes />), [IMPORTANT] not used
-        ]),
+        getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
+        // getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
+        //     getItem("Agenda Data", AGENDA_DATA_PATH, <GrNotes />),
+        // ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
             // getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used
             getItem("Kontrak/SPK/NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
             getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
+            getItem("Cash & Carry", AGENDA_CASH_CARRY_PATH, <HiOutlineBanknotes />),
         ]),
         getItem("Data Rekap", RECAP_PATH, <BsClipboardData />),
         getItem("Master Data", "master-data", <AiFillDatabase />, [

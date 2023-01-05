@@ -18,6 +18,7 @@ import { useQuery } from "react-query";
 import moment, { Moment } from "moment";
 import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL, PROCUREMENT_VALUES, SPONSORSHIP_VALUES, QUARTAL_MONTH_SHORT_EN } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
+import Utils from "utils";
 import { FDataJustification } from "./models";
 
 type ChildrenProps = {
@@ -172,6 +173,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: FDataJustification = {
             ...data,
+            value: Utils.convertToIntFormat(data.value as any) || "",
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
@@ -204,7 +206,9 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
 
     useEffect(() => {
         const values = type === SPONSORSHIP ? SPONSORSHIP_VALUES : PROCUREMENT_VALUES;
-        const findValue = values.sort((a, b) => b.value - a.value).find((el) => el.value < Number(value || 0));
+        const findValue = values
+            .sort((a, b) => b.value - a.value)
+            .find((el) => el.value < Number(Utils.convertToIntFormat((value as any) || "0") || 0));
         form.setFieldsValue({
             approval_position: findValue?.label,
         });

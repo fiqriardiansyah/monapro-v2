@@ -15,26 +15,26 @@ class CashCarryService extends BaseService {
 
     edit = "/cash-carry/edit";
 
-    // search = "/procurement/search-contract";
+    search = "/cash-carry/search";
 
     constructor() {
         super();
     }
 
-    // Search<T = any>(param: Models.SearchParam) {
-    //     return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
-    //         const req = await ApiMethod.get<BasePaginationResponse<T>>({
-    //             url: this.search,
-    //             config: {
-    //                 params: {
-    //                     ...param,
-    //                 },
-    //             },
-    //         });
-    //         if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
-    //         return req;
-    //     });
-    // }
+    Search<T extends CashCarry>(param: Models.SearchParam) {
+        return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<BasePaginationResponse<T>>({
+                url: this.search,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
 
     GetAll<T extends CashCarry>(param: { page: any }) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {

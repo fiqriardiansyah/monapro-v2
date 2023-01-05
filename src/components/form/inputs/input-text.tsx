@@ -18,7 +18,7 @@ const InputText: React.FC<TextInputProps> = forwardRef(
     ) => {
         const onInput = (e: React.ChangeEvent<HTMLInputElement>) => {
             const num = Math.abs(Utils.convertToIntFormat(e.target.value as unknown as string));
-            e.target.value = (Number.isNaN(num) ? "" : num) as unknown as string;
+            e.target.value = Utils.convertToStringFormat((Number.isNaN(num) ? "" : num) as number);
         };
 
         return (
@@ -65,7 +65,7 @@ const InputText: React.FC<TextInputProps> = forwardRef(
                         {...rest}
                         type="text"
                         placeholder={placeholder}
-                        value={value || ""}
+                        value={value ? Utils.convertToStringFormat(value as number) : ""}
                         onChange={onChange}
                         name={name}
                         onBlur={onBlur}

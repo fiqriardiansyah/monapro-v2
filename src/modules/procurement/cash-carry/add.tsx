@@ -16,6 +16,7 @@ import { useQuery } from "react-query";
 import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import moment from "moment";
+import Utils from "utils";
 import { TDataCreateCashCarry } from "./models";
 
 type ChildrenProps = {
@@ -34,7 +35,6 @@ const schema: yup.SchemaOf<Partial<TDataCreateCashCarry>> = yup.object().shape({
     submission_date: yup.string().required("Tanggal wajib diisi"),
     submission_value: yup.string().required("Nilai wajib diisi"),
     load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    subunit_id: yup.string().required("Sub unit wajib diisi"),
     billing_month: yup.string().required("Bulan pembayaran wajib diisi"),
     about: yup.string(),
     file_document: yup.string(),
@@ -55,26 +55,6 @@ const AddCashCarry = ({ onSubmit, loading, children }: Props) => {
         mode: "onChange",
         resolver: yupResolver(schema),
     });
-
-    const subUnitQuery = useQuery(
-        [procurementService.getSubUnit],
-        async () => {
-            const req = await procurementService.GetSubUnit();
-            const subunit = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.subunit_name,
-                        value: el.subunit_id,
-                    } as SelectOption)
-            );
-            return subunit;
-        },
-        {
-            onError: (error: any) => {
-                notification.error({ message: procurementService.getSubUnit, description: error?.message });
-            },
-        }
-    );
 
     const loadTypeQuery = useQuery(
         [procurementService.getLoadType],
@@ -116,6 +96,7 @@ const AddCashCarry = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: TDataCreateCashCarry = {
             ...data,
+            submission_value: Utils.convertToIntFormat(data.submission_value)?.toString() || "0",
             submission_date: moment(data.submission_date).format("yyyy-MM-DD"),
             billing_month: moment(data.billing_month).format("yyyy-MM-DD"),
             file_document: base64Attach,
@@ -179,18 +160,6 @@ const AddCashCarry = ({ onSubmit, loading, children }: Props) => {
                                             value: el.load_type_id,
                                         })) || []
                                     }
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="subunit_id"
-                                    label="Sub unit"
-                                    placeholder="Sub unit"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={subUnitQuery.isLoading}
-                                    options={subUnitQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>

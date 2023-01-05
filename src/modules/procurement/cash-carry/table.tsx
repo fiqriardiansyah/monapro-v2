@@ -60,12 +60,12 @@ const CashCarryTable = <T extends TDataCashCarry>({ fetcher, onClickEdit }: Prop
             width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        {
-            title: "Sub unit",
-            dataIndex: "subunit_name",
-            width: "150px",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
-        },
+        // {
+        //     title: "Sub unit",
+        //     dataIndex: "subunit_name",
+        //     width: "150px",
+        //     render: (text) => <p className="capitalize m-0">{text}</p>,
+        // },
         {
             title: "Bulan penagihan",
             dataIndex: "billing_month",

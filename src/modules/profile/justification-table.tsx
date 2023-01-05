@@ -8,9 +8,8 @@ import { BasePaginationResponse } from "models";
 import moment from "moment";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
-import { UserContext } from "context/user";
-import useIsForbidden from "hooks/useIsForbidden";
 import { TDataJustification } from "modules/procurement/justification/models";
+import { PROCUREMENT_JUSTIFICATION_PATH } from "utils/routes";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
@@ -21,7 +20,15 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
     const [params] = useSearchParams();
     const navigate = useNavigate();
 
-    const detailHandler = (data: T) => {};
+    const detailHandler = (data: T) => {
+        navigate({
+            pathname: PROCUREMENT_JUSTIFICATION_PATH,
+            search: `?${createSearchParams({
+                query: data.id?.toString(),
+                page: "1",
+            })}`,
+        });
+    };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         navigate({
@@ -127,19 +134,19 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
             },
         },
-        // {
-        //     width: "100px",
-        //     title: "Action",
-        //     key: "action",
-        //     fixed: "right",
-        //     render: (_, record) => (
-        //         <Space size="middle" direction="horizontal">
-        //             <Button type="text" onClick={() => detailHandler(record)}>
-        //                 Detail
-        //             </Button>
-        //         </Space>
-        //     ),
-        // },
+        {
+            width: "100px",
+            title: "Action",
+            key: "action",
+            fixed: "right",
+            render: (_, record) => (
+                <Space size="middle" direction="horizontal">
+                    <Button type="text" onClick={() => detailHandler(record)}>
+                        Detail
+                    </Button>
+                </Space>
+            ),
+        },
     ];
 
     return (

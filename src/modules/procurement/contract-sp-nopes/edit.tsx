@@ -18,6 +18,7 @@ import moment from "moment";
 import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
+import Utils from "utils";
 import { FDataContractSpNopes } from "./models";
 
 type ChildrenProps = {
@@ -144,6 +145,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
     const onSubmitHandler = handleSubmit((data) => {
         const parseData: FDataContractSpNopes = {
             ...data,
+            value: Utils.convertToIntFormat((data.value as any) || "0")?.toString(),
             date: data.date ? moment(data.date).format(FORMAT_DATE) : "",
             doc: base64 || getValues()?.doc || null,
         };

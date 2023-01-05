@@ -16,6 +16,7 @@ import useBase64File from "hooks/useBase64File";
 import moment from "moment";
 import cashCarryService from "services/api-endpoints/agenda/cash-carry";
 import ButtonDeleteFile from "components/common/button-delete-file";
+import Utils from "utils";
 import { TDataEditCashCarry } from "./models";
 
 type ChildrenProps = {
@@ -39,7 +40,6 @@ const schema: yup.SchemaOf<Partial<TDataEditCashCarry>> = yup.object().shape({
     submission_date: yup.string().required("Tanggal wajib diisi"),
     submission_value: yup.string().required("Nilai wajib diisi"),
     load_type_id: yup.string().required("Jenis beban wajib diisi"),
-    subunit_id: yup.string().required("Sub unit wajib diisi"),
     billing_month: yup.string().required("Bulan pembayaran wajib diisi"),
     about: yup.string(),
     file_document: yup.string(),
@@ -80,7 +80,6 @@ const EditCashCarry = ({ onSubmit, loading, children }: Props) => {
                     submission_date: data?.submission_date ? (moment(data?.submission_date) as any) : moment(),
                     submission_value: data.submission_value || "",
                     load_type_id: data.load_type_id || "",
-                    subunit_id: data.subunit_id || "",
                     billing_month: data?.billing_month ? (moment(data?.billing_month) as any) : moment(),
                     about: data.about || "",
                     file_document: data.file_document || "",
@@ -89,31 +88,10 @@ const EditCashCarry = ({ onSubmit, loading, children }: Props) => {
                 setValue("submission_date", data?.submission_date ? (moment(data?.submission_date) as any) : moment());
                 setValue("submission_value", data.submission_value || "");
                 setValue("load_type_id", data.load_type_id || "");
-                setValue("subunit_id", data.subunit_id || "");
                 setValue("billing_month", data?.billing_month ? (moment(data?.billing_month) as any) : moment());
                 setValue("about", data.about || "");
                 setValue("file_document", data.file_document || "");
                 setValue("status", data.status || "");
-            },
-        }
-    );
-
-    const subUnitQuery = useQuery(
-        [procurementService.getSubUnit],
-        async () => {
-            const req = await procurementService.GetSubUnit();
-            const subunit = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.subunit_name,
-                        value: el.subunit_id,
-                    } as SelectOption)
-            );
-            return subunit;
-        },
-        {
-            onError: (error: any) => {
-                notification.error({ message: procurementService.getSubUnit, description: error?.message });
             },
         }
     );
@@ -159,6 +137,7 @@ const EditCashCarry = ({ onSubmit, loading, children }: Props) => {
         const parseData: TDataEditId = {
             ...data,
             id: prevData?.id,
+            submission_value: Utils.convertToIntFormat(data.submission_value)?.toString() || "0",
             submission_date: moment(data.submission_date).format("yyyy-MM-DD"),
             billing_month: moment(data.billing_month).format("yyyy-MM-DD"),
             file_document: base64Attach || getValues()?.file_document || null,
@@ -246,18 +225,6 @@ const EditCashCarry = ({ onSubmit, loading, children }: Props) => {
                                             value: el.load_type_id,
                                         })) || []
                                     }
-                                />
-                            </Col>
-                            <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="subunit_id"
-                                    label="Sub unit"
-                                    placeholder="Sub unit"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={subUnitQuery.isLoading}
-                                    options={subUnitQuery.data || []}
                                 />
                             </Col>
                             <Col span={12}>

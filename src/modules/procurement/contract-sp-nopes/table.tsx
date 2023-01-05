@@ -103,6 +103,7 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit 
     return (
         <Table
             size="small"
+            scroll={{ x: 1500 }}
             loading={fetcher.isLoading}
             columns={columns}
             dataSource={fetcher.data?.list || []}

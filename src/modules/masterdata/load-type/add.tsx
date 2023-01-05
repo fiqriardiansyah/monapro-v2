@@ -14,6 +14,7 @@ import { MONTH_SHORT, QUARTAL_MONTH, QUARTAL_MONTH_SHORT } from "utils/constant"
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import moment from "moment";
+import Utils from "utils";
 import { FDataLoadType } from "./models";
 
 type ChildrenProps = {
@@ -118,6 +119,7 @@ const AddLoadType = ({ onSubmit, loading, children }: Props) => {
             if (!(month in parseData)) {
                 parseData[month] = 0;
             }
+            parseData[month] = Utils.convertToIntFormat(parseData[month]);
         });
 
         onSubmit(

@@ -36,7 +36,7 @@ import { UserContext } from "context/user";
 import ProfilePage from "pages/profile";
 import RecapDataPage from "pages/recap-data";
 import RegulationPage from "pages/masterdata/regulation";
-import CashCarryPage from "pages/agenda/cash-carry";
+import CashCarryPage from "pages/procurement/cash-carry";
 import MyActivity from "pages/profile/activity";
 
 function App() {

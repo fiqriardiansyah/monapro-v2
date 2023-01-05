@@ -4,26 +4,14 @@ import Header from "components/common/header";
 import { StateContext } from "context/state";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { AgendaData, CashCarry } from "models";
-import AddAgendaData from "modules/agenda/data/add";
-import EditAgendaData from "modules/agenda/data/edit";
-import { FDataAgenda, TDataAgenda } from "modules/agenda/data/models";
-import AgendaDataTable from "modules/agenda/data/table";
+import { CashCarry } from "models";
 import React, { useContext, useRef, useState } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
-import agendaDataService from "services/api-endpoints/agenda/agenda-data";
-import printService from "services/api-endpoints/print";
-import Docxtemplater from "docxtemplater";
-import PizZip from "pizzip";
-import PizZipUtils from "pizzip/utils/index";
-import { saveAs } from "file-saver";
 
 import Utils from "utils";
 import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
-import moment from "moment";
 import CashCarryTable from "modules/procurement/cash-carry/table";
 import { TDataCashCarry, TDataCreateCashCarry } from "modules/procurement/cash-carry/models";
 import cashCarryService from "services/api-endpoints/agenda/cash-carry";
@@ -43,6 +31,10 @@ const CashCarryPage = <T extends TDataCashCarry>() => {
 
     // crud fetcher
     const getList = useQuery([cashCarryService.getAll, page, query], async () => {
+        if (query) {
+            const res = await cashCarryService.Search<CashCarry>({ page: page as any, query: query as any });
+            return Utils.toBaseTable<CashCarry, T>(res.data.data);
+        }
         const res = await cashCarryService.GetAll<CashCarry>({ page });
         return Utils.toBaseTable<CashCarry, T>(res.data.data);
     });
@@ -119,6 +111,10 @@ const CashCarryPage = <T extends TDataCashCarry>() => {
         callback();
     };
 
+    const onSearchHandler = (qr: string) => {
+        setSearchParams({ page: "1", query: qr });
+    };
+
     const errors = [getList, createMutation, editMutation];
 
     return (
@@ -137,7 +133,7 @@ const CashCarryPage = <T extends TDataCashCarry>() => {
                     )}
                 </EditCashCarry>
                 <Header
-                    search={false}
+                    onSubmitSearch={onSearchHandler}
                     title="Cash & Carry"
                     action={
                         !isForbidden && (

@@ -15,6 +15,7 @@ import ControlledInputNumber from "components/form/controlled-inputs/controlled-
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import { AiOutlineMinus, AiOutlinePlus } from "react-icons/ai";
 import moment from "moment";
+import Utils from "utils";
 import { FDataLoadType, FDataLoadTypeId } from "./models";
 
 type ChildrenProps = {
@@ -146,9 +147,21 @@ const EditLoadType = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const parseData = {
+            ...data,
+        };
+
+        MONTH_SHORT.forEach((m) => {
+            const month = m as keyof FDataLoadType;
+            if (!(month in parseData)) {
+                parseData[month] = 0;
+            }
+            parseData[month] = Utils.convertToIntFormat(parseData[month]);
+        });
+
         onSubmit(
             {
-                ...data,
+                ...parseData,
                 id: prevData?.id as any,
                 year: moment(data.year).format("yyyy"),
                 budget_id: detailMutation.data?.budget_id as any,
