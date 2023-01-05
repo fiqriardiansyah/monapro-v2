@@ -13,7 +13,7 @@ import procurementService from "services/api-endpoints/procurement";
 import newsService from "services/api-endpoints/procurement/news";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, FORMAT_DATE_IND } from "utils/constant";
 import moment from "moment";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import { FDataNews } from "./models";
@@ -235,7 +235,13 @@ const EditNews = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date_news" label="Tanggal Berita Acara" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="date_news"
+                                    label="Tanggal Berita Acara"
+                                />
                             </Col>
                             <Col span={12}>
                                 {bapDocWatch ? (

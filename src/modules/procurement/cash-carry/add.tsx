@@ -13,7 +13,7 @@ import ControlledInputNumber from "components/form/controlled-inputs/controlled-
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, FORMAT_DATE_IND } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import moment from "moment";
 import Utils from "utils";
@@ -133,7 +133,13 @@ const AddCashCarry = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="submission_date" label="Tanngal pengajuan" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="submission_date"
+                                    label="Tanngal pengajuan"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText
@@ -166,6 +172,7 @@ const AddCashCarry = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate
                                     control={control}
                                     picker="month"
+                                    format="MMM yyyy"
                                     labelCol={{ xs: 12 }}
                                     name="billing_month"
                                     label="Bulan penagihan"

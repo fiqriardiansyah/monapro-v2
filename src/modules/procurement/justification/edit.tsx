@@ -15,7 +15,15 @@ import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
 import moment from "moment";
 import procurementService from "services/api-endpoints/procurement";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, PROCUREMENT_VALUES, QUARTAL, QUARTAL_MONTH_SHORT_EN, SPONSORSHIP_VALUES } from "utils/constant";
+import {
+    COMMON_FILE_EXTENSIONS,
+    FORMAT_DATE,
+    FORMAT_DATE_IND,
+    PROCUREMENT_VALUES,
+    QUARTAL,
+    QUARTAL_MONTH_SHORT_EN,
+    SPONSORSHIP_VALUES,
+} from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import Utils from "utils";
@@ -277,7 +285,13 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="justification_date"
+                                    label="Tanggal justifikasi"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText
@@ -353,6 +367,7 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate
                                     control={control}
                                     picker="month"
+                                    format="MMM yyyy"
                                     labelCol={{ xs: 12 }}
                                     name="estimation_paydate"
                                     label="Bulan penagihan"
@@ -412,7 +427,13 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
                                 )}
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="event_date"
+                                    label="Pelaksanaan acara"
+                                />
                             </Col>
                         </Row>
 

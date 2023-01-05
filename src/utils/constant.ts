@@ -6,6 +6,7 @@ export const locale = "en-us";
 
 export const FORMAT_DATE = "yyyy-MM-DD";
 export const FORMAT_SHOW_DATE = "DD MMM yyyy";
+export const FORMAT_DATE_IND = "DD-MM-yyyy";
 
 export const COMMON_FILE_EXTENSIONS = ["doc", "docx", "txt", "pdf", "html", "ppt", "pptx", "jpg", "jpeg", "png", "zip", "rar", "xls", "xlsx"];
 

@@ -12,7 +12,7 @@ import ControlledSelectInput from "components/form/controlled-inputs/controlled-
 import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import { useMutation, useQuery } from "react-query";
-import { COMMON_FILE_EXTENSIONS, DECISION, FOLLOW_UP, FORMAT_DATE, STATUS_AGENDA } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, DECISION, FOLLOW_UP, FORMAT_DATE, FORMAT_DATE_IND, STATUS_AGENDA } from "utils/constant";
 import agendaService from "services/api-endpoints/agenda";
 import agendaDataService from "services/api-endpoints/agenda/agenda-data";
 import moment from "moment";
@@ -217,7 +217,7 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
+                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" format={FORMAT_DATE_IND} />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText
@@ -232,7 +232,13 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="letter_no" label="No Surat" placeholder="Nomor" />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="letter_date" label="Tanggal Surat" />
+                                <ControlledInputDate
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="letter_date"
+                                    label="Tanggal Surat"
+                                    format={FORMAT_DATE_IND}
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText control={control} labelCol={{ xs: 12 }} name="sender" label="Pengirim" placeholder="Pengirim" />
@@ -277,7 +283,13 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledInputDate
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="event_date"
+                                    label="Pelaksanaan acara"
+                                    format={FORMAT_DATE_IND}
+                                />
                             </Col>
                             <Col span={12}>
                                 {docWatch ? (

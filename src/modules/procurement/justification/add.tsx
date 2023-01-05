@@ -16,7 +16,15 @@ import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
 import moment, { Moment } from "moment";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, QUARTAL, PROCUREMENT_VALUES, SPONSORSHIP_VALUES, QUARTAL_MONTH_SHORT_EN } from "utils/constant";
+import {
+    COMMON_FILE_EXTENSIONS,
+    FORMAT_DATE,
+    QUARTAL,
+    PROCUREMENT_VALUES,
+    SPONSORSHIP_VALUES,
+    QUARTAL_MONTH_SHORT_EN,
+    FORMAT_DATE_IND,
+} from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import Utils from "utils";
 import { FDataJustification } from "./models";
@@ -280,7 +288,13 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 </Col>
                             )}
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="justification_date" label="Tanggal justifikasi" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="justification_date"
+                                    label="Tanggal justifikasi"
+                                />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText
@@ -335,6 +349,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputDate
                                     control={control}
                                     picker="month"
+                                    format="MMM yyyy"
                                     labelCol={{ xs: 12 }}
                                     name="estimation_paydate"
                                     label="Bulan penagihan"
@@ -387,7 +402,13 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="event_date" label="Pelaksanaan acara" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="event_date"
+                                    label="Pelaksanaan acara"
+                                />
                             </Col>
                         </Row>
 

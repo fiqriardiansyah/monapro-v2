@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import contractService from "services/api-endpoints/procurement/contract";
 import moment from "moment";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, FORMAT_DATE_IND } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import Utils from "utils";
@@ -232,7 +232,7 @@ const EditContractSpNopes = ({ onSubmit, loading, children }: Props) => {
                                 />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
+                                <ControlledInputDate format={FORMAT_DATE_IND} control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" />
                             </Col>
                             <Col span={12}>
                                 <ControlledInputText

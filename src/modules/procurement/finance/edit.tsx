@@ -15,7 +15,7 @@ import { useMutation, useQuery } from "react-query";
 import procurementService from "services/api-endpoints/procurement";
 import financeService from "services/api-endpoints/procurement/finance";
 import moment from "moment";
-import { COMMON_FILE_EXTENSIONS, FORMAT_DATE } from "utils/constant";
+import { COMMON_FILE_EXTENSIONS, FORMAT_DATE, FORMAT_DATE_IND } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import ButtonDeleteFile from "components/common/button-delete-file";
 import { FDataFinance } from "./models";
@@ -260,13 +260,31 @@ const EditFinance = ({ onSubmit, loading, children }: Props) => {
                                 )}
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="tel21_date" label="Tanggal TEL21/SPB" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="tel21_date"
+                                    label="Tanggal TEL21/SPB"
+                                />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="spb_date" label="Tanggal SPB finance" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="spb_date"
+                                    label="Tanggal SPB finance"
+                                />
                             </Col>
                             <Col span={12}>
-                                <ControlledInputDate control={control} labelCol={{ xs: 24 }} name="payment_date" label="Tanggal Pembayaran" />
+                                <ControlledInputDate
+                                    format={FORMAT_DATE_IND}
+                                    control={control}
+                                    labelCol={{ xs: 24 }}
+                                    name="payment_date"
+                                    label="Tanggal Pembayaran"
+                                />
                             </Col>
                             {/* <Col span={12}>
                                 <ControlledInputNumber
