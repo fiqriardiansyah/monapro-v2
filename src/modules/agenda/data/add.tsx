@@ -36,6 +36,8 @@ const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
     endorse: yup.string(),
     letter_no: yup.string(),
     letter_date: yup.string().required("Tanggal Surat wajib diisi!"),
+    no_agenda_directors: yup.string(),
+    no_agenda_ccir: yup.string(),
     sender: yup.string().required("Pengirim wajib diisi!"),
     about: yup.string().required("Perihal wajib diisi!"),
     subunit_id: yup.string().required("Sub Unit wajib diisi!"),
@@ -147,6 +149,24 @@ const AddAgendaData = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="no_agenda_directors"
+                                    label="No. Agenda Direksi"
+                                    placeholder="No. Agenda Direksi"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="no_agenda_ccir"
+                                    label="No. Agenda CCIR"
+                                    placeholder="No. Agenda CCIR"
+                                />
+                            </Col>
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" format={FORMAT_DATE_IND} />
                             </Col>

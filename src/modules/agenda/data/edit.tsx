@@ -36,6 +36,8 @@ type Props = {
 const schema: yup.SchemaOf<Partial<FDataAgenda>> = yup.object().shape({
     date: yup.string(),
     endorse: yup.string(),
+    no_agenda_directors: yup.string(),
+    no_agenda_ccir: yup.string(),
     letter_no: yup.string(),
     letter_date: yup.string(),
     sender: yup.string(),
@@ -102,6 +104,8 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                     event_date: data?.event_date ? moment(data?.event_date) : moment(),
                     document: data?.document || "",
                     status: data?.status,
+                    no_agenda_ccir: data?.no_agenda_ccir,
+                    no_agenda_directors: data?.no_agenda_directors,
                 });
                 setValue("date", data?.date ? (moment(data?.date) as any) : moment());
                 setValue("endorse", data?.endorse || "");
@@ -114,6 +118,8 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                 setValue("event_date", data?.event_date ? (moment(data?.event_date) as any) : moment());
                 setValue("document", data?.document || "");
                 setValue("status", data?.status);
+                setValue("no_agenda_ccir", data?.no_agenda_ccir);
+                setValue("no_agenda_directors", data?.no_agenda_directors);
             },
         }
     );
@@ -123,6 +129,8 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
         reset();
         setPrevData(null);
         form.setFieldsValue({
+            no_agenda_directors: "",
+            no_agenda_ccir: "",
             date: "",
             endorse: "",
             letter_no: "",
@@ -216,6 +224,24 @@ const EditAgendaData = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="no_agenda_directors"
+                                    label="No. Agenda Direksi"
+                                    placeholder="No. Agenda Direksi"
+                                />
+                            </Col>
+                            <Col span={12}>
+                                <ControlledInputText
+                                    control={control}
+                                    labelCol={{ xs: 12 }}
+                                    name="no_agenda_ccir"
+                                    label="No. Agenda CCIR"
+                                    placeholder="No. Agenda CCIR"
+                                />
+                            </Col>
                             <Col span={12}>
                                 <ControlledInputDate control={control} labelCol={{ xs: 12 }} name="date" label="Tanggal" format={FORMAT_DATE_IND} />
                             </Col>

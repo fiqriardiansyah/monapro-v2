@@ -99,6 +99,8 @@ export interface AgendaData {
     id: string | number;
     no_agenda_secretariat: string;
     no_agenda_disposition: string;
+    no_agenda_directors: string;
+    no_agenda_ccir: string;
     date: string | null;
     endorse: string;
     letter_no: string;
