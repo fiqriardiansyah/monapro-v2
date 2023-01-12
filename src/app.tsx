@@ -17,6 +17,11 @@ import {
     PROCUREMENT_NEWS_PATH,
     PROFILE_PATH,
     RECAP_PATH,
+    SPONSORSHIP_CONTRACT_PATH,
+    SPONSORSHIP_FINANCE_PATH,
+    SPONSORSHIP_JUSTIFICATION_PATH,
+    SPONSORSHIP_NEWS_PATH,
+    SPONSORSHIP_NON_JUSTIFICATION_PATH,
 } from "utils/routes";
 
 // pages
@@ -38,6 +43,11 @@ import RecapDataPage from "pages/recap-data";
 import RegulationPage from "pages/masterdata/regulation";
 import CashCarryPage from "pages/procurement/cash-carry";
 import MyActivity from "pages/profile/activity";
+import NonJustificationPage from "pages/sponsorship/non-justification";
+import SJustificationPage from "pages/sponsorship/justification";
+import SContractPage from "pages/sponsorship/contract";
+import SNewsPage from "pages/sponsorship/news";
+import SFinancePage from "pages/sponsorship/finance";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -62,10 +72,18 @@ function App() {
                         <Route path={AGENDA_DATA_PATH} element={<AgendaDataPage />} />
                         <Route path={AGENDA_CASH_CARRY_PATH} element={<CashCarryPage />} />
                         <Route path={AGENDA_DISPOSITION_PATH} element={<AgendaDispositionPage />} />
+
                         <Route path={PROCUREMENT_JUSTIFICATION_PATH} element={<JustificationPage />} />
                         <Route path={PROCUREMENT_CONTRACT_PATH} element={<ContractPage />} />
                         <Route path={PROCUREMENT_NEWS_PATH} element={<NewsPage />} />
                         <Route path={PROCUREMENT_FINANCE_PATH} element={<FinancePage />} />
+
+                        <Route path={SPONSORSHIP_JUSTIFICATION_PATH} element={<SJustificationPage />} />
+                        <Route path={SPONSORSHIP_NON_JUSTIFICATION_PATH} element={<NonJustificationPage />} />
+                        <Route path={SPONSORSHIP_CONTRACT_PATH} element={<SContractPage />} />
+                        <Route path={SPONSORSHIP_NEWS_PATH} element={<SNewsPage />} />
+                        <Route path={SPONSORSHIP_FINANCE_PATH} element={<SFinancePage />} />
+
                         <Route path={RECAP_PATH} element={<RecapDataPage />} />
                     </Routes>
                 </Layout>

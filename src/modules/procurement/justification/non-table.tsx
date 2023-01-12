@@ -19,7 +19,7 @@ type Props<T> = {
     onClickLockBudget: (data: T, callback: () => void) => void;
 };
 
-const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
@@ -28,22 +28,22 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
     const navigate = useNavigate();
 
     const onClickLockBudgetHandler = (data: T) => {
-        Modal.confirm({
-            title: "Lock",
-            icon: <ImWarning className="text-red-400" />,
-            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran ${data.about_justification}?`,
-            onOk() {
-                return new Promise((resolve, reject) => {
-                    onClickLockBudget(data, () => {
-                        resolve(true);
-                    });
-                });
-            },
-            onCancel() {},
-            okButtonProps: {
-                danger: true,
-            },
-        });
+        // Modal.confirm({
+        //     title: "Lock",
+        //     icon: <ImWarning className="text-red-400" />,
+        //     content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran ${data.about_justification}?`,
+        //     onOk() {
+        //         return new Promise((resolve, reject) => {
+        //             onClickLockBudget(data, () => {
+        //                 resolve(true);
+        //             });
+        //         });
+        //     },
+        //     onCancel() {},
+        //     okButtonProps: {
+        //         danger: true,
+        //     },
+        // });
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
@@ -62,12 +62,6 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
             title: "No",
             dataIndex: "-",
             render: (text, record, i) => <p className="capitalize m-0">{((fetcher.data?.current_page || 1) - 1) * 10 + (i + 1)}</p>,
-        },
-        {
-            title: "No Justifikasi",
-            dataIndex: "no_justification",
-            width: "150px",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Tanggal Justifikasi",
@@ -191,4 +185,4 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
     );
 };
 
-export default JustificationTable;
+export default NonJustificationTable;

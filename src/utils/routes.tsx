@@ -12,12 +12,21 @@ export const MASTER_DATA_SOP_PATH = "/masterdata/sop";
 export const AGENDA_DATA_PATH = "/agenda/data";
 export const AGENDA_DISPOSITION_PATH = "/agenda/disposition";
 export const AGENDA_FINANCE_PATH = "/agenda/finance";
+
+export const AGENDA_CASH_CARRY_PATH = "/cash-carry";
+
 export const PROCUREMENT_JUSTIFICATION_PATH = "/procurement/justification";
-export const AGENDA_CASH_CARRY_PATH = "/procurement/cash-carry";
 export const PROCUREMENT_NEGOTIATION_PATH = "/procurement/negotiation";
 export const PROCUREMENT_CONTRACT_PATH = "/procurement/contract";
 export const PROCUREMENT_NEWS_PATH = "/procurement/news";
 export const PROCUREMENT_FINANCE_PATH = "/procurement/finance";
+
+export const SPONSORSHIP_JUSTIFICATION_PATH = "/sponsorship/justification";
+export const SPONSORSHIP_NON_JUSTIFICATION_PATH = "/sponsorship/nonjustification";
+export const SPONSORSHIP_NEGOTIATION_PATH = "/sponsorship/negotiation";
+export const SPONSORSHIP_CONTRACT_PATH = "/sponsorship/contract";
+export const SPONSORSHIP_NEWS_PATH = "/sponsorship/news";
+export const SPONSORSHIP_FINANCE_PATH = "/sponsorship/finance";
 
 export const PAGES_WITHOUT_LAYOUT = [SIGN_IN_PATH];
 

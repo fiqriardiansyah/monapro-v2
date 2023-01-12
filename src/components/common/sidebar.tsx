@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { MdDashboard } from "react-icons/md";
-import { AiFillDatabase, AiOutlineDeploymentUnit } from "react-icons/ai";
+import { AiFillDatabase, AiOutlineDeploymentUnit, AiOutlineException } from "react-icons/ai";
 import { BsClipboardData, BsFillCalendarCheckFill } from "react-icons/bs";
-import { HiClipboardDocumentCheck, HiOutlineBanknotes } from "react-icons/hi2";
+import { HiClipboardDocumentCheck, HiOutlineBanknotes, HiScale } from "react-icons/hi2";
 import { TfiHandPointUp, TfiWrite } from "react-icons/tfi";
 import { CiMoneyBill } from "react-icons/ci";
 import { IoDocumentAttachOutline } from "react-icons/io5";
@@ -35,6 +35,11 @@ import {
     PROCUREMENT_NEWS_PATH,
     RECAP_PATH,
     SOP_PATH,
+    SPONSORSHIP_CONTRACT_PATH,
+    SPONSORSHIP_FINANCE_PATH,
+    SPONSORSHIP_JUSTIFICATION_PATH,
+    SPONSORSHIP_NEWS_PATH,
+    SPONSORSHIP_NON_JUSTIFICATION_PATH,
 } from "utils/routes";
 import { UserContext } from "context/user";
 
@@ -66,22 +71,24 @@ function Sidebar({ collapse }: Props) {
     const items: MenuProps["items"] = [
         getItem("Dashboard", "/", <MdDashboard />),
         getItem("Agenda", AGENDA_DATA_PATH, <GrNotes />),
-        // getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
-        //     getItem("Agenda Data", AGENDA_DATA_PATH, <GrNotes />),
-        // ]),
+        getItem("Sponsorship", "sponsorship", <HiScale />, [
+            getItem("Justifikasi", SPONSORSHIP_JUSTIFICATION_PATH, <TfiHandPointUp />),
+            getItem("Non Justifikasi", SPONSORSHIP_NON_JUSTIFICATION_PATH, <AiOutlineException />),
+            getItem("Kontrak/SPK", SPONSORSHIP_CONTRACT_PATH, <IoDocumentAttachOutline />),
+            getItem("Berita Acara", SPONSORSHIP_NEWS_PATH, <TfiWrite />),
+            getItem("Finance", SPONSORSHIP_FINANCE_PATH, <CiMoneyBill />),
+        ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
-            // getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used
-            getItem("Kontrak/SPK/NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
+            getItem("NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
             getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),
-            getItem("Cash & Carry", AGENDA_CASH_CARRY_PATH, <HiOutlineBanknotes />),
         ]),
+        getItem("Cash & Carry", AGENDA_CASH_CARRY_PATH, <HiOutlineBanknotes />),
         getItem("Data Rekap", RECAP_PATH, <BsClipboardData />),
         getItem("Master Data", "master-data", <AiFillDatabase />, [
             getItem("Sub Unit", MASTER_DATA_SUB_UNIT_PATH, <AiOutlineDeploymentUnit />),
             state.user?.role_id === 1 ? getItem("Jenis Anggaran", MASTER_DATA_LOAD_TYPE_PATH, <GiTakeMyMoney />) : null,
-            // getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />), [IMPORTANT] not used
             getItem("Peraturan Internal", MASTER_DATA_SOP_PATH, <VscServerProcess />),
         ]),
     ];
@@ -95,5 +102,10 @@ function Sidebar({ collapse }: Props) {
         </div>
     );
 }
+// getItem("Agenda", "agenda", <BsFillCalendarCheckFill />, [
+//     getItem("Agenda Data", AGENDA_DATA_PATH, <GrNotes />),
+// ]),
+// getItem("Negosiasi", PROCUREMENT_NEGOTIATION_PATH, <HiScale />), [IMPORTANT] not used
+// getItem("Jabatan Approval", MASTER_DATA_APPROVAL_POSITION_PATH, <BsPersonCheck />), [IMPORTANT] not used
 
 export default Sidebar;

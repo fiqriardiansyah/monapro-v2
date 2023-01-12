@@ -28,11 +28,11 @@ const Layout = ({ children }: Props) => {
                     collapsible
                     collapsed={collapsed}
                     onCollapse={(value) => setCollapsed(value)}
-                    width={300}
+                    width={220}
                 >
                     <Sidebar collapse={collapsed} />
                 </LayoutAntd.Sider>
-                <LayoutAntd style={{ marginLeft: collapsed ? 80 : 300, transition: "all .4s", background: "#f4f4f4" }} className="w-screen">
+                <LayoutAntd style={{ marginLeft: collapsed ? 80 : 220, transition: "all .4s", background: "#f4f4f4" }} className="w-screen">
                     <LayoutAntd.Content>{children}</LayoutAntd.Content>
                 </LayoutAntd>
             </LayoutAntd>
