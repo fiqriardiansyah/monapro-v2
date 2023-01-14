@@ -5,17 +5,6 @@ import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
-export interface JustificationParam {
-    page: string | number;
-    type: number;
-}
-
-export interface JustificationSearchParam {
-    query: string;
-    page: number;
-    type: number;
-}
-
 class JustificationService extends BaseService {
     getAll = "/procurement/get-all-justification";
 
@@ -69,7 +58,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    Search<T = any>(param: JustificationSearchParam) {
+    Search<T = any>(param: Models.DefaultSearchTypeParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.search,
@@ -84,7 +73,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    GetAll<T = any>(param: JustificationParam) {
+    GetAll<T = any>(param: Models.DefaultTypeParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,

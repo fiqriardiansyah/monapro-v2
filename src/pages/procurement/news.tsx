@@ -12,7 +12,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import newsService from "services/api-endpoints/procurement/news";
-import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import { AWS_PATH, KEY_UPLOAD_FILE, PROCUREMENT_TYPE } from "utils/constant";
 
 // [FINISH]
 
@@ -28,12 +28,12 @@ const NewsPage = <T extends TDataNews>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([query ? newsService.search : newsService.getAll, page, query], async () => {
+    const getList = useQuery([query ? newsService.search : newsService.getAll, page, query, PROCUREMENT_TYPE], async () => {
         if (query) {
-            const req = await newsService.Search({ page: page as any, query: query as any });
+            const req = await newsService.Search({ page: page as any, query: query as any, type: PROCUREMENT_TYPE });
             return req.data.data;
         }
-        const req = await newsService.GetAll({ page });
+        const req = await newsService.GetAll({ page, type: PROCUREMENT_TYPE });
         return req.data.data;
     });
 

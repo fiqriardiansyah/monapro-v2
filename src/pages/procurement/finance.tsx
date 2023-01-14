@@ -13,7 +13,7 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import financeService from "services/api-endpoints/procurement/finance";
-import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import { AWS_PATH, KEY_UPLOAD_FILE, PROCUREMENT_TYPE } from "utils/constant";
 
 // [FINISH]
 
@@ -31,10 +31,10 @@ const FinancePage = <T extends TDataFinance>() => {
     // crud fetcher
     const getList = useQuery([query ? financeService.search : financeService.getAll, page, query], async () => {
         if (query) {
-            const req = await financeService.Search({ page: page as any, query: query as any });
+            const req = await financeService.Search({ page: page as any, query: query as any, type: PROCUREMENT_TYPE });
             return req.data.data;
         }
-        const req = await financeService.GetAll({ page });
+        const req = await financeService.GetAll({ page, type: PROCUREMENT_TYPE });
         return req.data.data;
     });
 

@@ -25,6 +25,7 @@ import {
     QUARTAL_MONTH_SHORT_EN,
     FORMAT_DATE_IND,
     SPONSORSHIP_TYPE,
+    MAXIMAL_NON_JUSTIFICATION,
 } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import Utils from "utils";
@@ -45,7 +46,7 @@ type Props = {
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
     agenda_data_id: yup.string().required("Agenda wajib diisi"),
-    value: yup.string(),
+    value: yup.string().required("Nilai wajib diisi"),
     about_justification: yup.string(),
     approval_position: yup.string().required("Approval posisi wajib diisi"), // wajib
     load_type_id: yup.string().required("Jenis beban wajib diisi"), // wajib
@@ -70,6 +71,7 @@ const AddJustificationSponsorship = ({ onSubmit, loading, children }: Props) => 
         watch,
         reset,
         setValue,
+        setError,
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
@@ -158,9 +160,18 @@ const AddJustificationSponsorship = ({ onSubmit, loading, children }: Props) => 
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const value = Utils.convertToIntFormat(data.value as any) || 0;
+        if (value <= MAXIMAL_NON_JUSTIFICATION) {
+            setError("value", {
+                message: "Minimal nilai lebih dari 20.000.0000",
+                type: "min",
+            });
+            return;
+        }
+
         const parseData: FDataJustification = {
             ...data,
-            value: Utils.convertToIntFormat(data.value as any) || "",
+            value,
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",

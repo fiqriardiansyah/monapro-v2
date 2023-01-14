@@ -341,3 +341,14 @@ export interface RecapFilterParam {
 export interface RecapFilterAllParam extends Omit<RecapFilterParam, "page"> {
     _?: any;
 }
+
+export interface DefaultTypeParam {
+    page: string | number;
+    type: number;
+}
+
+export interface DefaultSearchTypeParam {
+    query: string;
+    page: number;
+    type: number;
+}

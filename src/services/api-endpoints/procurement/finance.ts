@@ -22,7 +22,7 @@ class FinanceService extends BaseService {
         super();
     }
 
-    Search<T = any>(param: Models.SearchParam) {
+    Search<T = any>(param: Models.DefaultSearchTypeParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.search,
@@ -37,7 +37,7 @@ class FinanceService extends BaseService {
         });
     }
 
-    GetAll<T = any>(param: Models.FinanceGetAllParam) {
+    GetAll<T = any>(param: Models.DefaultTypeParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,

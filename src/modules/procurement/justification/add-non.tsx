@@ -14,15 +14,16 @@ import ControlledSelectInput from "components/form/controlled-inputs/controlled-
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
-import moment from "moment";
+import moment, { Moment } from "moment";
 import {
     COMMON_FILE_EXTENSIONS,
     FORMAT_DATE,
     QUARTAL,
-    PROCUREMENT_VALUES,
+    SPONSORSHIP_VALUES,
     QUARTAL_MONTH_SHORT_EN,
     FORMAT_DATE_IND,
-    PROCUREMENT_TYPE,
+    SPONSORSHIP_TYPE,
+    MAXIMAL_NON_JUSTIFICATION,
 } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import Utils from "utils";
@@ -42,8 +43,8 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    agenda_data_id: yup.string().nullable(),
-    value: yup.string(),
+    agenda_data_id: yup.string().required("Agenda wajib diisi"),
+    value: yup.string().required("Nilai wajib diisi"),
     about_justification: yup.string(),
     approval_position: yup.string().required("Approval posisi wajib diisi"), // wajib
     load_type_id: yup.string().required("Jenis beban wajib diisi"), // wajib
@@ -68,14 +69,16 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         watch,
         reset,
         setValue,
+        setError,
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
         defaultValues: {
-            type: PROCUREMENT_TYPE,
+            type: SPONSORSHIP_TYPE,
         },
     });
 
+    const agenda = watch("agenda_data_id");
     const value = watch("value");
     const estimationPaydate = watch("estimation_paydate");
 
@@ -112,6 +115,19 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
+    const agendaDataQuery = useQuery(
+        [procurementService.getNoAgenda],
+        async () => {
+            const req = await procurementService.GetNoAgenda();
+            return req.data.data;
+        },
+        {
+            onError: (error: any) => {
+                notification.error({ message: procurementService.getSubUnit, description: error?.message });
+            },
+        }
+    );
+
     const resetForm = () => {
         processFile(null);
         reset();
@@ -141,16 +157,27 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         setIsModalOpen(true);
     };
 
-    const onSubmitHandler = handleSubmit((data) => {
+    const onSubmitHandler = handleSubmit(async (data) => {
+        await form.validateFields();
+
+        const value = Utils.convertToIntFormat(data.value as any) || 0;
+        if (value > MAXIMAL_NON_JUSTIFICATION) {
+            setError("value", {
+                message: "Maximal nilai 20.000.0000",
+                type: "max",
+            });
+            return;
+        }
+
         const parseData: FDataJustification = {
             ...data,
-            value: Utils.convertToIntFormat(data.value as any) || "",
+            value,
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
-            agenda_data_id: null,
+            agenda_data_id: data.agenda_data_id || null,
             doc_justification: base64,
-            type: PROCUREMENT_TYPE,
+            type: SPONSORSHIP_TYPE,
         };
         onSubmit(parseData, () => {
             closeModal();
@@ -169,7 +196,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
     };
 
     useEffect(() => {
-        const findValue = PROCUREMENT_VALUES.sort((a, b) => b.value - a.value).find(
+        const findValue = SPONSORSHIP_VALUES.sort((a, b) => b.value - a.value).find(
             (el) => el.value < Number(Utils.convertToIntFormat((value as any) || "0") || 0)
         );
         form.setFieldsValue({
@@ -177,6 +204,15 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         });
         setValue("approval_position", findValue?.label || "");
     }, [value]);
+
+    useEffect(() => {
+        if (agenda === undefined || agenda === null) return;
+        const about = agendaDataQuery.data?.find((el) => el.agenda_data_id === Number(agenda))?.about;
+        form.setFieldsValue({
+            about_justification: about || "",
+        });
+        setValue("about_justification", about || "");
+    }, [agenda]);
 
     useEffect(() => {
         if (!estimationPaydate) return;
@@ -188,7 +224,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
 
     return (
         <>
-            <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
+            <Modal width={800} confirmLoading={loading} title="Tambah Non Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -201,6 +237,26 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
+                            <Col span={12}>
+                                <ControlledSelectInput
+                                    showSearch
+                                    name="agenda_data_id"
+                                    label="No Agenda"
+                                    placeholder="No Agenda"
+                                    optionFilterProp="children"
+                                    control={control}
+                                    loading={agendaDataQuery.isLoading}
+                                    options={
+                                        agendaDataQuery.data?.map(
+                                            (el) =>
+                                                ({
+                                                    label: el.no_agenda_secretariat,
+                                                    value: el.agenda_data_id,
+                                                } as SelectOption)
+                                        ) || []
+                                    }
+                                />
+                            </Col>
                             <Col span={12}>
                                 <ControlledInputDate
                                     format={FORMAT_DATE_IND}
@@ -224,6 +280,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText
                                     control={control}
                                     labelCol={{ xs: 12 }}
+                                    disabled
                                     name="about_justification"
                                     label="Perihal"
                                     placeholder="Perihal"

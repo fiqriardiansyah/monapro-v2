@@ -10,7 +10,7 @@ import React, { useContext, useRef } from "react";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import contractService from "services/api-endpoints/procurement/contract";
-import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import { AWS_PATH, KEY_UPLOAD_FILE, SPONSORSHIP_TYPE } from "utils/constant";
 
 // [FINISH]
 
@@ -28,10 +28,10 @@ const SContractPage = <T extends TDataContractSpNopes>() => {
     // crud fetcher
     const getList = useQuery([query ? contractService.search : contractService.getAll, page, query], async () => {
         if (query) {
-            const req = await contractService.Search({ page: page as any, query: query as any });
+            const req = await contractService.Search({ page: page as any, query: query as any, type: SPONSORSHIP_TYPE });
             return req.data.data;
         }
-        const req = await contractService.GetAll({ page });
+        const req = await contractService.GetAll({ page, type: SPONSORSHIP_TYPE });
         return req.data.data;
     });
 
