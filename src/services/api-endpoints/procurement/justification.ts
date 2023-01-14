@@ -5,8 +5,21 @@ import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
 
+export interface JustificationParam {
+    page: string | number;
+    type: number;
+}
+
+export interface JustificationSearchParam {
+    query: string;
+    page: number;
+    type: number;
+}
+
 class JustificationService extends BaseService {
     getAll = "/procurement/get-all-justification";
+
+    getAllNon = "/procurement/get-non-justification";
 
     create = "/procurement/create-justification";
 
@@ -20,11 +33,43 @@ class JustificationService extends BaseService {
 
     search = "/procurement/search-justification";
 
+    searchNon = "/procurement/search-non-justification";
+
     constructor() {
         super();
     }
 
-    Search<T = any>(param: Models.SearchParam) {
+    SearchNon<T = any>(param: { query: any; page: any }) {
+        return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<BasePaginationResponse<T>>({
+                url: this.searchNon,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    GetAllNon<T = any>(param: { page: any }) {
+        return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
+            const req = await ApiMethod.get<BasePaginationResponse<T>>({
+                url: this.getAllNon,
+                config: {
+                    params: {
+                        ...param,
+                    },
+                },
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    Search<T = any>(param: JustificationSearchParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.search,
@@ -39,7 +84,7 @@ class JustificationService extends BaseService {
         });
     }
 
-    GetAll<T = any>(param: Models.JustificationGetAllParam) {
+    GetAll<T = any>(param: JustificationParam) {
         return this.ProxyRequest<BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<BasePaginationResponse<T>>({
                 url: this.getAll,

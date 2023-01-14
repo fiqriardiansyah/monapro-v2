@@ -17,9 +17,10 @@ type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
     onClickLockBudget: (data: T, callback: () => void) => void;
+    isProcurement?: boolean;
 };
 
-const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+const JustificationTable = <T extends TDataJustification>({ fetcher, isProcurement, onClickEdit, onClickLockBudget }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
@@ -80,12 +81,6 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
             dataIndex: "-",
             width: "150px",
             render: (text, record) => <p className="capitalize m-0">{record.no_agenda ? "sponsorship" : "procurement"}</p>,
-        },
-        {
-            title: "No Agenda",
-            dataIndex: "no_agenda",
-            width: "150px",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
             title: "Perihal",
@@ -171,6 +166,15 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit
 
     if (state.user?.role_id === 1) {
         columns.push(action);
+    }
+
+    if (!isProcurement && !columns.find((el) => el.title === "No Agenda")) {
+        columns.splice(4, 0, {
+            title: "No Agenda",
+            dataIndex: "no_agenda",
+            width: "150px",
+            render: (text) => <p className="capitalize m-0">{text}</p>,
+        });
     }
 
     return (

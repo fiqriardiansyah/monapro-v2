@@ -3,8 +3,8 @@ import Header from "components/common/header";
 import { StateContext } from "context/state";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { AgendaDataLockBudgetData, BasePaginationResponse, Justification } from "models";
-import AddJustification from "modules/procurement/justification/add";
+import { AgendaDataLockBudgetData, Justification } from "models";
+import AddNonJustification from "modules/procurement/justification/add-non";
 import EditJustification from "modules/procurement/justification/edit";
 import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
 import NonJustificationTable from "modules/procurement/justification/non-table";
@@ -29,12 +29,12 @@ const NonJustificationPage = <T extends TDataJustification>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([query ? justificationService.search : justificationService.getAll, page, query], async () => {
+    const getList = useQuery([query ? justificationService.searchNon : justificationService.getAllNon, page, query], async () => {
         if (query) {
-            const res = await justificationService.Search<Justification>({ page: page as any, query: query as any });
+            const res = await justificationService.SearchNon<Justification>({ page: page as any, query: query as any });
             return Utils.toBaseTable<Justification, T>(res.data.data);
         }
-        const res = await justificationService.GetAll<Justification>({ page });
+        const res = await justificationService.GetAllNon<Justification>({ page });
         return Utils.toBaseTable<Justification, T>(res.data.data);
     });
 
@@ -153,13 +153,13 @@ const NonJustificationPage = <T extends TDataJustification>() => {
                 onSubmitSearch={onSearchHandler}
                 action={
                     !isForbidden && (
-                        <AddJustification loading={createMutation.isLoading} onSubmit={addHandler}>
+                        <AddNonJustification loading={createMutation.isLoading} onSubmit={addHandler}>
                             {(data) => (
                                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
                                     Tambah Justifikasi
                                 </Button>
                             )}
-                        </AddJustification>
+                        </AddNonJustification>
                     )
                 }
             />

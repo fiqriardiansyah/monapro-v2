@@ -2,7 +2,7 @@
 /* eslint-disable no-self-compare */
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -11,19 +11,18 @@ import ControlledInputText from "components/form/controlled-inputs/controlled-in
 import { SelectOption } from "models";
 import ControlledInputDate from "components/form/controlled-inputs/controlled-input-date";
 import ControlledSelectInput from "components/form/controlled-inputs/controlled-input-select";
-import ControlledInputNumber from "components/form/controlled-inputs/controlled-input-number";
 import InputFile from "components/form/inputs/input-file";
 import procurementService from "services/api-endpoints/procurement";
 import { useQuery } from "react-query";
-import moment, { Moment } from "moment";
+import moment from "moment";
 import {
     COMMON_FILE_EXTENSIONS,
     FORMAT_DATE,
     QUARTAL,
     PROCUREMENT_VALUES,
-    SPONSORSHIP_VALUES,
     QUARTAL_MONTH_SHORT_EN,
     FORMAT_DATE_IND,
+    PROCUREMENT_TYPE,
 } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
 import Utils from "utils";
@@ -43,7 +42,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    agenda_data_id: yup.string(),
+    agenda_data_id: yup.string().nullable(),
     value: yup.string(),
     about_justification: yup.string(),
     approval_position: yup.string().required("Approval posisi wajib diisi"), // wajib
@@ -54,15 +53,11 @@ const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     event_date: yup.string().required("Tanggal wajib diisi"),
     estimation_paydate: yup.string().required("Tanggal wajib diisi"),
     doc_justification: yup.string(),
+    type: yup.number().required(""),
 });
 
-const SPONSORSHIP = 0;
-const PROCUREMENT = 1;
-
-const AddJustification = ({ onSubmit, loading, children }: Props) => {
+const AddJustificationProcurement = ({ onSubmit, loading, children }: Props) => {
     const { base64, processFile, isProcessLoad } = useBase64File();
-
-    const [type, setType] = useState(SPONSORSHIP);
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -76,9 +71,11 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
+        defaultValues: {
+            type: PROCUREMENT_TYPE,
+        },
     });
 
-    const agenda = watch("agenda_data_id");
     const value = watch("value");
     const estimationPaydate = watch("estimation_paydate");
 
@@ -115,41 +112,7 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         }
     );
 
-    const approvalQuery = useQuery(
-        [procurementService.getApprovalPosition],
-        async () => {
-            const req = await procurementService.GetApprovalPosition();
-            const approval = req.data.data?.map(
-                (el) =>
-                    ({
-                        label: el.position,
-                        value: el.approval_position_id,
-                    } as SelectOption)
-            );
-            return approval;
-        },
-        {
-            onError: (error: any) => {
-                notification.error({ message: procurementService.getApprovalPosition, description: error?.message });
-            },
-        }
-    );
-
-    const agendaDataQuery = useQuery(
-        [procurementService.getNoAgenda],
-        async () => {
-            const req = await procurementService.GetNoAgenda();
-            return req.data.data;
-        },
-        {
-            onError: (error: any) => {
-                notification.error({ message: procurementService.getSubUnit, description: error?.message });
-            },
-        }
-    );
-
     const resetForm = () => {
-        setType(SPONSORSHIP);
         processFile(null);
         reset();
         form.setFieldsValue({
@@ -185,8 +148,9 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
-            agenda_data_id: data.agenda_data_id || null,
+            agenda_data_id: null,
             doc_justification: base64,
+            type: PROCUREMENT_TYPE,
         };
         onSubmit(parseData, () => {
             closeModal();
@@ -204,35 +168,15 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
         processFile(file);
     };
 
-    const changeTypeHandler = (tp: number) => {
-        setType(tp);
-        setValue("agenda_data_id", "");
-        form.setFieldsValue({
-            agenda_data_id: "",
-        });
-    };
-
     useEffect(() => {
-        const values = type === SPONSORSHIP ? SPONSORSHIP_VALUES : PROCUREMENT_VALUES;
-        const findValue = values
-            .sort((a, b) => b.value - a.value)
-            .find((el) => el.value < Number(Utils.convertToIntFormat((value as any) || "0") || 0));
+        const findValue = PROCUREMENT_VALUES.sort((a, b) => b.value - a.value).find(
+            (el) => el.value < Number(Utils.convertToIntFormat((value as any) || "0") || 0)
+        );
         form.setFieldsValue({
             approval_position: findValue?.label,
         });
         setValue("approval_position", findValue?.label || "");
-    }, [value, type]);
-
-    useEffect(() => {
-        if (type === SPONSORSHIP) {
-            if (agenda === undefined || agenda === null) return;
-            const about = agendaDataQuery.data?.find((el) => el.agenda_data_id === Number(agenda))?.about;
-            form.setFieldsValue({
-                about_justification: about || "",
-            });
-            setValue("about_justification", about || "");
-        }
-    }, [agenda, type]);
+    }, [value]);
 
     useEffect(() => {
         if (!estimationPaydate) return;
@@ -245,14 +189,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     return (
         <>
             <Modal width={800} confirmLoading={loading} title="Tambah Justifikasi" open={isModalOpen} onCancel={closeModal} footer={null}>
-                <Space className="!mb-7">
-                    <Button onClick={() => changeTypeHandler(SPONSORSHIP)} type={type === SPONSORSHIP ? "primary" : "default"}>
-                        Sponsorship
-                    </Button>
-                    <Button onClick={() => changeTypeHandler(PROCUREMENT)} type={type === PROCUREMENT ? "primary" : "default"}>
-                        Procurement
-                    </Button>
-                </Space>
                 <Form
                     form={form}
                     labelCol={{ span: 3 }}
@@ -265,28 +201,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                 >
                     <Space direction="vertical" className="w-full">
                         <Row gutter={10}>
-                            {type === SPONSORSHIP && (
-                                <Col span={12}>
-                                    <ControlledSelectInput
-                                        showSearch
-                                        name="agenda_data_id"
-                                        label="No Agenda"
-                                        placeholder="No Agenda"
-                                        optionFilterProp="children"
-                                        control={control}
-                                        loading={agendaDataQuery.isLoading}
-                                        options={
-                                            agendaDataQuery.data?.map(
-                                                (el) =>
-                                                    ({
-                                                        label: el.no_agenda_secretariat,
-                                                        value: el.agenda_data_id,
-                                                    } as SelectOption)
-                                            ) || []
-                                        }
-                                    />
-                                </Col>
-                            )}
                             <Col span={12}>
                                 <ControlledInputDate
                                     format={FORMAT_DATE_IND}
@@ -310,7 +224,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                 <ControlledInputText
                                     control={control}
                                     labelCol={{ xs: 12 }}
-                                    disabled={type === SPONSORSHIP}
                                     name="about_justification"
                                     label="Perihal"
                                     placeholder="Perihal"
@@ -380,18 +293,6 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
                                     placeholder="Approval posisi"
                                 />
                             </Col>
-                            {/* <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="approval_position_id"
-                                    label="Approval posisi"
-                                    placeholder="Approval posisi"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={approvalQuery.isLoading}
-                                    options={approvalQuery.data || []}
-                                />
-                            </Col> */}
                             <Col span={12}>
                                 <InputFile
                                     handleChange={onFileChangeHandler}
@@ -430,4 +331,4 @@ const AddJustification = ({ onSubmit, loading, children }: Props) => {
     );
 };
 
-export default AddJustification;
+export default AddJustificationProcurement;

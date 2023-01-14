@@ -11,4 +11,5 @@ export interface FDataJustification
     load_type_id: number | string;
     subunit_id: number | string;
     quartal_id: number;
+    type: number;
 }

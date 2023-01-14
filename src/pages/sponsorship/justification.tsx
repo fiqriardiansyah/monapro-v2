@@ -3,8 +3,8 @@ import Header from "components/common/header";
 import { StateContext } from "context/state";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import { AgendaDataLockBudgetData, BasePaginationResponse, Justification } from "models";
-import AddJustification from "modules/procurement/justification/add";
+import { AgendaDataLockBudgetData, Justification } from "models";
+import AddJustificationSponsorship from "modules/procurement/justification/add-sponsorship";
 import EditJustification from "modules/procurement/justification/edit";
 import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
 import JustificationTable from "modules/procurement/justification/table";
@@ -14,7 +14,7 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import justificationService from "services/api-endpoints/procurement/justification";
 import Utils from "utils";
-import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import { AWS_PATH, KEY_UPLOAD_FILE, SPONSORSHIP_TYPE } from "utils/constant";
 
 const SJustificationPage = <T extends TDataJustification>() => {
     const { notificationInstance } = useContext(StateContext);
@@ -28,12 +28,12 @@ const SJustificationPage = <T extends TDataJustification>() => {
     const editTriggerRef = useRef<HTMLButtonElement | null>(null);
 
     // crud fetcher
-    const getList = useQuery([query ? justificationService.search : justificationService.getAll, page, query], async () => {
+    const getList = useQuery([query ? justificationService.search : justificationService.getAll, page, query, SPONSORSHIP_TYPE], async () => {
         if (query) {
-            const res = await justificationService.Search<Justification>({ page: page as any, query: query as any });
+            const res = await justificationService.Search<Justification>({ page: page as any, query: query as any, type: SPONSORSHIP_TYPE });
             return Utils.toBaseTable<Justification, T>(res.data.data);
         }
-        const res = await justificationService.GetAll<Justification>({ page });
+        const res = await justificationService.GetAll<Justification>({ page, type: SPONSORSHIP_TYPE });
         return Utils.toBaseTable<Justification, T>(res.data.data);
     });
 
@@ -152,13 +152,13 @@ const SJustificationPage = <T extends TDataJustification>() => {
                 onSubmitSearch={onSearchHandler}
                 action={
                     !isForbidden && (
-                        <AddJustification loading={createMutation.isLoading} onSubmit={addHandler}>
+                        <AddJustificationSponsorship loading={createMutation.isLoading} onSubmit={addHandler}>
                             {(data) => (
                                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
                                     Tambah Justifikasi
                                 </Button>
                             )}
-                        </AddJustification>
+                        </AddJustificationSponsorship>
                     )
                 }
             />

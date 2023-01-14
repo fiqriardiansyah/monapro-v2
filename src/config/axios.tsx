@@ -8,7 +8,9 @@ import { DEFAULT_ERROR_MESSAGE, TOKEN_USER } from "utils/constant";
 
 const axiosClient = axios.create();
 
-axiosClient.defaults.baseURL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL_PROD : process.env.REACT_APP_BASE_URL_DEV;
+// axiosClient.defaults.baseURL = process.env.NODE_ENV === "production" ? process.env.REACT_APP_BASE_URL_PROD : process.env.REACT_APP_BASE_URL_DEV;
+
+axiosClient.defaults.baseURL = process.env.REACT_APP_BASE_URL_PROD;
 
 axiosClient.defaults.timeout = 1000000;
 
