@@ -31,6 +31,7 @@ export interface GetSubHeaderDashboard {
     list_activity: {
         load_name: string;
         load_usage: number;
+        load_total: number;
     }[];
 }
 

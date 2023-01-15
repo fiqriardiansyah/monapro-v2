@@ -189,7 +189,9 @@ const DashboardPage = () => {
                                             return (
                                                 <div className="w-full flex items-center justify-between mb-2">
                                                     <p className="m-0 text-gray-400 text-xs">{el.load_name}</p>
-                                                    <p className="m-0 text-gray-600 font-medium text-xs">{el.load_usage?.ToIndCurrency("Rp")}</p>
+                                                    <p className="m-0 text-gray-600 font-medium text-xs">
+                                                        {`${el.load_usage?.ToIndCurrency("Rp")} / ${el.load_total?.ToIndCurrency("Rp")}`}
+                                                    </p>
                                                 </div>
                                             );
                                         })}

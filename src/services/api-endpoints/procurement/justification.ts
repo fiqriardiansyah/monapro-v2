@@ -24,8 +24,36 @@ class JustificationService extends BaseService {
 
     searchNon = "/procurement/search-non-justification";
 
+    createNon = "/procurement/create-non-justification";
+
+    editNon = "/procurement/edit-non-justification";
+
     constructor() {
         super();
+    }
+
+    EditNon<T = any>(data: Models.JustificationEditData, config?: PostMethodParams["config"]) {
+        return this.ProxyRequest(async () => {
+            const req = await ApiMethod.put<T>({
+                url: this.editNon,
+                data,
+                config,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    CreateNon<T = any>(data: Models.JustificationCreateData, config?: PostMethodParams["config"]) {
+        return this.ProxyRequest(async () => {
+            const req = await ApiMethod.post<T>({
+                url: this.createNon,
+                data,
+                config,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     SearchNon<T = any>(param: { query: any; page: any }) {

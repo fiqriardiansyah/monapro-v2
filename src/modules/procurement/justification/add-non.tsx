@@ -163,7 +163,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         const value = Utils.convertToIntFormat(data.value as any) || 0;
         if (value > MAXIMAL_NON_JUSTIFICATION) {
             setError("value", {
-                message: "Maximal nilai 20.000.0000",
+                message: "Maximal nilai 20.000.000",
                 type: "max",
             });
             return;

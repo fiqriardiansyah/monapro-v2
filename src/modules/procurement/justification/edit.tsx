@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, Col, Form, Modal, notification, Row, Space } from "antd";
 import React, { useEffect, useState } from "react";
@@ -19,6 +20,7 @@ import {
     COMMON_FILE_EXTENSIONS,
     FORMAT_DATE,
     FORMAT_DATE_IND,
+    MAXIMAL_NON_JUSTIFICATION,
     PROCUREMENT_VALUES,
     QUARTAL,
     QUARTAL_MONTH_SHORT_EN,
@@ -40,6 +42,8 @@ type Props = {
     onSubmit: (data: FDataJustification & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
+    useMaxValue?: boolean;
+    useMinValue?: boolean;
 };
 
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
@@ -58,14 +62,14 @@ const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     type: yup.number(),
 });
 
-const EditJustification = ({ onSubmit, loading, children }: Props) => {
+const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinValue }: Props) => {
     const { base64, processFile, isProcessLoad } = useBase64File();
 
     const [prevData, setPrevData] = useState<Justification | null>(null);
 
     const [form] = Form.useForm();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const { handleSubmit, control, setValue, getValues, watch, reset } = useForm<FDataJustification>({
+    const { handleSubmit, control, setValue, getValues, watch, reset, setError } = useForm<FDataJustification>({
         mode: "onChange",
         resolver: yupResolver(schema),
     });
@@ -182,9 +186,31 @@ const EditJustification = ({ onSubmit, loading, children }: Props) => {
     };
 
     const onSubmitHandler = handleSubmit((data) => {
+        const value = Utils.convertToIntFormat(data.value as any) || 0;
+
+        if (useMinValue) {
+            if (value <= MAXIMAL_NON_JUSTIFICATION) {
+                setError("value", {
+                    message: "Minimal nilai lebih dari 20.000.000",
+                    type: "min",
+                });
+                return;
+            }
+        }
+
+        if (useMaxValue) {
+            if (value > MAXIMAL_NON_JUSTIFICATION) {
+                setError("value", {
+                    message: "Maximal nilai 20.000.000",
+                    type: "max",
+                });
+                return;
+            }
+        }
+
         const parseData: FDataJustification = {
             ...data,
-            value: Utils.convertToIntFormat(data.value as any) || "",
+            value,
             justification_date: data.justification_date ? moment(data.justification_date).format(FORMAT_DATE) : "",
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",

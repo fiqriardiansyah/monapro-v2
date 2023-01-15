@@ -90,10 +90,6 @@ export const ROLE = [
         value: 4,
         label: "Secretary",
     },
-    {
-        value: 5,
-        label: "Admin",
-    },
 ];
 
 export const QUARTAL = [

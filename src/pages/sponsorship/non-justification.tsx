@@ -40,7 +40,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
 
     const createMutation = useMutation(
         async (data: FDataJustification) => {
-            await justificationService.Create(data as any, {
+            await justificationService.CreateNon(data as any, {
                 onUploadProgress: (eventUpload) => {
                     if (!data.doc_justification) return;
                     const percentCompleted = Math.round((eventUpload.loaded * 100) / eventUpload.total);
@@ -67,7 +67,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
 
     const editMutation = useMutation(
         async (data: FDataJustification) => {
-            await justificationService.Edit(data as any, {
+            await justificationService.EditNon(data as any, {
                 onUploadProgress: (eventUpload) => {
                     if (!data.doc_justification) return;
                     if (data.doc_justification.includes(AWS_PATH)) return;
@@ -136,7 +136,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
 
     return (
         <div className="min-h-screen px-10">
-            <EditJustification loading={editMutation.isLoading} onSubmit={editHandler}>
+            <EditJustification useMaxValue loading={editMutation.isLoading} onSubmit={editHandler}>
                 {(data) => (
                     <button
                         type="button"
