@@ -73,21 +73,26 @@ export const STATUS_AGENDA = [
     },
 ];
 
+export const ROLE_SUPER_ADMIN = 1;
+export const ROLE_VIEWER = 2;
+export const ROLE_USER = 3;
+export const ROLE_SECRETARY = 4;
+
 export const ROLE = [
     {
-        value: 1,
+        value: ROLE_SUPER_ADMIN,
         label: "Super Admin",
     },
     {
-        value: 2,
+        value: ROLE_VIEWER,
         label: "Viewer",
     },
     {
-        value: 3,
+        value: ROLE_USER,
         label: "User",
     },
     {
-        value: 4,
+        value: ROLE_SECRETARY,
         label: "Secretary",
     },
 ];

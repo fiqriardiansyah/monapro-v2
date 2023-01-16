@@ -11,6 +11,7 @@ import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
+import { ROLE_SUPER_ADMIN, ROLE_USER } from "utils/constant";
 import { TDataJustification } from "./models";
 
 type Props<T> = {
@@ -168,8 +169,10 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, isProcureme
         ),
     };
 
-    if (state.user?.role_id === 1) {
-        columns.push(action);
+    if (state.user?.role_id === ROLE_SUPER_ADMIN || state.user?.role_id === ROLE_USER) {
+        if (!columns.find((el) => el.title === "Action")) {
+            columns.push(action);
+        }
     }
 
     if (!isProcurement && !columns.find((el) => el.title === "No Agenda")) {

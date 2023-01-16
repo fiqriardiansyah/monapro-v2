@@ -11,6 +11,7 @@ import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
+import { ROLE_SUPER_ADMIN, ROLE_USER } from "utils/constant";
 import { TDataJustification } from "./models";
 
 type Props<T> = {
@@ -28,22 +29,22 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
     const navigate = useNavigate();
 
     const onClickLockBudgetHandler = (data: T) => {
-        // Modal.confirm({
-        //     title: "Lock",
-        //     icon: <ImWarning className="text-red-400" />,
-        //     content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran ${data.about_justification}?`,
-        //     onOk() {
-        //         return new Promise((resolve, reject) => {
-        //             onClickLockBudget(data, () => {
-        //                 resolve(true);
-        //             });
-        //         });
-        //     },
-        //     onCancel() {},
-        //     okButtonProps: {
-        //         danger: true,
-        //     },
-        // });
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran ${data.about_justification}?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickLockBudget(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
@@ -163,8 +164,10 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
         ),
     };
 
-    if (state.user?.role_id === 1) {
-        columns.push(action);
+    if (state.user?.role_id === ROLE_SUPER_ADMIN || state.user?.role_id === ROLE_USER) {
+        if (!columns.find((el) => el.title === "Action")) {
+            columns.push(action);
+        }
     }
 
     return (
