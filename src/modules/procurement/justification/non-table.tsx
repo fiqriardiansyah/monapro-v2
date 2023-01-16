@@ -79,7 +79,7 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
         {
             title: "No Agenda",
             dataIndex: "no_agenda",
-            width: "150px",
+            width: "100px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
         {
@@ -91,7 +91,7 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
         {
             title: "Posisi",
             dataIndex: "position",
-            width: "150px",
+            width: "80px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {

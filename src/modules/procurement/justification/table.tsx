@@ -96,7 +96,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, isProcureme
         {
             title: "Posisi",
             dataIndex: "position",
-            width: "150px",
+            width: "80px",
             render: (text) => <p className="capitalize m-0 leading-3 text-xs">{text}</p>,
         },
         {
@@ -179,7 +179,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher, isProcureme
         columns.splice(4, 0, {
             title: "No Agenda",
             dataIndex: "no_agenda",
-            width: "150px",
+            width: "100px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         });
     }
