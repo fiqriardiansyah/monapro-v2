@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, message, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -29,6 +29,10 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
     const navigate = useNavigate();
 
     const onClickLockBudgetHandler = (data: T) => {
+        if (!data.doc_justification) {
+            message.error("Upload dokumen terlebih dahulu!");
+            return;
+        }
         Modal.confirm({
             title: "Lock",
             icon: <ImWarning className="text-red-400" />,
