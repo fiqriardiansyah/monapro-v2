@@ -56,7 +56,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
         },
         {
             onSuccess: () => {
-                message.success("Justifikasi dibuat!");
+                message.success("Non Justifikasi dibuat!");
                 getList.refetch();
             },
             onError: (error: any) => {
@@ -84,7 +84,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
         },
         {
             onSuccess: () => {
-                message.success("Justifikasi diedit!");
+                message.success("Non Justifikasi diedit!");
                 getList.refetch();
             },
             onError: (error: any) => {
@@ -156,7 +156,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
                         <AddNonJustification loading={createMutation.isLoading} onSubmit={addHandler}>
                             {(data) => (
                                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                                    Tambah Justifikasi
+                                    Tambah Non Justifikasi
                                 </Button>
                             )}
                         </AddNonJustification>

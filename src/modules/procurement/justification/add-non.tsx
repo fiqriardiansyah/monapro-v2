@@ -263,7 +263,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
                                     control={control}
                                     labelCol={{ xs: 12 }}
                                     name="justification_date"
-                                    label="Tanggal justifikasi"
+                                    label="Tanggal Non justifikasi"
                                 />
                             </Col>
                             <Col span={12}>
@@ -273,7 +273,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
                                     type="number"
                                     name="value"
                                     label="Nilai justifikasi"
-                                    placeholder="Nilai justifikasi"
+                                    placeholder="Nilai Non Justifikasi"
                                 />
                             </Col>
                             <Col span={12}>
