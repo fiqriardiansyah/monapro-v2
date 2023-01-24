@@ -15,6 +15,7 @@ import {
     PROCUREMENT_FINANCE_PATH,
     PROCUREMENT_JUSTIFICATION_PATH,
     PROCUREMENT_NEWS_PATH,
+    PROCUREMENT_OLD_JUSTIFICATION_PATH,
     PROFILE_PATH,
     RECAP_PATH,
     SPONSORSHIP_CONTRACT_PATH,
@@ -48,6 +49,7 @@ import SJustificationPage from "pages/sponsorship/justification";
 import SContractPage from "pages/sponsorship/contract";
 import SNewsPage from "pages/sponsorship/news";
 import SFinancePage from "pages/sponsorship/finance";
+import OldJustificationPage from "pages/procurement/old-justification";
 
 function App() {
     const { state } = useContext(UserContext);
@@ -77,6 +79,7 @@ function App() {
                         <Route path={PROCUREMENT_CONTRACT_PATH} element={<ContractPage />} />
                         <Route path={PROCUREMENT_NEWS_PATH} element={<NewsPage />} />
                         <Route path={PROCUREMENT_FINANCE_PATH} element={<FinancePage />} />
+                        <Route path={PROCUREMENT_OLD_JUSTIFICATION_PATH} element={<OldJustificationPage />} />
 
                         <Route path={SPONSORSHIP_JUSTIFICATION_PATH} element={<SJustificationPage />} />
                         <Route path={SPONSORSHIP_NON_JUSTIFICATION_PATH} element={<NonJustificationPage />} />

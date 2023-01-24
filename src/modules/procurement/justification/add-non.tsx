@@ -43,7 +43,7 @@ type Props = {
 
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     justification_date: yup.string().required("Tanggal wajib diisi"),
-    agenda_data_id: yup.string().required("Agenda wajib diisi"),
+    agenda_data_id: yup.string(),
     value: yup.string().required("Nilai wajib diisi"),
     about_justification: yup.string(),
     approval_position: yup.string().required("Approval posisi wajib diisi"), // wajib
@@ -163,7 +163,7 @@ const AddNonJustification = ({ onSubmit, loading, children }: Props) => {
         const value = Utils.convertToIntFormat(data.value as any) || 0;
         if (value > MAXIMAL_NON_JUSTIFICATION) {
             setError("value", {
-                message: "Maximal nilai 20.000.000",
+                message: `Maximal nilai ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
                 type: "max",
             });
             return;

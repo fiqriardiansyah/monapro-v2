@@ -3,7 +3,7 @@ import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import { MdDashboard } from "react-icons/md";
 import { AiFillDatabase, AiOutlineDeploymentUnit, AiOutlineException } from "react-icons/ai";
-import { BsClipboardData, BsFillCalendarCheckFill } from "react-icons/bs";
+import { BsClipboardData, BsFillCalendarCheckFill, BsFillFolderFill } from "react-icons/bs";
 import { HiClipboardDocumentCheck, HiOutlineBanknotes, HiScale } from "react-icons/hi2";
 import { TfiHandPointUp, TfiWrite } from "react-icons/tfi";
 import { CiMoneyBill } from "react-icons/ci";
@@ -33,6 +33,7 @@ import {
     PROCUREMENT_JUSTIFICATION_PATH,
     PROCUREMENT_NEGOTIATION_PATH,
     PROCUREMENT_NEWS_PATH,
+    PROCUREMENT_OLD_JUSTIFICATION_PATH,
     RECAP_PATH,
     SOP_PATH,
     SPONSORSHIP_CONTRACT_PATH,
@@ -80,6 +81,7 @@ function Sidebar({ collapse }: Props) {
         ]),
         getItem("Procurement", "procurement", <HiClipboardDocumentCheck />, [
             getItem("Justifikasi", PROCUREMENT_JUSTIFICATION_PATH, <TfiHandPointUp />),
+            getItem("Justifikasi Lama", PROCUREMENT_OLD_JUSTIFICATION_PATH, <BsFillFolderFill />),
             getItem("NOPES", PROCUREMENT_CONTRACT_PATH, <IoDocumentAttachOutline />),
             getItem("Berita Acara", PROCUREMENT_NEWS_PATH, <TfiWrite />),
             getItem("Finance", PROCUREMENT_FINANCE_PATH, <CiMoneyBill />),

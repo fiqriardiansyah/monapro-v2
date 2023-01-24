@@ -18,15 +18,35 @@ type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
     onClickEdit: (data: T) => void;
     onClickLockBudget: (data: T, callback: () => void) => void;
+    onClickDeleteJustif: (data: T, callback: () => void) => void;
 };
 
-const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget }: Props<T>) => {
+const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickEdit, onClickLockBudget, onClickDeleteJustif }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const location = useLocation();
     const [params] = useSearchParams();
     const navigate = useNavigate();
+
+    const onClickDelete = (data: T) => {
+        Modal.confirm({
+            title: "Delete",
+            icon: <ImWarning className="text-red-400" />,
+            content: `Hapus data ${data.about_justification} ?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickDeleteJustif(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
 
     const onClickLockBudgetHandler = (data: T) => {
         if (!data.doc_justification) {
@@ -152,7 +172,7 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
     ];
 
     const action: ColumnsType<T>[0] = {
-        width: "160px",
+        width: "250px",
         title: "Action",
         key: "action",
         fixed: "right",
@@ -163,6 +183,9 @@ const NonJustificationTable = <T extends TDataJustification>({ fetcher, onClickE
                 </Button>
                 <Button type={record?.lock_budget !== 1 ? "primary" : "default"} onClick={() => onClickLockBudgetHandler(record)}>
                     {record?.lock_budget === 1 ? "Unlock" : "Lock"}
+                </Button>
+                <Button type="text" onClick={() => onClickDelete(record)} danger>
+                    Delete
                 </Button>
             </Space>
         ),

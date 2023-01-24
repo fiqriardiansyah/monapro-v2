@@ -191,7 +191,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
         if (useMinValue) {
             if (value <= MAXIMAL_NON_JUSTIFICATION) {
                 setError("value", {
-                    message: "Minimal nilai lebih dari 20.000.000",
+                    message: `Minimal nilai lebih dari ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
                     type: "min",
                 });
                 return;
@@ -201,7 +201,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
         if (useMaxValue) {
             if (value > MAXIMAL_NON_JUSTIFICATION) {
                 setError("value", {
-                    message: "Maximal nilai 20.000.000",
+                    message: `Maximal nilai ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
                     type: "max",
                 });
                 return;

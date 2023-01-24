@@ -134,19 +134,19 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
             },
         },
-        {
-            width: "100px",
-            title: "Action",
-            key: "action",
-            fixed: "right",
-            render: (_, record) => (
-                <Space size="middle" direction="horizontal">
-                    <Button type="text" onClick={() => detailHandler(record)}>
-                        Detail
-                    </Button>
-                </Space>
-            ),
-        },
+        // {
+        //     width: "100px",
+        //     title: "Action",
+        //     key: "action",
+        //     fixed: "right",
+        //     render: (_, record) => (
+        //         <Space size="middle" direction="horizontal">
+        //             <Button type="text" onClick={() => detailHandler(record)}>
+        //                 Detail
+        //             </Button>
+        //         </Space>
+        //     ),
+        // },
     ];
 
     return (

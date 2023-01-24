@@ -12,7 +12,7 @@ import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
-import justificationService from "services/api-endpoints/procurement/justification";
+import justificationService, { DeleteJustification } from "services/api-endpoints/procurement/justification";
 import Utils from "utils";
 import { AWS_PATH, KEY_UPLOAD_FILE, SPONSORSHIP_TYPE } from "utils/constant";
 
@@ -107,7 +107,26 @@ const SJustificationPage = <T extends TDataJustification>() => {
         }
     );
 
+    const deleteMutation = useMutation(
+        async (data: DeleteJustification) => {
+            await justificationService.DeleteJustification(data);
+        },
+        {
+            onSuccess: () => {
+                getList.refetch();
+                message.success("Justifikasi dihapus!");
+            },
+            onError: (error: any) => {
+                message.error(error?.message);
+            },
+        }
+    );
+
     // crud handler
+    const onClickDeleteHandler = async (data: T, callback: () => void) => {
+        await deleteMutation.mutateAsync({ id: data.id });
+        callback();
+    };
     const onClickLockBudget = async (data: T, callback: () => void) => {
         await lockBudgetMutation.mutateAsync({ id: data.id, lock_budget: data.lock_budget === 1 ? 0 : 1 });
         callback();
@@ -163,7 +182,12 @@ const SJustificationPage = <T extends TDataJustification>() => {
                 }
             />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
-            <JustificationTable onClickLockBudget={onClickLockBudget} onClickEdit={onClickEdit} fetcher={getList} />
+            <JustificationTable
+                onClickDeleteJustif={onClickDeleteHandler}
+                onClickLockBudget={onClickLockBudget}
+                onClickEdit={onClickEdit}
+                fetcher={getList}
+            />
         </div>
     );
 };

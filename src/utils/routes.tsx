@@ -20,6 +20,7 @@ export const PROCUREMENT_NEGOTIATION_PATH = "/procurement/negotiation";
 export const PROCUREMENT_CONTRACT_PATH = "/procurement/contract";
 export const PROCUREMENT_NEWS_PATH = "/procurement/news";
 export const PROCUREMENT_FINANCE_PATH = "/procurement/finance";
+export const PROCUREMENT_OLD_JUSTIFICATION_PATH = "/procurement/old-justification";
 
 export const SPONSORSHIP_JUSTIFICATION_PATH = "/sponsorship/justification";
 export const SPONSORSHIP_NON_JUSTIFICATION_PATH = "/sponsorship/nonjustification";

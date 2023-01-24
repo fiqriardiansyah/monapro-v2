@@ -163,7 +163,7 @@ const AddJustificationSponsorship = ({ onSubmit, loading, children }: Props) => 
         const value = Utils.convertToIntFormat(data.value as any) || 0;
         if (value <= MAXIMAL_NON_JUSTIFICATION) {
             setError("value", {
-                message: "Minimal nilai lebih dari 20.000.000",
+                message: `Minimal nilai lebih dari ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
                 type: "min",
             });
             return;

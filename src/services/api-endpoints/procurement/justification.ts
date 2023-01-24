@@ -1,9 +1,14 @@
 /* eslint-disable no-useless-constructor */
 import * as Models from "models";
 import { BasePaginationResponse, Justification, PostMethodParams } from "models";
+import { FDataJustificationOld } from "modules/procurement/justification/models";
 import { DEFAULT_ERROR_MESSAGE } from "utils/constant";
 import ApiMethod from "../../api-methods";
 import BaseService from "../base";
+
+export interface DeleteJustification {
+    id: any;
+}
 
 class JustificationService extends BaseService {
     getAll = "/procurement/get-all-justification";
@@ -28,8 +33,33 @@ class JustificationService extends BaseService {
 
     editNon = "/procurement/edit-non-justification";
 
+    deleteJustification = "/procurement/delete-justification";
+
+    createOldJustification = "/procurement/create-old-justification";
+
     constructor() {
         super();
+    }
+
+    CreateOldJustification<T = any>(data: FDataJustificationOld) {
+        return this.ProxyRequest(async () => {
+            const req = await ApiMethod.post<T>({
+                url: this.createOldJustification,
+                data,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
+    }
+
+    DeleteJustification<T = any>(data: DeleteJustification) {
+        return this.ProxyRequest(async () => {
+            const req = await ApiMethod.delete<T>({
+                url: `${this.deleteJustification}/${data.id}`,
+            });
+            if (req.data?.status !== 200) throw new Error(req.data?.message || DEFAULT_ERROR_MESSAGE);
+            return req;
+        });
     }
 
     EditNon<T = any>(data: Models.JustificationEditData, config?: PostMethodParams["config"]) {
