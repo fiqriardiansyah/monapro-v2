@@ -17,7 +17,7 @@ type Props<T> = {
 
 const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>) => {
     const location = useLocation();
-    const [params] = useSearchParams();
+    const [params, setParams] = useSearchParams();
     const navigate = useNavigate();
 
     const detailHandler = (data: T) => {
@@ -31,13 +31,8 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
-        navigate({
-            pathname: location.pathname,
-            search: `?${createSearchParams({
-                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
-                page: pagination.current?.toString() || "1",
-            })}`,
-        });
+        params.set("page_justification", pagination.current?.toString() || "1");
+        setParams(params);
     };
 
     const columns: ColumnsType<T> = [

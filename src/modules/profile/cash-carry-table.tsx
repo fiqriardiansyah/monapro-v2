@@ -20,17 +20,12 @@ const CashCarryTable = <T extends CashCarry>({ fetcher }: Props<T>) => {
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const location = useLocation();
-    const [params] = useSearchParams();
+    const [params, setParams] = useSearchParams();
     const navigate = useNavigate();
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
-        navigate({
-            pathname: location.pathname,
-            search: `?${createSearchParams({
-                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
-                page: pagination.current?.toString() || "1",
-            })}`,
-        });
+        params.set("page_cc", pagination.current?.toString() || "1");
+        setParams(params);
     };
 
     const columns: ColumnsType<T> = [

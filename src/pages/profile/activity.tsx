@@ -27,6 +27,7 @@ import NewsTable from "modules/profile/news-table";
 const MyActivity = () => {
     const { setState, state } = useContext(UserContext);
     const [searchParams] = useSearchParams();
+
     const pageJustification = searchParams.get("page_justification") || 1;
     const pageCc = searchParams.get("page_cc") || 1;
     const pageAgenda = searchParams.get("page_agenda") || 1;
