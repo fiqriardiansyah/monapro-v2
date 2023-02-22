@@ -1,25 +1,27 @@
-import React, { useContext } from "react";
-import { Table } from "antd";
+import { Button, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
-import { UseQueryResult } from "react-query";
-import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse, AgendaData } from "models";
-import moment from "moment";
-import { DECISION, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
-import Utils from "utils";
 import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
+import { AgendaData, BasePaginationResponse } from "models";
+import Print from "modules/agenda/data/print";
+import moment from "moment";
+import React, { useContext } from "react";
+import { UseQueryResult } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import Utils from "utils";
+import { DECISION, FORMAT_SHOW_DATE, STATUS_AGENDA } from "utils/constant";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    onClickEdit: (data: T) => void;
 };
 
-const AgendaDataTable = <T extends AgendaData>({ fetcher }: Props<T>) => {
+const AgendaDataTable = <T extends AgendaData>({ fetcher, onClickEdit }: Props<T>) => {
     const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "agenda" });
 
-    const location = useLocation();
     const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         params.set("page_agenda", pagination.current?.toString() || "1");
@@ -98,6 +100,31 @@ const AgendaDataTable = <T extends AgendaData>({ fetcher }: Props<T>) => {
         },
     ];
 
+    const action: ColumnsType<T>[0] = {
+        width: "200px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+                <Print data={record as any}>
+                    {(dt) => (
+                        <Button type="primary" onClick={dt.clickPrint}>
+                            Print
+                        </Button>
+                    )}
+                </Print>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
+
     return (
         <Table
             scroll={{ x: 2000 }}
@@ -110,6 +137,7 @@ const AgendaDataTable = <T extends AgendaData>({ fetcher }: Props<T>) => {
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

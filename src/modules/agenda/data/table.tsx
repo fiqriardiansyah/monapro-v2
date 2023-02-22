@@ -62,11 +62,6 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
             dataIndex: "no_agenda_directors",
             render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
         },
-        // {
-        //     title: "No Agenda disposisi",
-        //     dataIndex: "no_agenda_disposition",
-        //     render: (text) => <p className="capitalize m-0">{text || "-"}</p>,
-        // },
         {
             title: "Tanggal",
             dataIndex: "date",
@@ -164,6 +159,7 @@ const AgendaDataTable = <T extends TDataAgenda>({ fetcher, onClickEdit, onClickP
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

@@ -154,7 +154,7 @@ const JustificationPage = <T extends TDataJustification>() => {
 
     return (
         <div className="min-h-screen px-10">
-            <EditJustification loading={editMutation.isLoading} onSubmit={editHandler}>
+            <EditJustification type={PROCUREMENT_TYPE} loading={editMutation.isLoading} onSubmit={editHandler}>
                 {(data) => (
                     <button
                         type="button"

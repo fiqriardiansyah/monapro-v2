@@ -111,6 +111,7 @@ const RegulationTable = <T extends TDataRegulation>({ fetcher, onClickEdit, onCl
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

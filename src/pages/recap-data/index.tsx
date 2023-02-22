@@ -10,7 +10,7 @@ import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import recapDataService from "services/api-endpoints/recap-data";
 import Utils from "utils";
-import { FINANCE_STATE, FORMAT_SHOW_DATE } from "utils/constant";
+import { FINANCE_STATE } from "utils/constant";
 
 const RecapDataPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();

@@ -60,7 +60,7 @@ class MyActivityService extends BaseService {
         });
     }
 
-    GetMyJustification<T = TDataJustification>(params: { page: any }) {
+    GetMyJustification<T = TDataJustification>(params: { page: any; type: 1 | 2 | 3 }) {
         return this.ProxyRequest<Models.BasePaginationResponse<T>>(async () => {
             const req = await ApiMethod.get<Models.BasePaginationResponse<T>>({
                 url: this.getMyJustification,

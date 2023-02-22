@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button, Modal, Space, Table } from "antd";
+import { Button, message, Modal, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
 
 import { UseQueryResult } from "react-query";
@@ -9,24 +9,63 @@ import moment from "moment";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
 import { TDataJustification } from "modules/procurement/justification/models";
-import { PROCUREMENT_JUSTIFICATION_PATH } from "utils/routes";
+import { UserContext } from "context/user";
+import { PROCUREMENT_TYPE, ROLE_SUPER_ADMIN, ROLE_USER, SPONSORSHIP_TYPE } from "utils/constant";
+import { ImWarning } from "react-icons/im";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    type: number;
+    onClickEdit: (data: T) => void;
+    onClickLockBudget: (data: T, callback: () => void) => void;
+    onClickDeleteJustif: (data: T, callback: () => void) => void;
 };
 
-const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>) => {
-    const location = useLocation();
+const JustificationTable = <T extends TDataJustification>({ fetcher, type, onClickDeleteJustif, onClickEdit, onClickLockBudget }: Props<T>) => {
+    const { state } = useContext(UserContext);
     const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
 
-    const detailHandler = (data: T) => {
-        navigate({
-            pathname: PROCUREMENT_JUSTIFICATION_PATH,
-            search: `?${createSearchParams({
-                query: data.id?.toString(),
-                page: "1",
-            })}`,
+    console.log(type);
+
+    const onClickDelete = (data: T) => {
+        Modal.confirm({
+            title: "Delete",
+            icon: <ImWarning className="text-red-400" />,
+            content: `Hapus data ${data.about_justification} ?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickDeleteJustif(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
+        });
+    };
+
+    const onClickLockBudgetHandler = (data: T) => {
+        if (!data.doc_justification) {
+            message.error("Upload dokumen terlebih dahulu!");
+            return;
+        }
+        Modal.confirm({
+            title: "Lock",
+            icon: <ImWarning className="text-red-400" />,
+            content: `${data.lock_budget === 1 ? "Unlock" : "Lock"} anggaran ${data.about_justification}?`,
+            onOk() {
+                return new Promise((resolve, reject) => {
+                    onClickLockBudget(data, () => {
+                        resolve(true);
+                    });
+                });
+            },
+            onCancel() {},
+            okButtonProps: {
+                danger: true,
+            },
         });
     };
 
@@ -55,16 +94,14 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
-            title: "Tipe",
-            dataIndex: "-",
-            width: "150px",
-            render: (text, record) => <p className="capitalize m-0">{record.no_agenda ? "sponsorship" : "procurement"}</p>,
-        },
-        {
-            title: "No Agenda",
-            dataIndex: "no_agenda",
-            width: "150px",
-            render: (text) => <p className="capitalize m-0">{text}</p>,
+            ...(Number(type) === SPONSORSHIP_TYPE
+                ? {
+                      title: "No Agenda",
+                      dataIndex: "no_agenda",
+                      width: "150px",
+                      render: (text) => <p className="capitalize m-0">{text}</p>,
+                  }
+                : {}),
         },
         {
             title: "Perihal",
@@ -129,20 +166,33 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
                 return <ButtonDownload url={url} name={Utils.createFileNameDownload({ url, text: `Justifikasi_${record.id}` })} />;
             },
         },
-        // {
-        //     width: "100px",
-        //     title: "Action",
-        //     key: "action",
-        //     fixed: "right",
-        //     render: (_, record) => (
-        //         <Space size="middle" direction="horizontal">
-        //             <Button type="text" onClick={() => detailHandler(record)}>
-        //                 Detail
-        //             </Button>
-        //         </Space>
-        //     ),
-        // },
     ];
+
+    const action: ColumnsType<T>[0] = {
+        width: "250px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+                <Button type={record?.lock_budget !== 1 ? "primary" : "default"} onClick={() => onClickLockBudgetHandler(record)}>
+                    {record?.lock_budget === 1 ? "Unlock" : "Lock"}
+                </Button>
+                <Button type="text" onClick={() => onClickDelete(record)} danger>
+                    Delete
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (state.user?.role_id === ROLE_SUPER_ADMIN || state.user?.role_id === ROLE_USER) {
+        if (!columns.find((el) => el.title === "Action")) {
+            columns.push(action);
+        }
+    }
 
     return (
         <Table
@@ -156,6 +206,7 @@ const JustificationTable = <T extends TDataJustification>({ fetcher }: Props<T>)
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

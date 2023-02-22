@@ -8,14 +8,13 @@ import AddNonJustification from "modules/procurement/justification/add-non";
 import EditJustification from "modules/procurement/justification/edit";
 import { FDataJustification, TDataJustification } from "modules/procurement/justification/models";
 import NonJustificationTable from "modules/procurement/justification/non-table";
-import JustificationTable from "modules/procurement/justification/table";
 import React, { useContext, useRef } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
 import { useMutation, useQuery } from "react-query";
 import { useSearchParams } from "react-router-dom";
 import justificationService, { DeleteJustification } from "services/api-endpoints/procurement/justification";
 import Utils from "utils";
-import { AWS_PATH, KEY_UPLOAD_FILE } from "utils/constant";
+import { AWS_PATH, KEY_UPLOAD_FILE, NON_JUSTIFICATION_TYPE } from "utils/constant";
 
 const NonJustificationPage = <T extends TDataJustification>() => {
     const { notificationInstance } = useContext(StateContext);
@@ -155,7 +154,7 @@ const NonJustificationPage = <T extends TDataJustification>() => {
 
     return (
         <div className="min-h-screen px-10">
-            <EditJustification useMaxValue loading={editMutation.isLoading} onSubmit={editHandler}>
+            <EditJustification type={NON_JUSTIFICATION_TYPE} loading={editMutation.isLoading} onSubmit={editHandler}>
                 {(data) => (
                     <button
                         type="button"

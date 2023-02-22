@@ -27,7 +27,7 @@ axiosClient.interceptors.request.use(
             "Access-Control-Allow-Methods": "GET,POST,OPTIONS,DELETE,PUT",
             Authorization: Cookies.get(TOKEN_USER)!,
         };
-        return process.env.NODE_ENV === "development" ? requestLogger(req) : req;
+        return req;
     },
     (error) => (process.env.NODE_ENV === "development" ? errorLogger(error) : error)
 );
@@ -48,7 +48,7 @@ axiosClient.interceptors.response.use(
             //     ),
             // });
         }
-        return process.env.NODE_ENV === "development" ? responseLogger(res) : res;
+        return res;
     },
     (error) => {
         if (error.response?.status === 401) {

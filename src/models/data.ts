@@ -160,6 +160,8 @@ export interface Justification {
     no_agenda: string;
     about_justification: string;
     position: string;
+    agenda_data_id?: string | null;
+    load_type_id?: number | string;
     value: number | string;
     subunit_name: string;
     load_name: string;

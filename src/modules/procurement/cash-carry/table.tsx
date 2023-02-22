@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
-import { Button, Modal, Select, Space, Table } from "antd";
+import { Button, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
-import { UseQueryResult } from "react-query";
-import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
-import moment from "moment";
-import { FORMAT_SHOW_DATE, STATUS_CASH_CARRY } from "utils/constant";
+import ButtonDownload from "components/common/button-donwload";
 import { UserContext } from "context/user";
 import useIsForbidden from "hooks/useIsForbidden";
-import ButtonDownload from "components/common/button-donwload";
+import { BasePaginationResponse } from "models";
+import moment from "moment";
+import React, { useContext } from "react";
+import { UseQueryResult } from "react-query";
+import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import Utils from "utils";
+import { FORMAT_SHOW_DATE, STATUS_CASH_CARRY } from "utils/constant";
 import { TDataCashCarry } from "./models";
 
 type Props<T> = {
@@ -60,12 +60,6 @@ const CashCarryTable = <T extends TDataCashCarry>({ fetcher, onClickEdit }: Prop
             width: "150px",
             render: (text) => <p className="capitalize m-0">{text}</p>,
         },
-        // {
-        //     title: "Sub unit",
-        //     dataIndex: "subunit_name",
-        //     width: "150px",
-        //     render: (text) => <p className="capitalize m-0">{text}</p>,
-        // },
         {
             title: "Bulan penagihan",
             dataIndex: "billing_month",
@@ -125,6 +119,7 @@ const CashCarryTable = <T extends TDataCashCarry>({ fetcher, onClickEdit }: Prop
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

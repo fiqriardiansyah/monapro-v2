@@ -128,21 +128,7 @@ const ContractPage = <T extends TDataContractSpNopes>() => {
                     </button>
                 )}
             </EditContractSpNopes>
-            <Header
-                onSubmitSearch={onSearchHandler}
-                title="Kontrak/SP/NOPES"
-                // action={
-                //     !isForbidden && (
-                //         <AddContract loading={createMutation.isLoading} onSubmit={addHandler}>
-                //             {(data) => (
-                //                 <Button onClick={data.openModal} type="default" icon={<AiOutlinePlus className="mr-2" />} className="BTN-ADD ">
-                //                     Tambah Kontrak
-                //                 </Button>
-                //             )}
-                //         </AddContract>
-                //     )
-                // }
-            />
+            <Header onSubmitSearch={onSearchHandler} title="Kontrak/SP/NOPES" />
             {errors.map((el) => (el.error ? <Alert message={(el.error as any)?.message || el.error} type="error" className="!my-2" /> : null))}
             <ContractSpNopesTable onClickEdit={onClickEdit} fetcher={getList} />
         </div>

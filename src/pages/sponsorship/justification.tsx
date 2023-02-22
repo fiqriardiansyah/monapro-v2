@@ -154,7 +154,7 @@ const SJustificationPage = <T extends TDataJustification>() => {
 
     return (
         <div className="min-h-screen px-10">
-            <EditJustification useMinValue loading={editMutation.isLoading} onSubmit={editHandler}>
+            <EditJustification type={SPONSORSHIP_TYPE} loading={editMutation.isLoading} onSubmit={editHandler}>
                 {(data) => (
                     <button
                         type="button"

@@ -13,12 +13,13 @@ import moment from "moment";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    onClickEdit: (data: T) => void;
 };
 
-const NewsTable = <T extends News>({ fetcher }: Props<T>) => {
-    const location = useLocation();
+const NewsTable = <T extends News>({ fetcher, onClickEdit }: Props<T>) => {
     const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         params.set("page_news", pagination.current?.toString() || "1");
@@ -88,6 +89,24 @@ const NewsTable = <T extends News>({ fetcher }: Props<T>) => {
         },
     ];
 
+    const action: ColumnsType<T>[0] = {
+        width: "100px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
+
     return (
         <Table
             scroll={{ x: 1500 }}
@@ -100,6 +119,7 @@ const NewsTable = <T extends News>({ fetcher }: Props<T>) => {
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

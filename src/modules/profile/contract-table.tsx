@@ -8,15 +8,18 @@ import moment from "moment";
 import { FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
 import Utils from "utils";
+import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    onClickEdit: (data: T) => void;
 };
 
-const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher }: Props<T>) => {
-    const location = useLocation();
+const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher, onClickEdit }: Props<T>) => {
     const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
+    const { state } = useContext(UserContext);
+    const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         params.set("page_contract", pagination.current?.toString() || "1");
@@ -70,6 +73,24 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher }: Props<T>) 
         },
     ];
 
+    const action: ColumnsType<T>[0] = {
+        width: "100px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
+
     return (
         <Table
             size="small"
@@ -81,6 +102,7 @@ const ContractSpNopesTable = <T extends ContractSpNopes>({ fetcher }: Props<T>) 
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

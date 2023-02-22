@@ -108,12 +108,6 @@ const JustificationTable = <T extends TDataJustification>({
             render: (text) => <p className="capitalize m-0">{moment(text).format("DD MMM yyy")}</p>,
         },
         {
-            title: "Tipe",
-            dataIndex: "-",
-            width: "150px",
-            render: (text, record) => <p className="capitalize m-0">{record.no_agenda ? "sponsorship" : "procurement"}</p>,
-        },
-        {
             title: "Perihal",
             dataIndex: "about_justification",
             width: "150px",
@@ -225,6 +219,7 @@ const JustificationTable = <T extends TDataJustification>({
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

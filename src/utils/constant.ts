@@ -26,6 +26,8 @@ export const SPONSORSHIP_TYPE = 1;
 
 export const PROCUREMENT_TYPE = 2;
 
+export const NON_JUSTIFICATION_TYPE = 3;
+
 export const currency = [
     {
         CtryNm: "INDONESIA",

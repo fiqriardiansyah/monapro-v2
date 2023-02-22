@@ -1,17 +1,16 @@
-import React, { useContext } from "react";
 import { Button, Modal, Select, Space, Table } from "antd";
 import type { ColumnsType, TablePaginationConfig } from "antd/es/table";
+import React, { useContext } from "react";
 
-import { UseQueryResult } from "react-query";
-import { createSearchParams, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BasePaginationResponse } from "models";
-import { ImWarning } from "react-icons/im";
-import moment from "moment";
-import { DECISION, FINANCE_STATE, FOLLOW_UP, FORMAT_SHOW_DATE } from "utils/constant";
 import ButtonDownload from "components/common/button-donwload";
-import Utils from "utils";
-import useIsForbidden from "hooks/useIsForbidden";
 import { UserContext } from "context/user";
+import useIsForbidden from "hooks/useIsForbidden";
+import { BasePaginationResponse } from "models";
+import moment from "moment";
+import { ImWarning } from "react-icons/im";
+import { UseQueryResult } from "react-query";
+import { useSearchParams } from "react-router-dom";
+import { FINANCE_STATE } from "utils/constant";
 import { TDataRecapData } from "./models";
 
 type Props<T> = {
@@ -24,9 +23,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "data_recap" });
 
-    const location = useLocation();
-    const [params] = useSearchParams();
-    const navigate = useNavigate();
+    const [params, setParams] = useSearchParams();
 
     const onClickLockBudgetHandler = (data: T) => {
         Modal.confirm({
@@ -48,13 +45,8 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
     };
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
-        navigate({
-            pathname: location.pathname,
-            search: `?${createSearchParams({
-                ...(params.get("query") ? { query: params.get("query") || "" } : {}),
-                page: pagination.current?.toString() || "1",
-            })}`,
-        });
+        params.set("page", pagination.current?.toString() || "1");
+        setParams(params);
     };
 
     const onClickPaidHandler = (data: T, status: number) => {
@@ -189,6 +181,7 @@ const RecapDataTable = <T extends TDataRecapData>({ fetcher, onClickLockBudget, 
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />

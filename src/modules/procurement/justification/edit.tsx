@@ -21,9 +21,11 @@ import {
     FORMAT_DATE,
     FORMAT_DATE_IND,
     MAXIMAL_NON_JUSTIFICATION,
+    NON_JUSTIFICATION_TYPE,
     PROCUREMENT_VALUES,
     QUARTAL,
     QUARTAL_MONTH_SHORT_EN,
+    SPONSORSHIP_TYPE,
     SPONSORSHIP_VALUES,
 } from "utils/constant";
 import useBase64File from "hooks/useBase64File";
@@ -42,8 +44,7 @@ type Props = {
     onSubmit: (data: FDataJustification & { id: string }, callback: () => void) => void;
     loading: boolean;
     children: (data: ChildrenProps) => void;
-    useMaxValue?: boolean;
-    useMinValue?: boolean;
+    type: number;
 };
 
 const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
@@ -62,7 +63,7 @@ const schema: yup.SchemaOf<Partial<FDataJustification>> = yup.object().shape({
     type: yup.number(),
 });
 
-const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinValue }: Props) => {
+const EditJustification = ({ onSubmit, loading, children, type }: Props) => {
     const { base64, processFile, isProcessLoad } = useBase64File();
 
     const [prevData, setPrevData] = useState<Justification | null>(null);
@@ -118,7 +119,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
             onSuccess: (data: any) => {
                 form.setFieldsValue({
                     justification_date: data?.justification_date ? (moment(data?.justification_date) as any) : moment(),
-                    agenda_data_id: data?.agenda_data_id || "",
+                    agenda_data_id: data?.no_agenda_secretariat || "",
                     value: data?.value || 0,
                     about_justification: data?.about_justification || "",
                     approval_position_id: data?.approval_position_id || "",
@@ -131,7 +132,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
                     quartal_id: data?.quartal_id || "",
                 });
                 setValue("justification_date", data?.justification_date ? (moment(data?.justification_date) as any) : moment());
-                setValue("agenda_data_id", data?.agenda_data_id || "");
+                setValue("agenda_data_id", data?.no_agenda_secretariat || "");
                 setValue("value", data?.value || 0);
                 setValue("about_justification", data?.about_justification || "");
                 setValue("approval_position", data?.approval_position || "");
@@ -188,7 +189,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
     const onSubmitHandler = handleSubmit((data) => {
         const value = Utils.convertToIntFormat(data.value as any) || 0;
 
-        if (useMinValue) {
+        if (type === SPONSORSHIP_TYPE) {
             if (value <= MAXIMAL_NON_JUSTIFICATION) {
                 setError("value", {
                     message: `Minimal nilai lebih dari ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
@@ -198,7 +199,7 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
             }
         }
 
-        if (useMaxValue) {
+        if (type === NON_JUSTIFICATION_TYPE) {
             if (value > MAXIMAL_NON_JUSTIFICATION) {
                 setError("value", {
                     message: `Maximal nilai ${MAXIMAL_NON_JUSTIFICATION?.ToIndCurrency("Rp")}`,
@@ -215,6 +216,8 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
             event_date: data.event_date ? moment(data.event_date).format(FORMAT_DATE) : "",
             estimation_paydate: data.estimation_paydate ? moment(data.estimation_paydate).format(FORMAT_DATE) : "",
             doc_justification: base64 || getValues()?.doc_justification || null,
+            agenda_data_id: detailMutation.data?.agenda_data_id || null,
+            type,
         };
         onSubmit(
             {
@@ -410,18 +413,6 @@ const EditJustification = ({ onSubmit, loading, children, useMaxValue, useMinVal
                                     placeholder="Approval posisi"
                                 />
                             </Col>
-                            {/* <Col span={12}>
-                                <ControlledSelectInput
-                                    showSearch
-                                    name="approval_position_id"
-                                    label="Approval posisi"
-                                    placeholder="Approval posisi"
-                                    optionFilterProp="children"
-                                    control={control}
-                                    loading={approvalQuery.isLoading}
-                                    options={approvalQuery.data || []}
-                                />
-                            </Col> */}
                             <Col span={12}>
                                 {docWatch ? (
                                     <div className="w-full">

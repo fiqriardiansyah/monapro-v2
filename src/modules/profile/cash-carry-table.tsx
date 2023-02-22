@@ -13,15 +13,14 @@ import Utils from "utils";
 
 type Props<T> = {
     fetcher: UseQueryResult<BasePaginationResponse<T>, unknown>;
+    onClickEdit: (data: T) => void;
 };
 
-const CashCarryTable = <T extends CashCarry>({ fetcher }: Props<T>) => {
+const CashCarryTable = <T extends CashCarry>({ fetcher, onClickEdit }: Props<T>) => {
     const { state } = useContext(UserContext);
     const isForbidden = useIsForbidden({ roleAccess: state.user?.role_access, access: "justification" });
 
-    const location = useLocation();
     const [params, setParams] = useSearchParams();
-    const navigate = useNavigate();
 
     const handleTableChange = (pagination: TablePaginationConfig) => {
         params.set("page_cc", pagination.current?.toString() || "1");
@@ -88,6 +87,24 @@ const CashCarryTable = <T extends CashCarry>({ fetcher }: Props<T>) => {
         },
     ];
 
+    const action: ColumnsType<T>[0] = {
+        width: "100px",
+        title: "Action",
+        key: "action",
+        fixed: "right",
+        render: (_, record) => (
+            <Space size="middle" direction="horizontal">
+                <Button type="text" onClick={() => onClickEdit(record)}>
+                    Edit
+                </Button>
+            </Space>
+        ),
+    };
+
+    if (!isForbidden) {
+        columns.push(action);
+    }
+
     return (
         <Table
             scroll={{ x: 1300 }}
@@ -100,6 +117,7 @@ const CashCarryTable = <T extends CashCarry>({ fetcher }: Props<T>) => {
                 current: fetcher.data?.current_page || 1,
                 pageSize: 10, // nanti minta be untuk buat
                 total: fetcher.data?.total_data || 0,
+                showSizeChanger: false,
             }}
             onChange={handleTableChange}
         />
